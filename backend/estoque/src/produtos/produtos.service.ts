@@ -144,18 +144,54 @@ export class ProdutosService {
   async obterParcial(
     obterParcialProdutoDto: ObterParcialProdutoDto,
   ): Promise<Produtos[]> {
-    if (!obterParcialProdutoDto.termoDePesquisa) {
+    if (!obterParcialProdutoDto) {
       return this.findAll();
     }
-    return await this.produtoRepository
+    let query = await this.produtoRepository
       .createQueryBuilder('produto')
-      .where('LOWER(produto.codigoProduto) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialProdutoDto.termoDePesquisa}%`,
-      })
-      .orWhere('LOWER(produto.nome) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialProdutoDto.termoDePesquisa}%`,
-      })
-      .getMany();
+      .leftJoinAndSelect('produto.categoria', 'categoria')
+      .leftJoinAndSelect('produto.usuario', 'usuario')
+      .leftJoinAndSelect('produto.marca', 'marca')
+      .leftJoinAndSelect('produto.unidadeMedida', 'unidadeMedida');
+
+    if (obterParcialProdutoDto.termoDePesquisa) {
+      query = query
+        .where('LOWER(produto.codigoProduto) LIKE LOWER(:termo)', {
+          termo: `%${obterParcialProdutoDto.termoDePesquisa}%`,
+        })
+        .orWhere('LOWER(produto.nome) LIKE LOWER(:termo)', {
+          termo: `%${obterParcialProdutoDto.termoDePesquisa}%`,
+        });
+    }
+    if (
+      obterParcialProdutoDto.categorias &&
+      obterParcialProdutoDto.categorias.length > 0
+    ) {
+      query = query.andWhere('categoria.id IN (:...categorias)', {
+        categorias: obterParcialProdutoDto.categorias,
+      });
+    }
+
+    if (
+      obterParcialProdutoDto.marcas &&
+      obterParcialProdutoDto.marcas.length > 0
+    ) {
+      query = query.andWhere('marca.id IN (:...marcas)', {
+        marcas: obterParcialProdutoDto.marcas,
+      });
+    }
+
+    if (
+      obterParcialProdutoDto.operadores &&
+      obterParcialProdutoDto.operadores.length > 0
+    ) {
+      query = query.andWhere('usuario.id IN (:...operadores)', {
+        operadores: obterParcialProdutoDto.operadores,
+      });
+    }
+
+    const result = await query.getMany();
+    return result;
   }
 
   async remove(id: number) {

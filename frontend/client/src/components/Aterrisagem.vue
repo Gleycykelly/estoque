@@ -265,7 +265,7 @@
           </v-card-text>
           <v-card-actions>
             <v-btn color="primary" @click="modalAberto = false">Fechar</v-btn>
-            <v-btn color="#aa00ff" @click="filtrarDados" variant="tonal">
+            <v-btn color="#aa00ff" @click="obterParcial" variant="tonal">
               Filtrar
             </v-btn>
           </v-card-actions>
@@ -352,12 +352,15 @@ export default {
     async obterdadosParaFiltrar() {},
 
     async obterParcial() {
+      if (this.modalAberto) {
+        this.modalAberto = false;
+      }
+
+      this.filtros.termoDePesquisa = this.termoDePesquisa;
       api
         .post(
           `http://localhost:3000/${this.provider}/obter-parcial`,
-          {
-            termoDePesquisa: this.termoDePesquisa,
-          },
+          this.filtros,
           {
             headers: {
               Authorization: `Bearer ${this.obterToken()}`,
