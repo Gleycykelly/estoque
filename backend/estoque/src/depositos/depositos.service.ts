@@ -31,34 +31,6 @@ export class DepositosService {
     return this.depositoRepository.save(deposito);
   }
 
-  async findAll() {
-    return await this.depositoRepository.find({
-      relations: ['endereco', 'endereco.municipio', 'endereco.municipio.uf'],
-      order: {
-        id: 'ASC',
-      },
-    });
-  }
-
-  async findOne(id: number) {
-    return await this.depositoRepository.findOne({
-      where: { id },
-      relations: ['endereco', 'endereco.municipio', 'endereco.municipio.uf'],
-    });
-  }
-
-  async obterParcial(
-    obterParcialDepositoDto: ObterParcialDepositoDto,
-  ): Promise<Depositos[]> {
-    if (!obterParcialDepositoDto.termo) {
-      return this.findAll();
-    }
-    return await this.depositoRepository.find({
-      relations: ['endereco', 'endereco.municipio', 'endereco.municipio.uf'],
-      where: { descricao: obterParcialDepositoDto.termo },
-    });
-  }
-
   async update(id: number, updateDepositoDto: UpdateDepositoDto) {
     const JaCadastrado = await this.depositoJaCadastrado(
       updateDepositoDto.descricao,
@@ -91,6 +63,34 @@ export class DepositosService {
     }
 
     return this.depositoRepository.save(deposito);
+  }
+
+  async findAll() {
+    return await this.depositoRepository.find({
+      relations: ['endereco', 'endereco.municipio', 'endereco.municipio.uf'],
+      order: {
+        id: 'ASC',
+      },
+    });
+  }
+
+  async findOne(id: number) {
+    return await this.depositoRepository.findOne({
+      where: { id },
+      relations: ['endereco', 'endereco.municipio', 'endereco.municipio.uf'],
+    });
+  }
+
+  async obterParcial(
+    obterParcialDepositoDto: ObterParcialDepositoDto,
+  ): Promise<Depositos[]> {
+    if (!obterParcialDepositoDto.termo) {
+      return this.findAll();
+    }
+    return await this.depositoRepository.find({
+      relations: ['endereco', 'endereco.municipio', 'endereco.municipio.uf'],
+      where: { descricao: obterParcialDepositoDto.termo },
+    });
   }
 
   async remove(id: number) {

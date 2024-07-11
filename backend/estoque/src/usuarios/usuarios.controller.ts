@@ -18,6 +18,7 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/enums/role.enum';
 import { RoleGuard } from 'src/guards/role.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { ObterParcialUsuarioDto } from './dto/obter-parcial-usuario.dto';
 
 const AllowUnauthorizedRequest = () =>
   SetMetadata('allowUnauthorizedRequest', true);
@@ -34,11 +35,6 @@ export class UsuariosController {
     return this.usuariosService.create(createUsuarioDto);
   }
 
-  // @Post('login')
-  // login(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
-  //   return this.usuariosService.login(loginDto);
-  // }
-
   @Get()
   @Roles(Role.Administrador)
   findAll() {
@@ -48,6 +44,11 @@ export class UsuariosController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usuariosService.findOne(+id);
+  }
+
+  @Post('/obter-parcial')
+  obterParcial(@Body() obterParcialUsuarioDto: ObterParcialUsuarioDto) {
+    return this.usuariosService.obterParcial(obterParcialUsuarioDto);
   }
 
   @Roles(Role.Administrador)

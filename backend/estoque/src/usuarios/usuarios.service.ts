@@ -16,6 +16,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { EnderecosService } from 'src/enderecos/enderecos.service';
 import { DepositosService } from 'src/depositos/depositos.service';
 import { UsuariosTelefonesService } from 'src/usuarios-telefones/usuarios-telefones.service';
+import { ObterParcialUsuarioDto } from './dto/obter-parcial-usuario.dto';
 
 @Injectable()
 export class UsuariosService {
@@ -225,6 +226,29 @@ export class UsuariosService {
       delete usuario.senha;
     }
     return usuario;
+  }
+
+  async obterParcial(
+    obterParcialUsuarioDto: ObterParcialUsuarioDto,
+  ): Promise<Usuarios[]> {
+    if (!obterParcialUsuarioDto.termoDePesquisa) {
+      return this.findAll();
+    }
+    return await this.usuarioRepository
+      .createQueryBuilder('usuario')
+      .where('LOWER(usuario.cpf) LIKE LOWER(:termo)', {
+        termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
+      })
+      .orWhere('LOWER(usuario.rg) LIKE LOWER(:termo)', {
+        termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
+      })
+      .orWhere('LOWER(usuario.nome) LIKE LOWER(:termo)', {
+        termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
+      })
+      .orWhere('LOWER(usuario.email) LIKE LOWER(:termo)', {
+        termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
+      })
+      .getMany();
   }
 
   async remove(id: number) {
