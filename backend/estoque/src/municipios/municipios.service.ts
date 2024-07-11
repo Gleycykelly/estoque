@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Municipios } from './entities/municipio.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { ObterParcialMunicipiosDto } from './dto/obter-parcial-municipios.dto';
 
 @Injectable()
@@ -31,11 +31,14 @@ export class MunicipiosService {
     if (!obterParcialMunicipiosDto) {
       return this.findAll();
     }
-    return await this.municipiosRepository.find({
-      where: [
-        { uf: Like(`%${obterParcialMunicipiosDto.uf}%`) },
-        { nome: Like(`%${obterParcialMunicipiosDto.termo}%`) },
-      ],
-    });
+    return await this.municipiosRepository
+      .createQueryBuilder('municipio')
+      .where('LOWER(municipio.uf) LIKE LOWER(:termo)', {
+        termo: `%${obterParcialMunicipiosDto.termoDePesquisa}%`,
+      })
+      .orWhere('LOWER(municipio.nome) LIKE LOWER(:termo)', {
+        termo: `%${obterParcialMunicipiosDto.termoDePesquisa}%`,
+      })
+      .getMany();
   }
 }

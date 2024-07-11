@@ -24,8 +24,11 @@ export class EstadosService {
     if (!obterParcialEstadosDto.termoDePesquisa) {
       return this.findAll();
     }
-    return await this.estadosRepository.find({
-      where: { nome: obterParcialEstadosDto.termoDePesquisa },
-    });
+    return await this.estadosRepository
+      .createQueryBuilder('estado')
+      .where('LOWER(estado.nome) LIKE LOWER(:termo)', {
+        termo: `%${obterParcialEstadosDto.termoDePesquisa}%`,
+      })
+      .getMany();
   }
 }

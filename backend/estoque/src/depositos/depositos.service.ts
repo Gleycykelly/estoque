@@ -84,13 +84,15 @@ export class DepositosService {
   async obterParcial(
     obterParcialDepositoDto: ObterParcialDepositoDto,
   ): Promise<Depositos[]> {
-    if (!obterParcialDepositoDto.termo) {
+    if (!obterParcialDepositoDto.termoDePesquisa) {
       return this.findAll();
     }
-    return await this.depositoRepository.find({
-      relations: ['endereco', 'endereco.municipio', 'endereco.municipio.uf'],
-      where: { descricao: obterParcialDepositoDto.termo },
-    });
+    return await this.depositoRepository
+      .createQueryBuilder('deposito')
+      .where('LOWER(deposito.descricao) LIKE LOWER(:termo)', {
+        termo: `%${obterParcialDepositoDto.termoDePesquisa}%`,
+      })
+      .getMany();
   }
 
   async remove(id: number) {
