@@ -25,9 +25,6 @@ export class MovimentacoesService {
 
     const decodedToken = await this.authService.checkToken(token);
 
-    console.log('nova saída');
-    console.log(createMovimentacoeDto);
-
     createMovimentacoeDto.usuario = await this.usuarioService.findOne(
       decodedToken.id,
     );
@@ -165,8 +162,6 @@ export class MovimentacoesService {
     const entradas = movimentacoes
       .filter((m: any) => m.tipoMovimentacao === 'Entrada')
       .sort((a, b) => (a.dataMovimentacao < b.dataMovimentacao ? -1 : 1));
-
-    console.log(entradas);
 
     const saidas = movimentacoes.filter(
       (m: any) => m.tipoMovimentacao === 'Saída',

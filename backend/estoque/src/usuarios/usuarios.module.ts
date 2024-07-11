@@ -10,6 +10,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { AuthService } from 'src/auth/auth.service';
 import { EnderecosModule } from 'src/enderecos/enderecos.module';
 import { DepositosModule } from 'src/depositos/depositos.module';
+import { UsuariosTelefonesModule } from 'src/usuarios-telefones/usuarios-telefones.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { DepositosModule } from 'src/depositos/depositos.module';
     forwardRef(() => AuthModule),
     EnderecosModule,
     DepositosModule,
+    UsuariosTelefonesModule,
   ],
   controllers: [UsuariosController],
   providers: [UsuariosService, AuthService],

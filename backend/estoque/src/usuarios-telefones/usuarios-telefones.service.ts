@@ -14,19 +14,7 @@ export class UsuariosTelefonesService {
   @InjectRepository(UsuariosTelefones)
   private readonly usuarioTelefonesRepository: Repository<UsuariosTelefones>;
 
-  private async verificaValoresDuplicados(createUsuariosTelefoneDto: any) {
-    const usuarioJaExiste = await this.usuarioTelefonesRepository.findOne({
-      where: [{ usuario: createUsuariosTelefoneDto.usuario.id }],
-    });
-
-    if (usuarioJaExiste) {
-      throw new ConflictException(`Usuário já possui telefones cadastrado!`);
-    }
-  }
-
   async create(createUsuariosTelefoneDto: CreateUsuariosTelefoneDto) {
-    await this.verificaValoresDuplicados(createUsuariosTelefoneDto);
-
     const usuarioTelefones = this.usuarioTelefonesRepository.create({
       ...createUsuariosTelefoneDto,
     });
@@ -63,16 +51,14 @@ export class UsuariosTelefonesService {
   }
 
   async remove(id: number) {
-    const usuarioTelefones = await this.usuarioTelefonesRepository.findOne({
-      where: { id },
-    });
+    try {
+      const usuario = await this.findOne(id);
 
-    if (!usuarioTelefones) {
-      throw new NotFoundException(
-        `Nenhuma relação entre usuário e telefones encontrada para o id ${id}`,
+      return await this.usuarioTelefonesRepository.remove(usuario);
+    } catch (error) {
+      throw new ConflictException(
+        'Não foi possível excluir os telefones cadastrados para este usuário!.',
       );
     }
-
-    return this.usuarioTelefonesRepository.remove(usuarioTelefones);
   }
 }

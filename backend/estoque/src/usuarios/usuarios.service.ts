@@ -15,6 +15,7 @@ import * as bcrypt from 'bcrypt';
 import { AuthService } from 'src/auth/auth.service';
 import { EnderecosService } from 'src/enderecos/enderecos.service';
 import { DepositosService } from 'src/depositos/depositos.service';
+import { UsuariosTelefonesService } from 'src/usuarios-telefones/usuarios-telefones.service';
 
 @Injectable()
 export class UsuariosService {
@@ -23,13 +24,15 @@ export class UsuariosService {
     private readonly authService: AuthService,
     private readonly enderecoService: EnderecosService,
     private readonly depositoService: DepositosService,
+    private readonly usuariosTelefonesService: UsuariosTelefonesService,
   ) {}
 
   @InjectRepository(Usuarios)
   private readonly usuarioRepository: Repository<Usuarios>;
 
   async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuarios> {
-    console.log(createUsuarioDto);
+    createUsuarioDto.senha = createUsuarioDto.cpf.replace(/\D/g, '');
+
     await this.usuarioJaCadastrado(createUsuarioDto.email);
 
     const salt = await bcrypt.genSalt();
@@ -66,6 +69,13 @@ export class UsuariosService {
 
     const usuarioRegistrado = await this.usuarioRepository.save(usuario);
     delete usuarioRegistrado.senha;
+
+    createUsuarioDto.usuariosTelefones.usuario = usuarioRegistrado;
+    createUsuarioDto.usuariosTelefones = await this.obtemEntidadeEstrangeira(
+      createUsuarioDto.usuariosTelefones,
+      this.usuariosTelefonesService,
+    );
+
     return usuarioRegistrado;
   }
 
@@ -77,6 +87,9 @@ export class UsuariosService {
         'enderecos.municipio.uf',
         'usuariosTelefones',
         'depositos',
+        'depositos.endereco',
+        'depositos.endereco.municipio',
+        'depositos.endereco.municipio.uf',
       ],
     });
     usuarios.forEach((usuario) => {
@@ -93,6 +106,9 @@ export class UsuariosService {
         'enderecos.municipio.uf',
         'usuariosTelefones',
         'depositos',
+        'depositos.endereco',
+        'depositos.endereco.municipio',
+        'depositos.endereco.municipio.uf',
       ],
       where: { id },
     });
@@ -125,7 +141,7 @@ export class UsuariosService {
 
     if (updateUsuarioDto.senha) {
       const usuarioBD = await this.usuarioRepository.findOne({
-        where: { id: updateUsuarioDto.id },
+        where: { email: updateUsuarioDto.email },
       });
 
       const senhaValida = await bcrypt.compare(
@@ -190,12 +206,18 @@ export class UsuariosService {
 
     if (!usuario) {
       throw new NotFoundException(
-        `Nenhum usuário encontrado para o id ${updateUsuarioDto.id}`,
+        `Nenhum usuário encontrado para o email ${updateUsuarioDto.email}`,
       );
     }
 
     const usuarioAlterado = await this.usuarioRepository.save(usuario);
     delete usuarioAlterado.senha;
+
+    updateUsuarioDto.usuariosTelefones.usuario = usuario;
+    updateUsuarioDto.usuariosTelefones = await this.obtemEntidadeEstrangeira(
+      updateUsuarioDto.usuariosTelefones,
+      this.usuariosTelefonesService,
+    );
     return usuarioAlterado;
   }
 
@@ -211,7 +233,16 @@ export class UsuariosService {
 
   async findUsuarioByEmail(email: string) {
     return await this.usuarioRepository.findOne({
-      relations: ['enderecos', 'usuariosTelefones'],
+      relations: [
+        'enderecos',
+        'enderecos.municipio',
+        'enderecos.municipio.uf',
+        'usuariosTelefones',
+        'depositos',
+        'depositos.endereco',
+        'depositos.endereco.municipio',
+        'depositos.endereco.municipio.uf',
+      ],
       where: { email },
     });
   }
@@ -225,6 +256,10 @@ export class UsuariosService {
         'enderecos.municipio',
         'enderecos.municipio.uf',
         'usuariosTelefones',
+        'depositos',
+        'depositos.endereco',
+        'depositos.endereco.municipio',
+        'depositos.endereco.municipio.uf',
       ],
       where: { id: decodedToken.id },
     });
@@ -247,6 +282,7 @@ export class UsuariosService {
   private async obtemEntidadeEstrangeira(entidade: any, service: any) {
     if (entidade.id) {
       const entidadeBD = await service.findOne(entidade.id);
+
       await service.update(entidadeBD.id, entidade);
       return entidadeBD;
     }

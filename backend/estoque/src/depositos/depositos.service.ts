@@ -81,7 +81,6 @@ export class DepositosService {
       updateDepositoDto.endereco,
       this.enderecoService,
     );
-
     const deposito = await this.depositoRepository.preload({
       ...updateDepositoDto,
       id,

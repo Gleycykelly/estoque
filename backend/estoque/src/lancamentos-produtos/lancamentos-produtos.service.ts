@@ -23,7 +23,6 @@ export class LancamentosProdutosService {
   private readonly lancamentoRepository: Repository<LancamentosProdutos>;
 
   async create(createLancamentosProdutoDto: CreateLancamentosProdutoDto) {
-    console.log('vai verificar lote');
     await this.loteJaCadastrado(createLancamentosProdutoDto.lote);
 
     createLancamentosProdutoDto.produto = await this.obtemEntidadeEstrangeira(
@@ -149,8 +148,7 @@ export class LancamentosProdutosService {
     const jaExiste = await this.lancamentoRepository.count({
       where: { lote: lote },
     });
-    console.log(jaExiste);
-    console.log(ehAtualizacao);
+
     if (jaExiste && !ehAtualizacao) {
       throw new ConflictException(`Já existe uma entrada para o lote ${lote}`);
     } else if (jaExiste) {

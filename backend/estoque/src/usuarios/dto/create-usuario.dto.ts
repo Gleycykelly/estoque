@@ -10,6 +10,7 @@ import { GeneroUsuario } from '../enum/genero-usuario.enum';
 import { PermissaoUsuario } from '../enum/permissao-usuario.enum';
 import { Enderecos } from 'src/enderecos/entities/endereco.entity';
 import { Depositos } from 'src/depositos/entities/deposito.entity';
+import { UsuariosTelefones } from 'src/usuarios-telefones/entities/usuario-telefone.entity';
 
 export class CreateUsuarioDto {
   @IsNotEmpty()
@@ -51,6 +52,9 @@ export class CreateUsuarioDto {
 
   @IsOptional()
   depositos: Depositos[];
+
+  @IsOptional()
+  usuariosTelefones: UsuariosTelefones;
 
   @IsString()
   @IsOptional()
