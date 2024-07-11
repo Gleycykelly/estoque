@@ -305,17 +305,9 @@ export default {
   data() {
     return {
       modelo: {
-        cpf: '',
-        dataNascimento: '',
-        email: '',
-        rg: '',
+        depositos: [],
         enderecos: [],
-        generoUsuario: '',
-        nome: '',
-        usuariosTelefones: {
-          telefone: '',
-          telefonePrincipal: '',
-        },
+        usuariosTelefones: {},
       },
       dialog: false,
       novoEndereco: {},
@@ -495,6 +487,9 @@ export default {
         .then((response) => {
           this.modelo = null;
           this.modelo = response.data;
+
+          if (!this.modelo.usuariosTelefones)
+            this.modelo.usuariosTelefones = {};
 
           for (const endereco of this.modelo.enderecos) {
             endereco.estado = endereco.municipio.uf;
