@@ -157,7 +157,7 @@
               <v-select
                 v-if="telaParaFiltrar == 'movimentacoes'"
                 v-model="filtros.produtos"
-                item-title="descricao"
+                item-title="nome"
                 item-value="id"
                 :items="produtos"
                 label="Produtos"
@@ -212,8 +212,9 @@
               <v-text-field
                 v-if="telaParaFiltrar == 'movimentacoes'"
                 label="Quantidade maior que"
-                v-model="filtros.quantidadeMaioQue"
+                v-model="filtros.quantidadeMaiorQue"
                 variant="outlined"
+                type="number"
               ></v-text-field>
 
               <v-text-field
@@ -221,6 +222,7 @@
                 label="Quantidade menor que"
                 v-model="filtros.quantidadeMenorQue"
                 variant="outlined"
+                type="number"
               ></v-text-field>
 
               <v-text-field
@@ -228,6 +230,7 @@
                 label="Dias para vencer"
                 v-model="filtros.diasParaVencer"
                 variant="outlined"
+                type="number"
               ></v-text-field>
 
               <v-switch

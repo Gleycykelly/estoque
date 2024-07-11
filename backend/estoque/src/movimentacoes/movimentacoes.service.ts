@@ -100,6 +100,9 @@ export class MovimentacoesService {
         'lancamentoProduto.fornecedor.endereco',
         'lancamentoProduto.localizacaoDeposito',
         'lancamentoProduto.localizacaoDeposito.deposito',
+        'lancamentoProduto.localizacaoDeposito.deposito.endereco',
+        'lancamentoProduto.localizacaoDeposito.deposito.endereco.municipio',
+        'lancamentoProduto.localizacaoDeposito.deposito.endereco.municipio.uf',
         'usuario',
       ],
     });
@@ -111,8 +114,6 @@ export class MovimentacoesService {
     if (!obterParcialMovimentacaoDto) {
       return this.findAll();
     }
-
-    console.log(obterParcialMovimentacaoDto);
 
     let query = await this.movimentacaoRepository
       .createQueryBuilder('movimentacao')
@@ -147,8 +148,8 @@ export class MovimentacoesService {
       obterParcialMovimentacaoDto.produtos &&
       obterParcialMovimentacaoDto.produtos.length > 0
     ) {
-      query = query.andWhere('produtos.id IN (:...produtos)', {
-        Produtos: obterParcialMovimentacaoDto.produtos,
+      query = query.andWhere('produto.id IN (:...produtos)', {
+        produtos: obterParcialMovimentacaoDto.produtos,
       });
     }
 
@@ -171,6 +172,8 @@ export class MovimentacoesService {
     }
 
     if (obterParcialMovimentacaoDto.quantidadeMaiorQue) {
+      console.log('tetse');
+      console.log(obterParcialMovimentacaoDto.quantidadeMaiorQue);
       query = query.andWhere('movimentacao.quantidade > (:maiorQue)', {
         maiorQue: obterParcialMovimentacaoDto.quantidadeMaiorQue,
       });
@@ -288,23 +291,4 @@ export class MovimentacoesService {
     }
     return service.create({ ...entidade });
   }
-
-  // async buscarMovimentacoesPorLote(lote: string): Promise<Movimentacoes[]> {
-  //   return this.movimentacaoRepository.find({
-  //     where: { lancamentoProduto: { lote } },
-  //     relations: [
-  //       'lancamentoProduto',
-  //       'lancamentoProduto.produto',
-  //       'lancamentoProduto.produto.porcoes',
-  //       'lancamentoProduto.produto.porcoes.unidadeMedida',
-  //       'lancamentoProduto.produto.porcoes.valorNutricional',
-  //       'lancamentoProduto.produto.porcoes.informacaoNutricional',
-  //       'lancamentoProduto.fornecedor',
-  //       'lancamentoProduto.fornecedor.endereco',
-  //       'lancamentoProduto.localizacaoDeposito',
-  //       'lancamentoProduto.localizacaoDeposito.deposito',
-  //       'usuario',
-  //     ],
-  //   });
-  // }
 }
