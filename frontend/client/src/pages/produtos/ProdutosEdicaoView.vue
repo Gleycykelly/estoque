@@ -1,0 +1,869 @@
+<template>
+  <v-main class="fill-height">
+    <v-card min-height="90vh" width="calc(100% - 100px)" style="margin: 0 auto">
+      <v-toolbar flat>
+        <v-toolbar-title class="text-grey">Produtos</v-toolbar-title>
+
+        <v-spacer></v-spacer>
+
+        <v-btn icon color="green" @click="salvar()">
+          <v-icon>mdi-check</v-icon>
+        </v-btn>
+
+        <v-btn icon color="red" @click="voltar()">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+
+      <v-card-text style="margin-bottom: 30px">
+        <v-tabs
+          v-model="tab"
+          align-tabs="center"
+          color="#AA00FF"
+          style="margin-bottom: 25px"
+        >
+          <v-tab :value="1">Dados do produto</v-tab>
+          <v-tab :value="2">Informações nutricionais</v-tab>
+        </v-tabs>
+
+        <v-tabs-window v-model="tab">
+          <v-tabs-window-item :key="1" :value="1" style="padding: 5px">
+            <v-text-field
+              label="Código do produto"
+              v-model="modelo.codigoProduto"
+              variant="outlined"
+            ></v-text-field>
+
+            <v-text-field
+              label="Nome"
+              v-model="modelo.nome"
+              variant="outlined"
+            ></v-text-field>
+
+            <v-text-field
+              label="Descrição"
+              v-model="modelo.descricao"
+              variant="outlined"
+            ></v-text-field>
+
+            <v-combobox
+              label="Categorias"
+              :items="categorias"
+              item-title="descricao"
+              item-value="id"
+              v-model="modelo.categoria"
+              variant="outlined"
+              append-icon="mdi-plus-circle-outline"
+              @click:append="adicionarCategoria"
+            ></v-combobox>
+
+            <v-combobox
+              label="Unidades de medida"
+              :items="unidadesDeMedida"
+              item-title="descricao"
+              item-value="id"
+              v-model="modelo.unidadeMedida"
+              variant="outlined"
+              append-icon="mdi-plus-circle-outline"
+              @click:append="adicionarUnidadeMedida"
+            ></v-combobox>
+
+            <v-combobox
+              label="Marcas"
+              :items="marcas"
+              item-title="descricao"
+              item-value="id"
+              v-model="modelo.marca"
+              variant="outlined"
+              append-icon="mdi-plus-circle-outline"
+              @click:append="adicionarMarca"
+            ></v-combobox>
+          </v-tabs-window-item>
+
+          <v-tabs-window-item :key="2" :value="2" style="padding: 5px">
+            <div class="text-start">
+              <v-card-title>
+                <v-dialog v-model="dialog">
+                  <template #activator="{ props }">
+                    <v-btn
+                      class="botao-informacao-nutricional"
+                      prepend-icon="mdi-plus"
+                      v-bind="props"
+                      variant="tonal"
+                    >
+                      Adicionar
+                    </v-btn>
+                  </template>
+                  <v-card
+                    class="text-center informacoes-nutricionais"
+                    title="Informaçao nutricional"
+                  >
+                    <v-card-text>
+                      <v-text-field
+                        label=" Porção"
+                        v-model="novaPorcao.porcao"
+                        variant="outlined"
+                      ></v-text-field>
+
+                      <v-text-field
+                        label="Alergênicos"
+                        v-model="novaPorcao.informacaoNutricional.alergenicos"
+                        variant="outlined"
+                      ></v-text-field>
+
+                      <v-text-field
+                        label="Ingredientes"
+                        v-model="novaPorcao.informacaoNutricional.ingredientes"
+                        variant="outlined"
+                      ></v-text-field>
+
+                      <v-combobox
+                        label="Unidades de medida"
+                        :items="unidadesDeMedida"
+                        item-title="descricao"
+                        item-value="id"
+                        v-model="novaPorcao.unidadeMedida"
+                        variant="outlined"
+                        append-icon="mdi-plus-circle-outline"
+                        @click:append="adicionaUnidadeMedida"
+                      ></v-combobox>
+
+                      <div class="valores-nutricionais">
+                        <div>
+                          <div class="titulo-valores-nutricionais">
+                            Valores nutricionais
+                          </div>
+
+                          <div>
+                            <div class="valores-nutricionais-campos">
+                              <v-text-field
+                                type="number"
+                                v-model="
+                                  novaPorcao.valorNutricional.valorEnergetico
+                                "
+                                label="Valor energético"
+                                @input="
+                                  !novaPorcao.valorNutricional.valorEnergetico
+                                    ? (novaPorcao.valorNutricional.valorEnergetico =
+                                        null)
+                                    : novaPorcao.valorNutricional
+                                        .valorEnergetico
+                                "
+                                variant="outlined"
+                              ></v-text-field>
+
+                              <v-text-field
+                                type="number"
+                                class="margin-para-valores-nutricionais"
+                                label="Carboidratos"
+                                v-model="
+                                  novaPorcao.valorNutricional.carboidratos
+                                "
+                                @input="
+                                  !novaPorcao.valorNutricional.carboidratos
+                                    ? (novaPorcao.valorNutricional.carboidratos =
+                                        null)
+                                    : novaPorcao.valorNutricional.carboidratos
+                                "
+                                variant="outlined"
+                              ></v-text-field>
+
+                              <v-text-field
+                                type="number"
+                                class="margin-para-valores-nutricionais"
+                                label="Açucares totais"
+                                v-model="
+                                  novaPorcao.valorNutricional.acucaresTotais
+                                "
+                                @input="
+                                  !novaPorcao.valorNutricional.acucaresTotais
+                                    ? (novaPorcao.valorNutricional.acucaresTotais =
+                                        null)
+                                    : novaPorcao.valorNutricional.acucaresTotais
+                                "
+                                variant="outlined"
+                              ></v-text-field>
+
+                              <v-text-field
+                                type="number"
+                                class="margin-para-valores-nutricionais"
+                                label="Açucares adicionados"
+                                v-model="
+                                  novaPorcao.valorNutricional
+                                    .acucaresAdicionados
+                                "
+                                @input="
+                                  !novaPorcao.valorNutricional
+                                    .acucaresAdicionados
+                                    ? (novaPorcao.valorNutricional.acucaresAdicionados =
+                                        null)
+                                    : novaPorcao.valorNutricional
+                                        .acucaresAdicionados
+                                "
+                                variant="outlined"
+                              ></v-text-field>
+
+                              <v-text-field
+                                type="number"
+                                class="margin-para-valores-nutricionais"
+                                label="Proteínas"
+                                v-model="novaPorcao.valorNutricional.proteinas"
+                                variant="outlined"
+                                @input="
+                                  !novaPorcao.valorNutricional.proteinas
+                                    ? (novaPorcao.valorNutricional.proteinas =
+                                        null)
+                                    : novaPorcao.valorNutricional.proteinas
+                                "
+                              ></v-text-field>
+                            </div>
+
+                            <div class="valores-nutricionais-campos">
+                              <v-text-field
+                                type="number"
+                                label="Gorduras totais"
+                                v-model="
+                                  novaPorcao.valorNutricional.gordurasTotais
+                                "
+                                @input="
+                                  !novaPorcao.valorNutricional.gordurasTotais
+                                    ? (novaPorcao.valorNutricional.gordurasTotais =
+                                        null)
+                                    : novaPorcao.valorNutricional.gordurasTotais
+                                "
+                                variant="outlined"
+                              ></v-text-field>
+
+                              <v-text-field
+                                type="number"
+                                class="margin-para-valores-nutricionais"
+                                label="Gorduras saturadas"
+                                v-model="
+                                  novaPorcao.valorNutricional.gordurasSaturadas
+                                "
+                                @input="
+                                  !novaPorcao.valorNutricional.gordurasSaturadas
+                                    ? (novaPorcao.valorNutricional.gordurasSaturadas =
+                                        null)
+                                    : novaPorcao.valorNutricional
+                                        .gordurasSaturadas
+                                "
+                                variant="outlined"
+                              ></v-text-field>
+
+                              <v-text-field
+                                type="number"
+                                class="margin-para-valores-nutricionais"
+                                label="Gorduras trans"
+                                v-model="
+                                  novaPorcao.valorNutricional.gordurasTrans
+                                "
+                                @input="
+                                  !novaPorcao.valorNutricional.gordurasTrans
+                                    ? (novaPorcao.valorNutricional.gordurasTrans =
+                                        null)
+                                    : novaPorcao.valorNutricional.gordurasTrans
+                                "
+                                variant="outlined"
+                              ></v-text-field>
+
+                              <v-text-field
+                                type="number"
+                                class="margin-para-valores-nutricionais"
+                                label="Fibras alimentares"
+                                v-model="
+                                  novaPorcao.valorNutricional.fibrasAlimentares
+                                "
+                                @input="
+                                  !novaPorcao.valorNutricional.fibrasAlimentares
+                                    ? (novaPorcao.valorNutricional.fibrasAlimentares =
+                                        null)
+                                    : novaPorcao.valorNutricional
+                                        .fibrasAlimentares
+                                "
+                                variant="outlined"
+                              ></v-text-field>
+
+                              <v-text-field
+                                type="number"
+                                class="margin-para-valores-nutricionais"
+                                label="Sódio"
+                                v-model="novaPorcao.valorNutricional.sodio"
+                                @input="
+                                  !novaPorcao.valorNutricional.sodio
+                                    ? (novaPorcao.valorNutricional.sodio = null)
+                                    : novaPorcao.valorNutricional.sodio
+                                "
+                                variant="outlined"
+                              ></v-text-field>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </v-card-text>
+
+                    <v-divider></v-divider>
+
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+
+                      <v-btn
+                        text="voltar"
+                        variant="plain"
+                        @click="sairDoModalDeInformacoesNutricionais()"
+                      ></v-btn>
+
+                      <v-btn
+                        color="#aa00ff"
+                        text="Adicionar"
+                        variant="tonal"
+                        @click="adicionarNovaInformacaoNutricional()"
+                      ></v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </v-card-title>
+            </div>
+
+            <div
+              v-if="modelo.porcoes && modelo.porcoes.length > 0"
+              style="overflow: auto; max-height: 70vh"
+            >
+              <div
+                style="padding: 15px; overflow: auto"
+                v-for="(porcao, index) in modelo.porcoes"
+                :key="index.porcao"
+              >
+                <div class="container-titulo-porcao">
+                  <div class="titulo-porcoes">Porção {{ index + 1 }}</div>
+                  <v-icon @click="excluirPorcao(porcao)" class="excluir-procao">
+                    mdi-trash-can-outline
+                  </v-icon>
+                </div>
+
+                <v-text-field
+                  label=" Porção"
+                  v-model="porcao.porcao"
+                  variant="outlined"
+                ></v-text-field>
+
+                <v-text-field
+                  label="Alergênicos"
+                  v-model="porcao.informacaoNutricional.alergenicos"
+                  variant="outlined"
+                ></v-text-field>
+
+                <v-text-field
+                  label="Ingredientes"
+                  v-model="porcao.informacaoNutricional.ingredientes"
+                  variant="outlined"
+                ></v-text-field>
+
+                <v-combobox
+                  label="Unidades de medida"
+                  :items="unidadesDeMedida"
+                  item-title="descricao"
+                  item-value="id"
+                  v-model="porcao.unidadeMedida"
+                  variant="outlined"
+                  append-icon="mdi-plus-circle-outline"
+                  @click:append="adicionaUnidadeMedida"
+                ></v-combobox>
+
+                <div class="valores-nutricionais">
+                  <div style="padding: 15px">
+                    <div class="titulo-valores-nutricionais">
+                      Valores nutricionais
+                    </div>
+
+                    <div class="valores-nutricionais-campos">
+                      <v-text-field
+                        type="number"
+                        label="Valor energético"
+                        v-model="porcao.valorNutricional.valorEnergetico"
+                        @input="
+                          !porcao.valorNutricional.valorEnergetico
+                            ? (porcao.valorNutricional.valorEnergetico = null)
+                            : porcao.valorNutricional.valorEnergetico
+                        "
+                        variant="outlined"
+                      ></v-text-field>
+
+                      <v-text-field
+                        type="number"
+                        class="margin-para-valores-nutricionais"
+                        label="Carboidratos"
+                        v-model="porcao.valorNutricional.carboidratos"
+                        @input="
+                          !porcao.valorNutricional.carboidratos
+                            ? (porcao.valorNutricional.carboidratos = null)
+                            : porcao.valorNutricional.carboidratos
+                        "
+                        variant="outlined"
+                      ></v-text-field>
+
+                      <v-text-field
+                        type="number"
+                        class="margin-para-valores-nutricionais"
+                        label="Açucares totais"
+                        v-model="porcao.valorNutricional.acucaresTotais"
+                        @input="
+                          !porcao.valorNutricional.acucaresTotais
+                            ? (porcao.valorNutricional.acucaresTotais = null)
+                            : porcao.valorNutricional.acucaresTotais
+                        "
+                        variant="outlined"
+                      ></v-text-field>
+
+                      <v-text-field
+                        type="number"
+                        class="margin-para-valores-nutricionais"
+                        label="Açucares adicionados"
+                        v-model="porcao.valorNutricional.acucaresAdicionados"
+                        @input="
+                          !porcao.valorNutricional.acucaresAdicionados
+                            ? (porcao.valorNutricional.acucaresAdicionados =
+                                null)
+                            : porcao.valorNutricional.acucaresAdicionados
+                        "
+                        variant="outlined"
+                      ></v-text-field>
+
+                      <v-text-field
+                        type="number"
+                        class="margin-para-valores-nutricionais"
+                        label="Proteínas"
+                        v-model="porcao.valorNutricional.proteinas"
+                        variant="outlined"
+                        @input="
+                          !porcao.valorNutricional.proteinas
+                            ? (porcao.valorNutricional.proteinas = null)
+                            : porcao.valorNutricional.proteinas
+                        "
+                      ></v-text-field>
+                    </div>
+
+                    <div class="valores-nutricionais-campos">
+                      <v-text-field
+                        type="number"
+                        label="Gorduras totais"
+                        v-model="porcao.valorNutricional.gordurasTotais"
+                        @input="
+                          !porcao.valorNutricional.gordurasTotais
+                            ? (porcao.valorNutricional.gordurasTotais = null)
+                            : porcao.valorNutricional.gordurasTotais
+                        "
+                        variant="outlined"
+                      ></v-text-field>
+
+                      <v-text-field
+                        type="number"
+                        class="margin-para-valores-nutricionais"
+                        label="Gorduras saturadas"
+                        v-model="porcao.valorNutricional.gordurasSaturadas"
+                        @input="
+                          !porcao.valorNutricional.gordurasSaturadas
+                            ? (porcao.valorNutricional.gordurasSaturadas = null)
+                            : porcao.valorNutricional.gordurasSaturadas
+                        "
+                        variant="outlined"
+                      ></v-text-field>
+
+                      <v-text-field
+                        type="number"
+                        class="margin-para-valores-nutricionais"
+                        label="Gorduras trans"
+                        v-model="porcao.valorNutricional.gordurasTrans"
+                        @input="
+                          !porcao.valorNutricional.gordurasTrans
+                            ? (porcao.valorNutricional.gordurasTrans = null)
+                            : porcao.valorNutricional.gordurasTrans
+                        "
+                        variant="outlined"
+                      ></v-text-field>
+
+                      <v-text-field
+                        type="number"
+                        class="margin-para-valores-nutricionais"
+                        label="Fibras alimentares"
+                        v-model="porcao.valorNutricional.fibrasAlimentares"
+                        @input="
+                          !porcao.valorNutricional.fibrasAlimentares
+                            ? (porcao.valorNutricional.fibrasAlimentares = null)
+                            : porcao.valorNutricional.fibrasAlimentares
+                        "
+                        variant="outlined"
+                      ></v-text-field>
+
+                      <v-text-field
+                        type="number"
+                        class="margin-para-valores-nutricionais"
+                        label="Sódio"
+                        clearable
+                        v-model="porcao.valorNutricional.sodio"
+                        @input="
+                          !porcao.valorNutricional.sodio
+                            ? (porcao.valorNutricional.sodio = null)
+                            : porcao.valorNutricional.sodio
+                        "
+                        variant="outlined"
+                      ></v-text-field>
+                    </div>
+                  </div>
+                </div>
+
+                <v-divider class="divisao-informacoes-nutricionais"></v-divider>
+              </div>
+            </div>
+          </v-tabs-window-item>
+        </v-tabs-window>
+      </v-card-text>
+
+      <v-divider></v-divider>
+    </v-card>
+  </v-main>
+</template>
+
+<script>
+import api from '@/services/api';
+import { useAuthStore, useDadosStore, useAlerta } from '@/store/index';
+
+export default {
+  name: 'ProdutosEdicao',
+  data() {
+    return {
+      dialog: false,
+      modelo: {
+        porcoes: [
+          {
+            informacaoNutricional: {},
+            valorNutricional: {},
+          },
+        ],
+      },
+      categorias: [],
+      unidadesDeMedida: [],
+      marcas: [],
+      tab: 0,
+      novaPorcao: {
+        informacaoNutricional: {},
+        valorNutricional: {},
+        produto: {},
+      },
+    };
+  },
+  methods: {
+    obterToken() {
+      const authStore = useAuthStore();
+      const token = authStore.getToken();
+
+      if (!token) {
+        this.$router.push('/login');
+      }
+
+      return token;
+    },
+
+    voltar() {
+      this.$router.push('/produtos');
+    },
+
+    podeGravar() {
+      if (!this.modelo.codigoProduto) {
+        useAlerta().exibirSnackbar(
+          'O código do produto é obrigatório!',
+          'orange',
+        );
+        return false;
+      }
+
+      if (!this.modelo.nome) {
+        useAlerta().exibirSnackbar(
+          'O nome do produto é obrigatório!',
+          'orange',
+        );
+        return false;
+      }
+
+      if (!this.modelo.categoria) {
+        useAlerta().exibirSnackbar('A categoria é obrigatória!', 'orange');
+        return false;
+      }
+
+      if (!this.modelo.unidadeMedida) {
+        useAlerta().exibirSnackbar(
+          'A unidade de medida é obrigatória!',
+          'orange',
+        );
+        return false;
+      }
+
+      if (!this.modelo.marca) {
+        useAlerta().exibirSnackbar('A marca é obrigatória!', 'orange');
+        return false;
+      }
+
+      return true;
+    },
+
+    async salvar() {
+      if (!this.podeGravar()) {
+        return;
+      }
+
+      if (this.dados && this.dados.ehTelaAtualizacao) {
+        api
+          .patch(
+            `http://localhost:3000/produtos/${this.dados.id}`,
+            this.modelo,
+            {
+              headers: {
+                Authorization: `Bearer ${this.obterToken()}`,
+              },
+            },
+          )
+          .then(() => {
+            useAlerta().exibirSnackbar(
+              'O produto foi atualizado com sucesso!',
+              'green',
+            );
+            this.voltar();
+          })
+          .catch((error) => {
+            if (error.response && error.response.data) {
+              useAlerta().exibirSnackbar(error.response.data.message, 'red');
+            } else {
+              useAlerta().exibirSnackbar(error.message, 'red');
+            }
+          });
+      } else {
+        api
+          .post(`http://localhost:3000/produtos/`, this.modelo, {
+            headers: {
+              Authorization: `Bearer ${this.obterToken()}`,
+            },
+          })
+          .then(() => {
+            useAlerta().exibirSnackbar(
+              'O produto foi criado com sucesso!',
+              'green',
+            );
+            this.voltar();
+          })
+          .catch((error) => {
+            if (error.response && error.response.data) {
+              useAlerta().exibirSnackbar(error.response.data.message, 'red');
+            } else {
+              useAlerta().exibirSnackbar(error.message, 'red');
+            }
+          });
+      }
+    },
+
+    async obterProdutos() {
+      api
+        .get(`http://localhost:3000/produtos/${this.dados.id}`, {
+          headers: {
+            Authorization: `Bearer ${this.obterToken()}`,
+          },
+        })
+        .then((response) => {
+          this.modelo = null;
+
+          this.modelo = response.data;
+        });
+    },
+
+    async obterCategorias() {
+      api
+        .get(`http://localhost:3000/categorias/`, {
+          headers: {
+            Authorization: `Bearer ${this.obterToken()}`,
+          },
+        })
+        .then((response) => {
+          this.categorias = [];
+
+          this.categorias = response.data;
+        });
+    },
+
+    async obterUnidadesMedidas() {
+      api
+        .get(`http://localhost:3000/unidades-medidas/`, {
+          headers: {
+            Authorization: `Bearer ${this.obterToken()}`,
+          },
+        })
+        .then((response) => {
+          this.unidadesDeMedida = [];
+
+          this.unidadesDeMedida = response.data;
+        });
+    },
+
+    async obterMarcas() {
+      api
+        .get(`http://localhost:3000/marcas/`, {
+          headers: {
+            Authorization: `Bearer ${this.obterToken()}`,
+          },
+        })
+        .then((response) => {
+          this.marcas = [];
+
+          this.marcas = response.data;
+        });
+    },
+
+    adicionarCategoria() {
+      alert('Adicionar nova categoria!');
+    },
+
+    adicionaUnidadeMedida() {
+      this.$router.push('/unidades-medida-edicao');
+    },
+
+    adicionarMarca() {
+      alert('Adicionar nova marca!');
+    },
+    adicionarNovaInformacaoNutricional() {
+      this.dialog = false;
+      this.novaPorcao.produto = {
+        id: this.modelo.id,
+      };
+      this.modelo.porcoes.push(this.novaPorcao);
+      this.limparNovaPorcao();
+    },
+
+    sairDoModalDeInformacoesNutricionais() {
+      this.dialog = false;
+      this.limparNovaPorcao();
+    },
+
+    limparNovaPorcao() {
+      this.novaPorcao = {
+        informacaoNutricional: {},
+        valorNutricional: {},
+      };
+    },
+
+    excluirPorcao(porcao) {
+      if (porcao.id) {
+        api
+          .delete(`http://localhost:3000/porcoes/${porcao.id}`, {
+            headers: {
+              Authorization: `Bearer ${this.obterToken()}`,
+            },
+          })
+          .then(() => {
+            useAlerta().exibirSnackbar('Porção excluída com sucesso!', 'green');
+
+            this.modelo.porcoes = this.modelo.porcoes.filter(
+              (p) => p.id != porcao.id,
+            );
+          })
+          .catch((error) => {
+            if (error.response && error.response.data) {
+              useAlerta().exibirSnackbar(error.response.data.message, 'red');
+            } else {
+              useAlerta().exibirSnackbar(error.message, 'red');
+            }
+          });
+      } else {
+        this.modelo.porcoes = this.modelo.porcoes.filter(
+          (p) => p.porcao != porcao.porcao,
+        );
+      }
+    },
+  },
+  created() {
+    this.obterCategorias();
+    this.obterUnidadesMedidas();
+    this.obterMarcas();
+
+    if (this.dados && this.dados.ehTelaAtualizacao) {
+      this.obterProdutos();
+    }
+  },
+  computed: {
+    dados() {
+      return useDadosStore().getDadosParaEdicao;
+    },
+  },
+};
+</script>
+
+<style>
+.botao-informacao-nutricional {
+  background-color: #aa00ff !important;
+  color: white !important;
+  font-weight: 900 !important;
+  font-family: 'Roboto', sans-serif;
+}
+
+.informacoes-nutricionais {
+  @media (min-width: 850px) {
+    width: 800px !important;
+  }
+  @media (max-width: 849px) {
+    width: 100% !important;
+  }
+}
+
+.container-titulo-porcao {
+  color: #aa00ff;
+  display: flex;
+  margin-bottom: 15px;
+  font-size: large;
+  justify-content: space-between;
+}
+
+.excluir-procao {
+  cursor: pointer;
+}
+
+.valores-nutricionais {
+  border-radius: 25px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #e1bee7;
+  max-height: 250px;
+  padding: 15px;
+  overflow: auto;
+}
+
+.titulo-valores-nutricionais {
+  text-align: left;
+  color: #ce93d8;
+  font-size: large;
+  margin-bottom: 15px;
+}
+
+.valores-nutricionais-campos {
+  @media (min-width: 850px) {
+    display: flex;
+  }
+
+  @media (max-width: 849px) {
+    display: block;
+  }
+}
+
+.margin-para-valores-nutricionais {
+  @media (min-width: 850px) {
+    margin-left: 15px;
+  }
+
+  @media (max-width: 849px) {
+    margin-left: 0;
+  }
+}
+
+.divisao-informacoes-nutricionais {
+  border-color: #aa00ff;
+  border-width: 1px;
+  border-style: dashed;
+  margin-top: 15px;
+}
+</style>
