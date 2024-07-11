@@ -3,6 +3,8 @@
     titulo="Movimentações"
     :provider="'movimentacoes'"
     :telaEdicao="'movimentacoes-edicao'"
+    :telaParaFiltrar="'movimentacoes'"
+    :mostrarBotaoDeFiltro="true"
     :colunasAterrissagem="[
       { title: 'Identificador', value: 'id' },
       { title: 'Produto', value: 'lancamentoProduto.produto.nome' },

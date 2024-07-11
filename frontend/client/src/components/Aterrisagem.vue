@@ -99,6 +99,180 @@
     </v-card>
     <v-sheet>
       <v-fab
+        v-if="mostrarBotaoDeFiltro"
+        class="me-4"
+        icon="mdi-filter"
+        location="top end"
+        absolute
+        offset
+        color="#AA00FF"
+        @click="abrirModalFiltro"
+        style="top: -55px"
+      ></v-fab>
+
+      <v-dialog v-model="modalAberto" max-width="500px">
+        <v-card>
+          <v-card-title>Filtrar</v-card-title>
+          <v-card-text>
+            <div>
+              <!-- Produtos
+              --------------- -->
+              <v-select
+                v-if="telaParaFiltrar == 'produtos'"
+                v-model="filtros.categorias"
+                item-title="descricao"
+                item-value="id"
+                :items="categorias"
+                label="Categorias"
+                multiple
+                color="#AA00FF"
+                variant="outlined"
+                persistent-hint
+              ></v-select>
+
+              <v-select
+                v-if="telaParaFiltrar == 'produtos'"
+                v-model="filtros.marcas"
+                item-title="descricao"
+                item-value="id"
+                :items="marcas"
+                label="Marcas"
+                multiple
+                color="#AA00FF"
+                variant="outlined"
+                persistent-hint
+              ></v-select>
+              <!-- Movimentações
+              --------------- -->
+
+              <v-select
+                v-if="telaParaFiltrar == 'movimentacoes'"
+                v-model="filtros.produtos"
+                item-title="descricao"
+                item-value="id"
+                :items="produtos"
+                label="Produtos"
+                multiple
+                color="#AA00FF"
+                variant="outlined"
+                persistent-hint
+              ></v-select>
+
+              <v-select
+                v-if="
+                  telaParaFiltrar == 'produtos' ||
+                  telaParaFiltrar == 'movimentacoes'
+                "
+                v-model="filtros.operadores"
+                item-title="nome"
+                item-value="id"
+                :items="operadores"
+                label="Operadores"
+                multiple
+                color="#AA00FF"
+                variant="outlined"
+                persistent-hint
+              ></v-select>
+
+              <v-select
+                v-if="telaParaFiltrar == 'movimentacoes'"
+                v-model="filtros.depositos"
+                item-title="descricao"
+                item-value="id"
+                :items="depositos"
+                label="Depósitos"
+                multiple
+                color="#AA00FF"
+                variant="outlined"
+                persistent-hint
+              ></v-select>
+
+              <v-select
+                v-if="telaParaFiltrar == 'movimentacoes'"
+                v-model="filtros.fornecedores"
+                item-title="razaoSocial"
+                item-value="id"
+                :items="fornecedores"
+                label="Forncedores"
+                multiple
+                color="#AA00FF"
+                variant="outlined"
+                persistent-hint
+              ></v-select>
+
+              <v-combobox
+                v-if="telaParaFiltrar == 'movimentacoes'"
+                label="Tipo de movimentação"
+                :items="['Entrada', 'Saída']"
+                item-title="descricao"
+                item-value="id"
+                v-model="filtros.tipoMovimentacao"
+                variant="outlined"
+              ></v-combobox>
+
+              <v-text-field
+                v-if="telaParaFiltrar == 'movimentacoes'"
+                label="Quantidade maior que"
+                v-model="filtros.quantidadeMaioQue"
+                variant="outlined"
+              ></v-text-field>
+
+              <v-text-field
+                v-if="telaParaFiltrar == 'movimentacoes'"
+                label="Quantidade menor que"
+                v-model="filtros.quantidadeMenorQue"
+                variant="outlined"
+              ></v-text-field>
+
+              <v-text-field
+                v-if="telaParaFiltrar == 'movimentacoes'"
+                label="Dias para vencer"
+                v-model="filtros.diasParaVencer"
+                variant="outlined"
+              ></v-text-field>
+
+              <v-switch
+                v-if="telaParaFiltrar == 'movimentacoes'"
+                v-model="filtros.vencidos"
+                label="Produtos vencidos"
+                color="#AA00FF"
+                hide-details
+                inset
+              ></v-switch>
+
+              <!-- Operadores
+              --------------- -->
+              <v-combobox
+                v-if="telaParaFiltrar == 'operadores'"
+                label="Genêros"
+                :items="['Feminino', 'Masculino']"
+                item-title="descricao"
+                item-value="id"
+                v-model="filtros.generoUsuario"
+                variant="outlined"
+              ></v-combobox>
+
+              <v-combobox
+                v-if="telaParaFiltrar == 'operadores'"
+                label="Permissões"
+                :items="['Administrador', 'Usuario']"
+                item-title="descricao"
+                item-value="id"
+                v-model="filtros.permissaoUsuario"
+                variant="outlined"
+              ></v-combobox>
+            </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn color="primary" @click="modalAberto = false">Fechar</v-btn>
+            <v-btn color="#aa00ff" @click="filtrarDados" variant="tonal">
+              Filtrar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-fab
         class="me-4"
         icon="mdi-plus"
         location="top end"
@@ -123,6 +297,8 @@ export default {
     provider: String,
     colunasAterrissagem: [],
     telaEdicao: String,
+    telaParaFiltrar: String,
+    mostrarBotaoDeFiltro: Boolean,
   },
   data() {
     return {
@@ -133,6 +309,10 @@ export default {
       termoDePesquisa: null,
       selected: null,
       mostrarBotaoEdicao: false,
+      modalAberto: false,
+      categorias: [],
+      operadores: [],
+      filtros: {},
     };
   },
   methods: {
@@ -152,8 +332,6 @@ export default {
     },
 
     async obtemDados() {
-      let loader = this.$loading.show();
-
       api
         .get(`http://localhost:3000/${this.provider}/`, {
           headers: {
@@ -168,10 +346,10 @@ export default {
           }
         });
 
-      loader.hide();
-
       return this.dados;
     },
+
+    async obterdadosParaFiltrar() {},
 
     async obterParcial() {
       api
@@ -194,6 +372,10 @@ export default {
         });
 
       return this.dados;
+    },
+
+    filtrarDados() {
+      console.log(this.filtros);
     },
 
     irParaTelaDeCriacao() {
@@ -261,9 +443,65 @@ export default {
 
       return 'gray';
     },
+    abrirModalFiltro() {
+      this.modalAberto = true;
+    },
+    async obterCategorias() {
+      api
+        .get(`http://localhost:3000/categorias/`, {
+          headers: {
+            Authorization: `Bearer ${this.obterToken()}`,
+          },
+        })
+        .then((response) => {
+          this.categorias = [];
+
+          for (const dado of response.data) {
+            this.categorias.push(dado);
+          }
+        });
+    },
+    async obterMarcas() {
+      api
+        .get(`http://localhost:3000/marcas/`, {
+          headers: {
+            Authorization: `Bearer ${this.obterToken()}`,
+          },
+        })
+        .then((response) => {
+          this.marcas = [];
+
+          for (const dado of response.data) {
+            this.marcas.push(dado);
+          }
+        });
+    },
+
+    async obterOperadores() {
+      api
+        .get(`http://localhost:3000/usuarios/`, {
+          headers: {
+            Authorization: `Bearer ${this.obterToken()}`,
+          },
+        })
+        .then((response) => {
+          this.operadores = [];
+
+          for (const dado of response.data) {
+            this.operadores.push(dado);
+          }
+        });
+    },
   },
   created() {
     this.obtemDados();
+    if (this.mostrarBotaoDeFiltro) {
+      if (this.telaParaFiltrar === 'produtos') {
+        this.obterCategorias();
+        this.obterMarcas();
+        this.obterOperadores();
+      }
+    }
   },
 };
 </script>

@@ -3,6 +3,8 @@
     titulo="Operadores"
     :provider="'usuarios'"
     :telaEdicao="'operadores-edicao'"
+    :telaParaFiltrar="'operadores'"
+    :mostrarBotaoDeFiltro="true"
     :colunasAterrissagem="[
       { title: 'Identificador', value: 'id' },
       { title: 'E-mail', value: 'email' },

@@ -3,6 +3,8 @@
     titulo="Produtos"
     :provider="'produtos'"
     :telaEdicao="'produtos-edicao'"
+    :telaParaFiltrar="'produtos'"
+    :mostrarBotaoDeFiltro="true"
     :colunasAterrissagem="[
       { title: 'Identificador', value: 'id' },
       { title: 'Código do produto', value: 'codigoProduto' },
