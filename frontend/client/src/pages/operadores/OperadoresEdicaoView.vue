@@ -29,6 +29,15 @@
         <v-tabs-window v-model="tab">
           <v-tabs-window-item :key="1" :value="1">
             <div class="dados-gerais">
+              <v-alert
+                v-if="!ehAtualizacao"
+                style="margin-bottom: 20px"
+                density="compact"
+                text="A senha inicial do novo usuário é o CPF dele, certifique-se de avisar para que o usuário troque a senha imediatamente na aba 'Perfil'
+              ao acessar pela primeira vez o sistema!"
+                title="Nova senha"
+                type="warning"
+              ></v-alert>
               <v-text-field
                 label="Nome"
                 v-model="modelo.nome"
@@ -105,13 +114,6 @@
                   label="Telefone secundário"
                   v-mask="'(##) #####-####'"
                   v-model="modelo.usuariosTelefones.telefone"
-                  variant="outlined"
-                ></v-text-field>
-              </div>
-              <div>
-                <v-text-field
-                  label="Senha"
-                  v-model="modelo.senha"
                   variant="outlined"
                 ></v-text-field>
               </div>
@@ -304,6 +306,7 @@ export default {
   name: 'OperadoresEdicao',
   data() {
     return {
+      ehAtualizacao: false,
       modelo: {
         depositos: [],
         enderecos: [],
@@ -579,6 +582,7 @@ export default {
     this.obterEstados();
     this.obterDepositos();
     if (this.dados && this.dados.ehTelaAtualizacao) {
+      this.ehAtualizacao = true;
       this.obterOperadores();
     }
   },
