@@ -144,6 +144,15 @@
               ></v-select>
               <!-- Movimentações
               --------------- -->
+              <v-combobox
+                v-if="telaParaFiltrar == 'movimentacoes'"
+                label="Tipo de movimentação"
+                :items="['Entrada', 'Saída']"
+                item-title="descricao"
+                item-value="id"
+                v-model="filtros.tipoMovimentacao"
+                variant="outlined"
+              ></v-combobox>
 
               <v-select
                 v-if="telaParaFiltrar == 'movimentacoes'"
@@ -199,16 +208,6 @@
                 variant="outlined"
                 persistent-hint
               ></v-select>
-
-              <v-combobox
-                v-if="telaParaFiltrar == 'movimentacoes'"
-                label="Tipo de movimentação"
-                :items="['Entrada', 'Saída']"
-                item-title="descricao"
-                item-value="id"
-                v-model="filtros.tipoMovimentacao"
-                variant="outlined"
-              ></v-combobox>
 
               <v-text-field
                 v-if="telaParaFiltrar == 'movimentacoes'"
@@ -440,15 +439,18 @@ export default {
           }
         });
     },
+
     corDaMovimentacao(tipoMovimentacao) {
       if (tipoMovimentacao === 'Entrada') return 'green';
       if (tipoMovimentacao === 'Saída') return 'red';
 
       return 'gray';
     },
+
     abrirModalFiltro() {
       this.modalAberto = true;
     },
+
     async obterCategorias() {
       api
         .get(`http://localhost:3000/categorias/`, {
@@ -464,6 +466,7 @@ export default {
           }
         });
     },
+
     async obterMarcas() {
       api
         .get(`http://localhost:3000/marcas/`, {
@@ -495,6 +498,54 @@ export default {
           }
         });
     },
+
+    async obterDepositos() {
+      api
+        .get(`http://localhost:3000/depositos/`, {
+          headers: {
+            Authorization: `Bearer ${this.obterToken()}`,
+          },
+        })
+        .then((response) => {
+          this.depositos = [];
+
+          for (const dado of response.data) {
+            this.depositos.push(dado);
+          }
+        });
+    },
+
+    async obterFornecedores() {
+      api
+        .get(`http://localhost:3000/fornecedores/`, {
+          headers: {
+            Authorization: `Bearer ${this.obterToken()}`,
+          },
+        })
+        .then((response) => {
+          this.fornecedores = [];
+
+          for (const dado of response.data) {
+            this.fornecedores.push(dado);
+          }
+        });
+    },
+
+    async obterProdutos() {
+      api
+        .get(`http://localhost:3000/produtos/`, {
+          headers: {
+            Authorization: `Bearer ${this.obterToken()}`,
+          },
+        })
+        .then((response) => {
+          this.produtos = [];
+
+          for (const dado of response.data) {
+            this.produtos.push(dado);
+          }
+        });
+    },
   },
   created() {
     this.obtemDados();
@@ -503,6 +554,14 @@ export default {
         this.obterCategorias();
         this.obterMarcas();
         this.obterOperadores();
+      }
+
+      if (this.telaParaFiltrar === 'movimentacoes') {
+        this.obterOperadores();
+        this.obterDepositos();
+        this.obterFornecedores();
+
+        this.obterProdutos();
       }
     }
   },

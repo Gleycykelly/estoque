@@ -108,17 +108,114 @@ export class MovimentacoesService {
   async obterParcial(
     obterParcialMovimentacaoDto: ObterParcialMovimentacaoDto,
   ): Promise<Movimentacoes[]> {
-    if (!obterParcialMovimentacaoDto.termoDePesquisa) {
+    if (!obterParcialMovimentacaoDto) {
       return this.findAll();
     }
-    return await this.movimentacaoRepository
+
+    console.log(obterParcialMovimentacaoDto);
+
+    let query = await this.movimentacaoRepository
       .createQueryBuilder('movimentacao')
-      .leftJoinAndSelect('movimentacao.lancamentoProduto', 'lancamentoProduto')
-      .leftJoinAndSelect('lancamentoProduto.produto', 'produto')
-      .where('LOWER(produto.nome) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialMovimentacaoDto.termoDePesquisa}%`,
-      })
-      .getMany();
+      .leftJoinAndSelect('movimentacao.lancamentoProduto', 'lancamento')
+      .leftJoinAndSelect('lancamento.produto', 'produto')
+      .leftJoinAndSelect('movimentacao.usuario', 'usuario')
+      .leftJoinAndSelect('lancamento.localizacaoDeposito', 'localiza')
+      .leftJoinAndSelect('localiza.deposito', 'deposito')
+      .leftJoinAndSelect('lancamento.fornecedor', 'fornecedor');
+
+    if (obterParcialMovimentacaoDto.termoDePesquisa) {
+      query = query
+        .leftJoinAndSelect(
+          'movimentacao.lancamentoProduto',
+          'lancamentoProduto',
+        )
+        .leftJoinAndSelect('lancamentoProduto.produto', 'produto')
+        .where('LOWER(produto.nome) LIKE LOWER(:termo)', {
+          termo: `%${obterParcialMovimentacaoDto.termoDePesquisa}%`,
+        });
+    }
+    if (
+      obterParcialMovimentacaoDto.depositos &&
+      obterParcialMovimentacaoDto.depositos.length > 0
+    ) {
+      query = query.andWhere('deposito.id IN (:...depositos)', {
+        depositos: obterParcialMovimentacaoDto.depositos,
+      });
+    }
+
+    if (
+      obterParcialMovimentacaoDto.produtos &&
+      obterParcialMovimentacaoDto.produtos.length > 0
+    ) {
+      query = query.andWhere('produtos.id IN (:...produtos)', {
+        Produtos: obterParcialMovimentacaoDto.produtos,
+      });
+    }
+
+    if (
+      obterParcialMovimentacaoDto.fornecedores &&
+      obterParcialMovimentacaoDto.fornecedores.length > 0
+    ) {
+      query = query.andWhere('fornecedor.id IN (:...fornecedores)', {
+        fornecedores: obterParcialMovimentacaoDto.fornecedores,
+      });
+    }
+
+    if (
+      obterParcialMovimentacaoDto.operadores &&
+      obterParcialMovimentacaoDto.operadores.length > 0
+    ) {
+      query = query.andWhere('usuario.id IN (:...operadores)', {
+        operadores: obterParcialMovimentacaoDto.operadores,
+      });
+    }
+
+    if (obterParcialMovimentacaoDto.quantidadeMaiorQue) {
+      query = query.andWhere('movimentacao.quantidade > (:maiorQue)', {
+        maiorQue: obterParcialMovimentacaoDto.quantidadeMaiorQue,
+      });
+    }
+
+    if (obterParcialMovimentacaoDto.quantidadeMenorQue) {
+      query = query.andWhere('movimentacao.quantidade < (:menorQue)', {
+        menorQue: obterParcialMovimentacaoDto.quantidadeMenorQue,
+      });
+    }
+
+    if (obterParcialMovimentacaoDto.diasParaVencer) {
+      // const dataAtual = new Date();
+      const dataVencimento = new Date();
+      dataVencimento.setDate(
+        dataVencimento.getDate() + obterParcialMovimentacaoDto.diasParaVencer,
+      );
+
+      // query = query.andWhere('lancamento.dataValidade > (:dataAtual)', {
+      //   dataAtual: dataAtual.toISOString(),
+      // });
+
+      query = query.andWhere('lancamento.dataValidade = (:dataVencimento)', {
+        dataVencimento: dataVencimento.toISOString(),
+      });
+    }
+
+    if (obterParcialMovimentacaoDto.produtosVencidos) {
+      const dataAtual = new Date();
+      query = query.andWhere(' lancamento.dataValidade < (:dataAtual)', {
+        dataAtual: dataAtual.toISOString(),
+      });
+    }
+
+    if (obterParcialMovimentacaoDto.tipoMovimentacao) {
+      query = query.andWhere(
+        ' movimentacao.tipoMovimentacao LIKE (:tipoMovimentacao)',
+        {
+          tipoMovimentacao: obterParcialMovimentacaoDto.tipoMovimentacao,
+        },
+      );
+    }
+
+    const result = await query.getMany();
+    return result;
   }
 
   async remove(id: number) {
