@@ -202,6 +202,7 @@ export class UsuariosService {
 
     const usuario = await this.usuarioRepository.preload({
       ...updateUsuarioDto,
+      id,
     });
 
     if (!usuario) {
@@ -218,6 +219,7 @@ export class UsuariosService {
       updateUsuarioDto.usuariosTelefones,
       this.usuariosTelefonesService,
     );
+
     return usuarioAlterado;
   }
 
