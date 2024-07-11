@@ -379,10 +379,6 @@ export default {
       return this.dados;
     },
 
-    filtrarDados() {
-      console.log(this.filtros);
-    },
-
     irParaTelaDeCriacao() {
       useDadosStore().salvarDadosParaEdicao(null);
       this.$router.push(`/${this.telaEdicao}`);

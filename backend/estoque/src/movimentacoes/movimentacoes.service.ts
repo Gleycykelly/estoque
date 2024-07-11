@@ -172,8 +172,6 @@ export class MovimentacoesService {
     }
 
     if (obterParcialMovimentacaoDto.quantidadeMaiorQue) {
-      console.log('tetse');
-      console.log(obterParcialMovimentacaoDto.quantidadeMaiorQue);
       query = query.andWhere('movimentacao.quantidade > (:maiorQue)', {
         maiorQue: obterParcialMovimentacaoDto.quantidadeMaiorQue,
       });
