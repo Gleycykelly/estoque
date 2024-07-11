@@ -70,52 +70,15 @@ export class UsuariosService {
     const usuarioRegistrado = await this.usuarioRepository.save(usuario);
     delete usuarioRegistrado.senha;
 
-    createUsuarioDto.usuariosTelefones.usuario = usuarioRegistrado;
-    createUsuarioDto.usuariosTelefones = await this.obtemEntidadeEstrangeira(
-      createUsuarioDto.usuariosTelefones,
-      this.usuariosTelefonesService,
-    );
+    if (createUsuarioDto.usuariosTelefones) {
+      createUsuarioDto.usuariosTelefones.usuario = usuarioRegistrado;
+      createUsuarioDto.usuariosTelefones = await this.obtemEntidadeEstrangeira(
+        createUsuarioDto.usuariosTelefones,
+        this.usuariosTelefonesService,
+      );
+    }
 
     return usuarioRegistrado;
-  }
-
-  async findAll() {
-    const usuarios = await this.usuarioRepository.find({
-      relations: [
-        'enderecos',
-        'enderecos.municipio',
-        'enderecos.municipio.uf',
-        'usuariosTelefones',
-        'depositos',
-        'depositos.endereco',
-        'depositos.endereco.municipio',
-        'depositos.endereco.municipio.uf',
-      ],
-    });
-    usuarios.forEach((usuario) => {
-      delete usuario.senha;
-    });
-    return usuarios;
-  }
-
-  async findOne(id: number) {
-    const usuario = await this.usuarioRepository.findOne({
-      relations: [
-        'enderecos',
-        'enderecos.municipio',
-        'enderecos.municipio.uf',
-        'usuariosTelefones',
-        'depositos',
-        'depositos.endereco',
-        'depositos.endereco.municipio',
-        'depositos.endereco.municipio.uf',
-      ],
-      where: { id },
-    });
-    if (usuario) {
-      delete usuario.senha;
-    }
-    return usuario;
   }
 
   async update(
@@ -214,13 +177,54 @@ export class UsuariosService {
     const usuarioAlterado = await this.usuarioRepository.save(usuario);
     delete usuarioAlterado.senha;
 
-    updateUsuarioDto.usuariosTelefones.usuario = usuario;
-    updateUsuarioDto.usuariosTelefones = await this.obtemEntidadeEstrangeira(
-      updateUsuarioDto.usuariosTelefones,
-      this.usuariosTelefonesService,
-    );
+    if (updateUsuarioDto.usuariosTelefones) {
+      updateUsuarioDto.usuariosTelefones.usuario = usuario;
+      updateUsuarioDto.usuariosTelefones = await this.obtemEntidadeEstrangeira(
+        updateUsuarioDto.usuariosTelefones,
+        this.usuariosTelefonesService,
+      );
+    }
 
     return usuarioAlterado;
+  }
+
+  async findAll() {
+    const usuarios = await this.usuarioRepository.find({
+      relations: [
+        'enderecos',
+        'enderecos.municipio',
+        'enderecos.municipio.uf',
+        'usuariosTelefones',
+        'depositos',
+        'depositos.endereco',
+        'depositos.endereco.municipio',
+        'depositos.endereco.municipio.uf',
+      ],
+    });
+    usuarios.forEach((usuario) => {
+      delete usuario.senha;
+    });
+    return usuarios;
+  }
+
+  async findOne(id: number) {
+    const usuario = await this.usuarioRepository.findOne({
+      relations: [
+        'enderecos',
+        'enderecos.municipio',
+        'enderecos.municipio.uf',
+        'usuariosTelefones',
+        'depositos',
+        'depositos.endereco',
+        'depositos.endereco.municipio',
+        'depositos.endereco.municipio.uf',
+      ],
+      where: { id },
+    });
+    if (usuario) {
+      delete usuario.senha;
+    }
+    return usuario;
   }
 
   async remove(id: number) {
@@ -252,7 +256,7 @@ export class UsuariosService {
   async obterUsuarioLogado(token: string) {
     const decodedToken = await this.authService.checkToken(token);
 
-    return await this.usuarioRepository.findOne({
+    const usuario = await this.usuarioRepository.findOne({
       relations: [
         'enderecos',
         'enderecos.municipio',
@@ -265,6 +269,10 @@ export class UsuariosService {
       ],
       where: { id: decodedToken.id },
     });
+    if (usuario) {
+      delete usuario.senha;
+    }
+    return usuario;
   }
 
   async usuarioJaCadastrado(email: string, ehAtualizacao = false) {
