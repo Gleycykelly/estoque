@@ -83,6 +83,9 @@ export class MovimentacoesService {
         'lancamentoProduto.localizacaoDeposito.deposito',
         'usuario',
       ],
+      order: {
+        id: 'ASC',
+      },
     });
   }
 
@@ -212,6 +215,7 @@ export class MovimentacoesService {
       );
     }
 
+    query.orderBy('movimentacao.id', 'ASC');
     const result = await query.getMany();
     return result;
   }

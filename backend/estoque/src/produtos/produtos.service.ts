@@ -189,7 +189,7 @@ export class ProdutosService {
         operadores: obterParcialProdutoDto.operadores,
       });
     }
-
+    query.orderBy('produto.id', 'ASC');
     const result = await query.getMany();
     return result;
   }
