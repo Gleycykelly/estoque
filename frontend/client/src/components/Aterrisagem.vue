@@ -312,7 +312,6 @@ import api from '@/services/api';
 import { useAuthStore, useDadosStore, useAlerta } from '@/store/index';
 
 export default {
-  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Aterrissagem',
   props: {
     titulo: String,

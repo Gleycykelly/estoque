@@ -75,7 +75,6 @@
 import api from '@/services/api';
 import { useAuthStore } from '@/store/index';
 export default {
-  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Menu',
   data() {
     return {

@@ -22,7 +22,6 @@
 <script>
 import { useAlerta } from '@/store/index';
 export default {
-  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Alertas',
   data() {
     return {
