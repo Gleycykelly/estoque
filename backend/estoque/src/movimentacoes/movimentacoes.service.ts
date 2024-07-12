@@ -184,15 +184,11 @@ export class MovimentacoesService {
     }
 
     if (obterParcialMovimentacaoDto.diasParaVencer) {
-      // const dataAtual = new Date();
       const dataVencimento = new Date();
       dataVencimento.setDate(
-        dataVencimento.getDate() + obterParcialMovimentacaoDto.diasParaVencer,
+        dataVencimento.getDate() +
+          Number(obterParcialMovimentacaoDto.diasParaVencer),
       );
-
-      // query = query.andWhere('lancamento.dataValidade > (:dataAtual)', {
-      //   dataAtual: dataAtual.toISOString(),
-      // });
 
       query = query.andWhere('lancamento.dataValidade = (:dataVencimento)', {
         dataVencimento: dataVencimento.toISOString(),
@@ -201,6 +197,7 @@ export class MovimentacoesService {
 
     if (obterParcialMovimentacaoDto.produtosVencidos) {
       const dataAtual = new Date();
+
       query = query.andWhere(' lancamento.dataValidade < (:dataAtual)', {
         dataAtual: dataAtual.toISOString(),
       });
@@ -208,7 +205,7 @@ export class MovimentacoesService {
 
     if (obterParcialMovimentacaoDto.tipoMovimentacao) {
       query = query.andWhere(
-        ' movimentacao.tipoMovimentacao LIKE (:tipoMovimentacao)',
+        ' movimentacao.tipoMovimentacao = :tipoMovimentacao',
         {
           tipoMovimentacao: obterParcialMovimentacaoDto.tipoMovimentacao,
         },
