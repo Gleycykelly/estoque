@@ -152,6 +152,12 @@
                 item-value="id"
                 v-model="filtros.tipoMovimentacao"
                 variant="outlined"
+                @update:model-value="
+                  filtros.quantidadeMaiorQue = null;
+                  filtros.quantidadeMenorQue = null;
+                  filtros.diasParaVencer = null;
+                  filtros.produtosVencidos = false;
+                "
               ></v-combobox>
 
               <v-select
@@ -210,36 +216,50 @@
               ></v-select>
 
               <v-text-field
+                :disabled="filtros.tipoMovimentacao == 'Saída'"
                 v-if="telaParaFiltrar == 'movimentacoes'"
                 label="Quantidade maior que"
                 v-model="filtros.quantidadeMaiorQue"
                 variant="outlined"
                 type="number"
+                @update:model-value="
+                  filtros.quantidadeMenorQue = null;
+                  filtros.tipoMovimentacao = 'Entrada';
+                "
               ></v-text-field>
 
               <v-text-field
+                :disabled="filtros.tipoMovimentacao == 'Saída'"
                 v-if="telaParaFiltrar == 'movimentacoes'"
                 label="Quantidade menor que"
                 v-model="filtros.quantidadeMenorQue"
                 variant="outlined"
                 type="number"
+                @update:model-value="
+                  filtros.quantidadeMaiorQue = null;
+                  filtros.tipoMovimentacao = 'Entrada';
+                "
               ></v-text-field>
 
               <v-text-field
+                :disabled="filtros.tipoMovimentacao == 'Saída'"
                 v-if="telaParaFiltrar == 'movimentacoes'"
                 label="Dias para vencer"
                 v-model="filtros.diasParaVencer"
                 variant="outlined"
                 type="number"
+                @update:model-value="filtros.tipoMovimentacao = 'Entrada'"
               ></v-text-field>
 
               <v-switch
+                :disabled="filtros.tipoMovimentacao == 'Saída'"
                 v-if="telaParaFiltrar == 'movimentacoes'"
-                v-model="filtros.vencidos"
+                v-model="filtros.produtosVencidos"
                 label="Produtos vencidos"
                 color="#AA00FF"
                 hide-details
                 inset
+                @update:model-value="filtros.tipoMovimentacao = 'Entrada'"
               ></v-switch>
 
               <!-- Operadores
