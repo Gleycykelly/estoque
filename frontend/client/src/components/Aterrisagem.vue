@@ -115,8 +115,6 @@
           <v-card-title>Filtrar</v-card-title>
           <v-card-text>
             <div>
-              <!-- Produtos
-              --------------- -->
               <v-select
                 v-if="telaParaFiltrar == 'produtos'"
                 v-model="filtros.categorias"
@@ -142,8 +140,7 @@
                 variant="outlined"
                 persistent-hint
               ></v-select>
-              <!-- Movimentações
-              --------------- -->
+
               <v-combobox
                 v-if="telaParaFiltrar == 'movimentacoes'"
                 label="Tipo de movimentação"
@@ -262,8 +259,6 @@
                 @update:model-value="filtros.tipoMovimentacao = 'Entrada'"
               ></v-switch>
 
-              <!-- Operadores
-              --------------- -->
               <v-combobox
                 v-if="telaParaFiltrar == 'operadores'"
                 label="Genêros"
