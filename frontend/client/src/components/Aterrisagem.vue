@@ -16,6 +16,7 @@
             v-if="mostrarBotaoEdicao"
           >
             <v-icon>mdi-square-edit-outline</v-icon>
+            <v-tooltip activator="parent" location="top">Editar item</v-tooltip>
           </v-btn>
 
           <v-btn
@@ -25,6 +26,9 @@
             v-if="mostrarBotaoEdicao"
           >
             <v-icon>mdi-delete-outline</v-icon>
+            <v-tooltip activator="parent" location="top">
+              Excluir item
+            </v-tooltip>
           </v-btn>
         </div>
 
@@ -35,6 +39,7 @@
           icon
         >
           <v-icon>mdi-magnify</v-icon>
+          <v-tooltip activator="parent" location="start">Buscar</v-tooltip>
         </v-btn>
 
         <v-text-field
@@ -56,6 +61,7 @@
           v-if="pesquisa && !mostrarBotaoEdicao"
         >
           <v-icon>mdi-close</v-icon>
+          <v-tooltip activator="parent" location="top">Fechar busca</v-tooltip>
         </v-btn>
       </v-toolbar>
 
@@ -108,7 +114,10 @@
         color="#AA00FF"
         @click="abrirModalFiltro"
         style="top: -55px"
-      ></v-fab>
+      >
+        <v-icon>mdi-filter</v-icon>
+        <v-tooltip activator="parent" location="start">Filtrar itens</v-tooltip>
+      </v-fab>
 
       <v-dialog v-model="modalAberto" max-width="500px">
         <v-card>
@@ -297,7 +306,12 @@
         offset
         color="#AA00FF"
         @click="irParaTelaDeCriacao"
-      ></v-fab>
+      >
+        <v-icon>mdi-plus</v-icon>
+        <v-tooltip activator="parent" location="start">
+          Adicionar item
+        </v-tooltip>
+      </v-fab>
     </v-sheet>
   </v-main>
 </template>
