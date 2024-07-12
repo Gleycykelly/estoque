@@ -28,6 +28,7 @@ export class MunicipiosService {
   async obterParcial(
     obterParcialMunicipiosDto: ObterParcialMunicipiosDto,
   ): Promise<Municipios[]> {
+    console.log(obterParcialMunicipiosDto);
     if (!obterParcialMunicipiosDto) {
       return this.findAll();
     }
@@ -36,8 +37,8 @@ export class MunicipiosService {
       .where('LOWER(municipio.uf) LIKE LOWER(:termo)', {
         termo: `%${obterParcialMunicipiosDto.termoDePesquisa}%`,
       })
-      .orWhere('LOWER(municipio.nome) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialMunicipiosDto.termoDePesquisa}%`,
+      .orWhere('LOWER(municipio.uf) LIKE LOWER(:uf)', {
+        uf: `%${obterParcialMunicipiosDto.uf}%`,
       })
       .getMany();
   }
