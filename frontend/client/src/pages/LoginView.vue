@@ -89,6 +89,7 @@ export default {
           const token = response.data;
           const authStore = useAuthStore();
           authStore.setToken(token);
+          console.log('realizou login');
           this.$router.push('/home');
         })
         .catch((error) => {

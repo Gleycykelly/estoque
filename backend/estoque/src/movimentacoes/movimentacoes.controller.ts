@@ -11,10 +11,11 @@ import {
 import { MovimentacoesService } from './movimentacoes.service';
 import { CreateMovimentacoeDto } from './dto/create-movimentacoe.dto';
 import { UpdateMovimentacoeDto } from './dto/update-movimentacoe.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ObterParcialMovimentacaoDto } from './dto/obter-parcial-movimentacao.dto';
 
 @ApiTags('movimentacoes')
+@ApiBearerAuth()
 @Controller('movimentacoes')
 export class MovimentacoesController {
   constructor(private readonly movimentacoesService: MovimentacoesService) {}
@@ -30,6 +31,16 @@ export class MovimentacoesController {
   @Get()
   findAll() {
     return this.movimentacoesService.findAll();
+  }
+
+  @Get('valor-total-entradas-saidas')
+  valorTotalEntradasSaidas() {
+    return this.movimentacoesService.valorTotalEntradasSaidas();
+  }
+
+  @Get('ultimas-movimentacoes')
+  ultimasMovimentacoes() {
+    return this.movimentacoesService.ultimasMovimentacoes();
   }
 
   @Get(':id')

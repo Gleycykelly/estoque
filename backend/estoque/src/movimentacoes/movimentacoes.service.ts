@@ -286,4 +286,31 @@ export class MovimentacoesService {
     }
     return service.create({ ...entidade });
   }
+
+  async valorTotalEntradasSaidas() {
+    const query = `
+       SELECT
+          SUM(CASE WHEN m."tipo_movimentacao"  = 'Entrada' THEN lp."preco_custo" * m."quantidade" ELSE 0 END) AS total_entrada,
+          SUM(CASE WHEN m."tipo_movimentacao" = 'Saída' THEN lp."preco_venda" * m."quantidade" ELSE 0 END) AS total_saida
+      from movimentacoes m
+       inner join lancamentos_produtos lp on lp."id" = m."id_lancamento_produto";
+    `;
+
+    const results = await this.movimentacaoRepository.query(query);
+
+    const { total_entrada, total_saida } = results[0];
+    return { totalEntrada: total_entrada || 0, totalSaida: total_saida || 0 };
+  }
+
+  async ultimasMovimentacoes() {
+    const query = `
+      select  p."nome", m."quantidade", m."tipo_movimentacao"  from movimentacoes m 
+inner join lancamentos_produtos lp on lp."id" = m."id_lancamento_produto"
+inner join produtos p on p."id" = lp."id_produto" limit 5;
+    `;
+
+    const results = await this.movimentacaoRepository.query(query);
+
+    return results;
+  }
 }
