@@ -267,7 +267,12 @@
 
 <script>
 import api from '@/services/api';
-import { useAuthStore, useDadosStore, useAlerta } from '@/store/index';
+import {
+  useAuthStore,
+  useDadosStore,
+  useAlerta,
+  useDadosDeOutraTela,
+} from '@/store/index';
 
 export default {
   name: 'MovimentacoesEdicao',
@@ -530,9 +535,39 @@ export default {
           }
         });
     },
-    adicionarProduto() {},
-    adicionarDeposito() {},
-    adicionarFornecedor() {},
+    adicionarProduto() {
+      const dadosOutraTela = {
+        dadosOriginais: this.modelo,
+        rotaOriginal: 'movimentacoes-edicao',
+        rotaCriacao: 'produtos-edicao',
+        indoParaCriacao: true,
+      };
+      useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+
+      this.$router.push('produtos-edicao');
+    },
+    adicionarDeposito() {
+      const dadosOutraTela = {
+        dadosOriginais: this.modelo,
+        rotaOriginal: 'movimentacoes-edicao',
+        rotaCriacao: 'depositos-edicao',
+        indoParaCriacao: true,
+      };
+      useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+
+      this.$router.push('depositos-edicao');
+    },
+    adicionarFornecedor() {
+      const dadosOutraTela = {
+        dadosOriginais: this.modelo,
+        rotaOriginal: 'movimentacoes-edicao',
+        rotaCriacao: 'fornecedores-edicao',
+        indoParaCriacao: true,
+      };
+      useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+
+      this.$router.push('fornecedores-edicao');
+    },
 
     obterDadosPorLote(lote) {
       this.loading = true;
@@ -591,10 +626,19 @@ export default {
     if (this.dados && this.dados.ehTelaAtualizacao) {
       this.obterMovimentacao();
     }
+
+    if (this.dadosDeOutraTela && !this.dadosDeOutraTela.indoParaCriacao) {
+      this.modelo = this.dadosDeOutraTela.dadosOriginais;
+      useDadosDeOutraTela().salvarDadosDeOutraTela(null);
+    }
   },
   computed: {
     dados() {
       return useDadosStore().getDadosParaEdicao;
+    },
+
+    dadosDeOutraTela() {
+      return useDadosDeOutraTela().getDadosDeOutraTela;
     },
   },
 };

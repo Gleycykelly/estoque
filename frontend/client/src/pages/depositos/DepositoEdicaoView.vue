@@ -105,7 +105,12 @@
 
 <script>
 import api from '@/services/api';
-import { useAuthStore, useDadosStore, useAlerta } from '@/store/index';
+import {
+  useAuthStore,
+  useDadosStore,
+  useAlerta,
+  useDadosDeOutraTela,
+} from '@/store/index';
 // import MensagensAlerta from '../../components/MensagensAlerta.vue';
 export default {
   // components: { MensagensAlerta },
@@ -144,7 +149,21 @@ export default {
     },
 
     voltar() {
-      this.$router.push('/depositos');
+      if (this.dadosOutraTela && this.dadosOutraTela.indoParaCriacao) {
+        this.dadosOutraTela.dadosOriginais.lancamentoProduto.localizacaoDeposito.deposito =
+          this.modelo;
+        const dadosOutraTela = {
+          dadosOriginais: this.dadosOutraTela.dadosOriginais,
+          rotaOriginal: this.dadosOutraTela.rotaOriginal,
+          rotaCriacao: this.dadosOutraTela.rotaCriacao,
+          indoParaCriacao: false,
+        };
+
+        useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+        this.$router.push(this.dadosOutraTela.rotaOriginal);
+      } else {
+        this.$router.push('/depositos');
+      }
     },
 
     podeGravar() {
@@ -231,11 +250,12 @@ export default {
               Authorization: `Bearer ${this.obterToken()}`,
             },
           })
-          .then(() => {
+          .then((resultado) => {
             useAlerta().exibirSnackbar(
               'O depósito foi criado com sucesso!',
               'green',
             );
+            this.modelo = resultado.data;
 
             this.voltar();
           })
@@ -329,6 +349,10 @@ export default {
   computed: {
     dados() {
       return useDadosStore().getDadosParaEdicao;
+    },
+
+    dadosOutraTela() {
+      return useDadosDeOutraTela().getDadosDeOutraTela;
     },
   },
 };

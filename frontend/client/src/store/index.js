@@ -33,6 +33,22 @@ export const useDadosStore = defineStore('dados', {
   },
 });
 
+export const useDadosDeOutraTela = defineStore('dadosOutraTela', {
+  state: () => ({
+    dadosDeOutraTela: null,
+  }),
+  actions: {
+    salvarDadosDeOutraTela(dadosOutraTela) {
+      this.dadosDeOutraTela = dadosOutraTela;
+    },
+  },
+  getters: {
+    getDadosDeOutraTela() {
+      return this.dadosDeOutraTela;
+    },
+  },
+});
+
 export const useAlerta = defineStore('alerta', {
   state: () => ({
     show: false,

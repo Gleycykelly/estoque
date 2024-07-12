@@ -28,7 +28,6 @@ export class MunicipiosService {
   async obterParcial(
     obterParcialMunicipiosDto: ObterParcialMunicipiosDto,
   ): Promise<Municipios[]> {
-    console.log(obterParcialMunicipiosDto);
     if (!obterParcialMunicipiosDto) {
       return this.findAll();
     }

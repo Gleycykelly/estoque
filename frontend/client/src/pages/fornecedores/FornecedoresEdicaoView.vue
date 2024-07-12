@@ -123,7 +123,12 @@
 
 <script>
 import api from '@/services/api';
-import { useAuthStore, useDadosStore, useAlerta } from '@/store/index';
+import {
+  useAuthStore,
+  useDadosStore,
+  useAlerta,
+  useDadosDeOutraTela,
+} from '@/store/index';
 
 export default {
   name: 'FornecedoresEdicao',
@@ -244,7 +249,21 @@ export default {
     },
 
     voltar() {
-      this.$router.push('/fornecedores');
+      if (this.dadosOutraTela && this.dadosOutraTela.indoParaCriacao) {
+        this.dadosOutraTela.dadosOriginais.lancamentoProduto.fornecedor =
+          this.modelo;
+        const dadosOutraTela = {
+          dadosOriginais: this.dadosOutraTela.dadosOriginais,
+          rotaOriginal: this.dadosOutraTela.rotaOriginal,
+          rotaCriacao: this.dadosOutraTela.rotaCriacao,
+          indoParaCriacao: false,
+        };
+
+        useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+        this.$router.push(this.dadosOutraTela.rotaOriginal);
+      } else {
+        this.$router.push('/fornecedores');
+      }
     },
 
     async salvar() {
@@ -284,11 +303,12 @@ export default {
               Authorization: `Bearer ${this.obterToken()}`,
             },
           })
-          .then(() => {
+          .then((resultado) => {
             useAlerta().exibirSnackbar(
               'O fornecedor foi criado com sucesso!',
               'green',
             );
+            this.modelo = resultado.data;
             this.voltar();
           })
           .catch((error) => {
@@ -328,6 +348,10 @@ export default {
   computed: {
     dados() {
       return useDadosStore().getDadosParaEdicao;
+    },
+
+    dadosOutraTela() {
+      return useDadosDeOutraTela().getDadosDeOutraTela;
     },
   },
 };

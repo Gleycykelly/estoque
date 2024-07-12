@@ -73,7 +73,6 @@ export default {
           this.modelo = null;
 
           this.modelo = response.data;
-          console.log(this.modelo);
         });
     },
     async obterUltimasMovimentacoes() {

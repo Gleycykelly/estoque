@@ -124,8 +124,6 @@
                         item-value="id"
                         v-model="novaPorcao.unidadeMedida"
                         variant="outlined"
-                        append-icon="mdi-plus-circle-outline"
-                        @click:append="adicionaUnidadeMedida"
                       ></v-combobox>
 
                       <div class="valores-nutricionais">
@@ -366,8 +364,6 @@
                   item-value="id"
                   v-model="porcao.unidadeMedida"
                   variant="outlined"
-                  append-icon="mdi-plus-circle-outline"
-                  @click:append="adicionaUnidadeMedida"
                 ></v-combobox>
 
                 <div class="valores-nutricionais">
@@ -526,7 +522,12 @@
 
 <script>
 import api from '@/services/api';
-import { useAuthStore, useDadosStore, useAlerta } from '@/store/index';
+import {
+  useAuthStore,
+  useDadosStore,
+  useAlerta,
+  useDadosDeOutraTela,
+} from '@/store/index';
 
 export default {
   name: 'ProdutosEdicao',
@@ -565,7 +566,21 @@ export default {
     },
 
     voltar() {
-      this.$router.push('/produtos');
+      if (this.dadosOutraTela && this.dadosOutraTela.indoParaCriacao) {
+        this.dadosOutraTela.dadosOriginais.lancamentoProduto.produto =
+          this.modelo;
+        const dadosOutraTela = {
+          dadosOriginais: this.dadosOutraTela.dadosOriginais,
+          rotaOriginal: this.dadosOutraTela.rotaOriginal,
+          rotaCriacao: this.dadosOutraTela.rotaCriacao,
+          indoParaCriacao: false,
+        };
+
+        useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+        this.$router.push(this.dadosOutraTela.rotaOriginal);
+      } else {
+        this.$router.push('/produtos');
+      }
     },
 
     podeGravar() {
@@ -643,11 +658,13 @@ export default {
               Authorization: `Bearer ${this.obterToken()}`,
             },
           })
-          .then(() => {
+          .then((resultado) => {
             useAlerta().exibirSnackbar(
               'O produto foi criado com sucesso!',
               'green',
             );
+            this.modelo = resultado.data;
+
             this.voltar();
           })
           .catch((error) => {
@@ -717,15 +734,39 @@ export default {
     },
 
     adicionarCategoria() {
-      alert('Adicionar nova categoria!');
+      const dadosOutraTela = {
+        dadosOriginais: this.modelo,
+        rotaOriginal: 'produtos-edicao',
+        rotaCriacao: 'categorias-edicao',
+        indoParaCriacao: true,
+      };
+      useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+
+      this.$router.push('categorias-edicao');
     },
 
-    adicionaUnidadeMedida() {
-      this.$router.push('/unidades-medida-edicao');
+    adicionarUnidadeMedida() {
+      const dadosOutraTela = {
+        dadosOriginais: this.modelo,
+        rotaOriginal: 'produtos-edicao',
+        rotaCriacao: 'unidades-medida-edicao',
+        indoParaCriacao: true,
+      };
+      useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+
+      this.$router.push('unidades-medida-edicao');
     },
 
     adicionarMarca() {
-      alert('Adicionar nova marca!');
+      const dadosOutraTela = {
+        dadosOriginais: this.modelo,
+        rotaOriginal: 'produtos-edicao',
+        rotaCriacao: 'marcas-edicao',
+        indoParaCriacao: true,
+      };
+      useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+
+      this.$router.push('marcas-edicao');
     },
     adicionarNovaInformacaoNutricional() {
       this.dialog = false;
@@ -785,10 +826,19 @@ export default {
     if (this.dados && this.dados.ehTelaAtualizacao) {
       this.obterProdutos();
     }
+
+    if (this.dadosDeOutraTela && !this.dadosDeOutraTela.indoParaCriacao) {
+      this.modelo = this.dadosDeOutraTela.dadosOriginais;
+      useDadosDeOutraTela().salvarDadosDeOutraTela(null);
+    }
   },
   computed: {
     dados() {
       return useDadosStore().getDadosParaEdicao;
+    },
+
+    dadosDeOutraTela() {
+      return useDadosDeOutraTela().getDadosDeOutraTela;
     },
   },
 };
