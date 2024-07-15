@@ -352,6 +352,10 @@ export class MovimentacoesService {
         'usuario',
       ],
     });
+
+    if (movimentacoes == null || movimentacoes.length <= 0) {
+      throw new NotFoundException('Nenhum dado encontrado!');
+    }
     const dados = [];
 
     for (const movimentacao of movimentacoes) {

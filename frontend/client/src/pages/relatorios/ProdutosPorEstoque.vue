@@ -105,6 +105,29 @@ export default {
         console.error('Erro ao baixar o arquivo Excel', error);
       }
     },
+    async emitirEmPDF() {
+      console.log(this.modelo);
+      try {
+        api
+          .post(`http://localhost:3000/pdf/produtos-por-estoque`, this.modelo, {
+            headers: {
+              Authorization: `Bearer ${this.obterToken()}`,
+            },
+            responseType: 'blob',
+          })
+          .then((response) => {
+            console.log(response.data);
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'documento.pdf');
+            document.body.appendChild(link);
+            link.click();
+          });
+      } catch (error) {
+        console.error('Erro ao baixar o arquivo Excel', error);
+      }
+    },
   },
   created() {
     this.obterDepositos();
