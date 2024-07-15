@@ -8,6 +8,7 @@
     :colunasAterrissagem="[
       { title: 'Identificador', value: 'id' },
       { title: 'Produto', value: 'lancamentoProduto.produto.nome' },
+      { title: 'Lote', value: 'lancamentoProduto.lote' },
       { title: 'Quantidade', value: 'quantidade' },
       { title: 'Tipo de movimentação', value: 'tipoMovimentacao' },
       { title: 'Data da movimentação', value: 'dataMovimentacao' },

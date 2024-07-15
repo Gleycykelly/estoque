@@ -32,12 +32,17 @@
               <v-alert
                 v-if="!ehAtualizacao"
                 style="margin-bottom: 20px"
-                density="compact"
-                text="A senha inicial do novo usuário é o CPF dele, certifique-se de avisar para que o usuário troque a senha imediatamente na aba 'Perfil'
-              ao acessar pela primeira vez o sistema!"
+                prominent
+                variant="outlined"
                 title="Nova senha"
                 type="warning"
-              ></v-alert>
+              >
+                <div style="text-align: left; font-size: 16px">
+                  A senha inicial do novo usuário é o CPF dele, certifique-se de
+                  avisar para que o usuário troque a senha imediatamente na aba
+                  'Perfil' ao acessar pela primeira vez o sistema!
+                </div>
+              </v-alert>
               <v-text-field
                 label="Nome"
                 v-model="modelo.nome"
@@ -69,7 +74,7 @@
                   variant="outlined"
                   type="date"
                   v-model="modelo.dataNascimento"
-                  label="Data de nascimento"
+                  clearable
                 ></v-text-field>
                 <v-combobox
                   class="dados-gerais-margin"

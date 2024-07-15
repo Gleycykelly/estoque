@@ -38,6 +38,7 @@
             variant="outlined"
             type="date"
             v-model="modelo.dataNascimento"
+            clearable
             label="Data de Nascimento"
           ></v-text-field>
           <v-combobox
@@ -219,7 +220,7 @@ export default {
 
 .campos-data {
   @media (min-width: 850px) {
-    max-width: 180px;
+    max-width: 200px;
   }
 }
 </style>

@@ -128,6 +128,7 @@
                 type="date"
                 v-model="modelo.lancamentoProduto.dataValidade"
                 label="Data de validade"
+                clearable
               ></v-text-field>
               <v-text-field
                 v-if="modelo.dataMovimentacao"
