@@ -534,14 +534,7 @@ export default {
   data() {
     return {
       dialog: false,
-      modelo: {
-        porcoes: [
-          {
-            informacaoNutricional: {},
-            valorNutricional: {},
-          },
-        ],
-      },
+      modelo: {},
       categorias: [],
       unidadesDeMedida: [],
       marcas: [],
@@ -566,18 +559,21 @@ export default {
     },
 
     voltar() {
-      if (this.dadosOutraTela && this.dadosOutraTela.indoParaCriacao) {
-        this.dadosOutraTela.dadosOriginais.lancamentoProduto.produto =
-          this.modelo;
+      if (this.dadosDeOutraTela && this.dadosDeOutraTela.indoParaCriacao) {
+        if (this.modelo.codigoProduto) {
+          this.dadosDeOutraTela.dadosOriginais.lancamentoProduto.produto =
+            this.modelo;
+        }
+
         const dadosOutraTela = {
-          dadosOriginais: this.dadosOutraTela.dadosOriginais,
-          rotaOriginal: this.dadosOutraTela.rotaOriginal,
-          rotaCriacao: this.dadosOutraTela.rotaCriacao,
+          dadosOriginais: this.dadosDeOutraTela.dadosOriginais,
+          rotaOriginal: this.dadosDeOutraTela.rotaOriginal,
+          rotaCriacao: this.dadosDeOutraTela.rotaCriacao,
           indoParaCriacao: false,
         };
 
         useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
-        this.$router.push(this.dadosOutraTela.rotaOriginal);
+        this.$router.push(this.dadosDeOutraTela.rotaOriginal);
       } else {
         this.$router.push('/produtos');
       }

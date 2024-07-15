@@ -542,6 +542,7 @@ export default {
         rotaCriacao: 'produtos-edicao',
         indoParaCriacao: true,
       };
+
       useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
 
       this.$router.push('produtos-edicao');
