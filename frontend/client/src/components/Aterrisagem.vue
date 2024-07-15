@@ -21,7 +21,7 @@
 
           <v-btn
             style="color: #aa00ff"
-            @click="deletarItem"
+            @click="modalConfirmarExclusao = true"
             icon
             v-if="mostrarBotaoEdicao"
           >
@@ -31,6 +31,27 @@
             </v-tooltip>
           </v-btn>
         </div>
+
+        <v-dialog v-model="modalConfirmarExclusao" max-width="400" persistent>
+          <v-card text="Tem certeza que deseja excluir o item?">
+            <template v-slot:actions>
+              <v-spacer></v-spacer>
+
+              <v-btn @click="modalConfirmarExclusao = false">voltar</v-btn>
+
+              <v-btn
+                color="#aa00ff"
+                variant="tonal"
+                @click="
+                  deletarItem();
+                  modalConfirmarExclusao = false;
+                "
+              >
+                Excluir
+              </v-btn>
+            </template>
+          </v-card>
+        </v-dialog>
 
         <v-btn
           color="#AA00FF"
@@ -343,6 +364,7 @@ export default {
       categorias: [],
       operadores: [],
       filtros: {},
+      modalConfirmarExclusao: false,
     };
   },
   methods: {
