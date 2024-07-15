@@ -1,11 +1,15 @@
 <template>
-  <v-navigation-drawer v-model="menuAberto" clipped theme="dark" :width="300">
+  <v-navigation-drawer v-model="menuAberto" clipped theme="dark" :width="325">
     <v-list dense nav color="#AA00FF" class="menu-opcoes">
       <v-list-subheader>Menu</v-list-subheader>
 
       <v-divider></v-divider>
 
-      <v-list-item prepend-icon="mdi-home" :to="{ name: 'home' }">
+      <v-list-item
+        class="titulo-item"
+        prepend-icon="mdi-home"
+        :to="{ name: 'home' }"
+      >
         Dashboard
       </v-list-item>
 
@@ -15,17 +19,26 @@
         <template v-slot:activator="{ props }">
           <v-list-item
             v-bind="props"
-            title="Cadastros"
             prepend-icon="mdi-folder-plus"
             :class="{ 'show-icon': menuFechado }"
-          ></v-list-item>
+          >
+            <div class="titulo">Cadastros</div>
+          </v-list-item>
         </template>
 
-        <v-list-item :to="{ name: 'categorias' }">Categorias</v-list-item>
-        <v-list-item :to="{ name: 'fornecedores' }">Fornecedores</v-list-item>
-        <v-list-item :to="{ name: 'marcas' }">Marcas</v-list-item>
-        <v-list-item :to="{ name: 'produtos' }">Produtos</v-list-item>
-        <v-list-item :to="{ name: 'unidadesMedida' }">
+        <v-list-item class="sub-titulo" :to="{ name: 'categorias' }">
+          Categorias
+        </v-list-item>
+        <v-list-item class="sub-titulo" :to="{ name: 'fornecedores' }">
+          Fornecedores
+        </v-list-item>
+        <v-list-item class="sub-titulo" :to="{ name: 'marcas' }">
+          Marcas
+        </v-list-item>
+        <v-list-item class="sub-titulo" :to="{ name: 'produtos' }">
+          Produtos
+        </v-list-item>
+        <v-list-item class="sub-titulo" :to="{ name: 'unidadesMedida' }">
           Unidades de medida
         </v-list-item>
       </v-list-group>
@@ -33,33 +46,67 @@
         <template v-slot:activator="{ props }">
           <v-list-item
             v-bind="props"
-            title="Movimentações"
             prepend-icon="mdi-swap-horizontal-bold"
             :class="{ 'show-icon': menuFechado }"
-          ></v-list-item>
+          >
+            <div class="titulo">Movimentações</div>
+          </v-list-item>
         </template>
 
-        <v-list-item :to="{ name: 'movimentacoes' }">Entrada/Saída</v-list-item>
+        <v-list-item class="sub-titulo" :to="{ name: 'movimentacoes' }">
+          Entrada/Saída
+        </v-list-item>
       </v-list-group>
-      <v-list-group value="Administrativo" no-action>
+
+      <v-list-group value="Relatórios" no-action>
         <template v-slot:activator="{ props }">
           <v-list-item
             v-bind="props"
-            title="Administrativo"
-            prepend-icon="mdi-cogs"
-          ></v-list-item>
+            prepend-icon="mdi-file-document"
+            :class="{ 'show-icon': menuFechado }"
+          >
+            <div class="titulo">Relatórios</div>
+          </v-list-item>
         </template>
 
-        <v-list-item :to="{ name: 'depositos' }" v-if="ehAdministrador">
-          Depósitos
+        <v-list-item class="sub-titulo" :to="{ name: 'produtos-por-estoque' }">
+          Produtos por estoque
         </v-list-item>
-        <v-list-item :to="{ name: 'operadores' }" v-if="ehAdministrador">
-          Operadores
-        </v-list-item>
-        <v-list-item :to="{ name: 'perfil' }">Perfil</v-list-item>
       </v-list-group>
 
-      <v-list-item prepend-icon="mdi-logout" @click="sair()">Sair</v-list-item>
+      <v-list-group value="Administrativo" no-action>
+        <template v-slot:activator="{ props }">
+          <v-list-item v-bind="props" prepend-icon="mdi-cogs">
+            <div class="titulo">Administrativo</div>
+          </v-list-item>
+        </template>
+
+        <v-list-item
+          class="sub-titulo"
+          :to="{ name: 'depositos' }"
+          v-if="ehAdministrador"
+        >
+          Depósitos
+        </v-list-item>
+        <v-list-item
+          class="sub-titulo"
+          :to="{ name: 'operadores' }"
+          v-if="ehAdministrador"
+        >
+          Operadores
+        </v-list-item>
+        <v-list-item class="sub-titulo" :to="{ name: 'perfil' }">
+          Perfil
+        </v-list-item>
+      </v-list-group>
+
+      <v-list-item
+        class="titulo-item"
+        prepend-icon="mdi-logout"
+        @click="sair()"
+      >
+        Sair
+      </v-list-item>
     </v-list>
   </v-navigation-drawer>
   <v-main>
@@ -128,5 +175,13 @@ export default {
 <style>
 .menu-opcoes {
   text-align: left !important;
+}
+
+/* .titulo-item {
+} */
+
+.titulo {
+  font-size: 16px !important;
+  font-weight: 900;
 }
 </style>

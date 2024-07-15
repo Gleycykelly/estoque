@@ -18,6 +18,7 @@ import CategoriasView from '../pages/categorias/CategoriasView.vue';
 import CategoriasEdicaoView from '../pages/categorias/CategoriasEdicaoView.vue';
 import FornecedoresView from '../pages/fornecedores/FornecedoresView.vue';
 import FornecedoresEdicaoView from '../pages/fornecedores/FornecedoresEdicaoView.vue';
+import ProdutosPorEstoque from '../pages/relatorios/ProdutosPorEstoque.vue';
 
 const routes = [
   {
@@ -115,6 +116,11 @@ const routes = [
     path: '/categorias-edicao',
     name: 'categorias-edicao',
     component: CategoriasEdicaoView,
+  },
+  {
+    path: '/produtos-por-estoque',
+    name: 'produtos-por-estoque',
+    component: ProdutosPorEstoque,
   },
 ];
 
