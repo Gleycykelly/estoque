@@ -6,7 +6,7 @@ import {
 import { CreateLancamentosProdutoDto } from './dto/create-lancamentos-produto.dto';
 import { UpdateLancamentosProdutoDto } from './dto/update-lancamentos-produto.dto';
 import { LancamentosProdutos } from './entities/lancamento-produto.entity';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LocalizacoesDepositosService } from 'src/localizacoes-depositos/localizacoes-depositos.service';
 import { ProdutosService } from 'src/produtos/produtos.service';
@@ -126,11 +126,35 @@ export class LancamentosProdutosService {
     });
   }
 
-  async remove(id: number) {
+  async remove(id: number, queryRunner?: QueryRunner) {
     try {
-      const lancamentoProduto = await this.findOne(id);
+      let lancamentoProduto: LancamentosProdutos;
 
-      return await this.lancamentoRepository.remove(lancamentoProduto);
+      if (queryRunner) {
+        lancamentoProduto = await queryRunner.manager.findOne(
+          LancamentosProdutos,
+          {
+            where: { id },
+          },
+        );
+      } else {
+        lancamentoProduto = await this.findOne(id);
+      }
+
+      if (!lancamentoProduto) {
+        throw new NotFoundException(
+          `Nenhum lançamento de produto encontrado para o id ${id}`,
+        );
+      }
+
+      if (queryRunner) {
+        await queryRunner.manager.remove(
+          LancamentosProdutos,
+          lancamentoProduto,
+        );
+      } else {
+        await this.lancamentoRepository.remove(lancamentoProduto);
+      }
     } catch (error) {
       throw new ConflictException(
         'Não foi possível excluir o lançamento do produto porque há movimentações associadas a ele.',

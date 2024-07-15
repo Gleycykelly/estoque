@@ -1,17 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateMovimentacoeDto } from './dto/create-movimentacoe.dto';
 import { UpdateMovimentacoeDto } from './dto/update-movimentacoe.dto';
 import { Movimentacoes } from './entities/movimentacao.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
 import { LancamentosProdutosService } from 'src/lancamentos-produtos/lancamentos-produtos.service';
 import { AuthService } from 'src/auth/auth.service';
 import { ObterParcialMovimentacaoDto } from './dto/obter-parcial-movimentacao.dto';
+import { LancamentosProdutos } from 'src/lancamentos-produtos/entities/lancamento-produto.entity';
 
 @Injectable()
 export class MovimentacoesService {
   constructor(
+    private dataSource: DataSource,
     private readonly authService: AuthService,
     private readonly usuarioService: UsuariosService,
     private readonly lancamentoProdutoService: LancamentosProdutosService,
@@ -221,17 +227,55 @@ export class MovimentacoesService {
   }
 
   async remove(id: number) {
-    const movimentacao = await this.movimentacaoRepository.findOne({
-      where: { id },
-    });
+    const queryRunner =
+      this.movimentacaoRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    if (!movimentacao) {
-      throw new NotFoundException(
-        `Nenhuma movimentação encontrada para o id ${id}`,
+    try {
+      const movimentacao = await this.movimentacaoRepository.findOne({
+        relations: ['lancamentoProduto'],
+        where: { id },
+      });
+
+      if (!movimentacao) {
+        throw new NotFoundException(
+          `Nenhuma movimentação encontrada para o id ${id}`,
+        );
+      }
+
+      if (movimentacao.tipoMovimentacao == 'Saída') {
+        await queryRunner.manager.remove(Movimentacoes, movimentacao);
+        queryRunner.commitTransaction();
+        return movimentacao;
+      }
+
+      queryRunner.manager.getRepository(Movimentacoes);
+      queryRunner.manager.getRepository(LancamentosProdutos);
+
+      const lancamentoParaRemover = movimentacao.lancamentoProduto.id;
+
+      const movimetacoesSaida = await this.movimentacaoRepository.find({
+        where: { lancamentoProduto: { id: lancamentoParaRemover } },
+      });
+
+      await queryRunner.manager.remove(Movimentacoes, movimentacao);
+
+      for (const movimentacao of movimetacoesSaida) {
+        await queryRunner.manager.remove(Movimentacoes, movimentacao);
+      }
+
+      await this.lancamentoProdutoService.remove(
+        lancamentoParaRemover,
+        queryRunner,
       );
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new ConflictException('Não foi possível excluir a movimentação.');
+    } finally {
+      await queryRunner.release();
     }
-
-    return this.movimentacaoRepository.remove(movimentacao);
   }
 
   async obterPorLote(lote: string) {

@@ -32,8 +32,26 @@
           </v-btn>
         </div>
 
-        <v-dialog v-model="modalConfirmarExclusao" max-width="400" persistent>
-          <v-card text="Tem certeza que deseja excluir o item?">
+        <v-dialog v-model="modalConfirmarExclusao" max-width="500" persistent>
+          <v-card>
+            <v-card-text>
+              Tem certeza que deseja excluir o item?
+              <div
+                style="padding: 25px"
+                v-if="telaParaFiltrar == 'movimentacoes'"
+              >
+                <v-alert
+                  border="top"
+                  type="warning"
+                  variant="outlined"
+                  prominent
+                >
+                  Ao excluir uma movimentação de entrada, todas as movimentações
+                  de saída associadas ao mesmo lote serão excluídas também!
+                </v-alert>
+              </div>
+            </v-card-text>
+
             <template v-slot:actions>
               <v-spacer></v-spacer>
 
