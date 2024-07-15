@@ -327,6 +327,75 @@ export class MovimentacoesService {
     };
   }
 
+  async obterProdutosPorEstoque(id: number) {
+    const movimentacoes = await this.movimentacaoRepository.find({
+      where: {
+        lancamentoProduto: {
+          localizacaoDeposito: {
+            deposito: {
+              id: id,
+            },
+          },
+        },
+      },
+      relations: [
+        'lancamentoProduto',
+        'lancamentoProduto.produto',
+        'lancamentoProduto.produto.porcoes',
+        'lancamentoProduto.produto.porcoes.unidadeMedida',
+        'lancamentoProduto.produto.porcoes.valorNutricional',
+        'lancamentoProduto.produto.porcoes.informacaoNutricional',
+        'lancamentoProduto.fornecedor',
+        'lancamentoProduto.fornecedor.endereco',
+        'lancamentoProduto.localizacaoDeposito',
+        'lancamentoProduto.localizacaoDeposito.deposito',
+        'usuario',
+      ],
+    });
+    const dados = [];
+
+    for (const movimentacao of movimentacoes) {
+      if (dados.length <= 0) {
+        dados.push({
+          deposito:
+            movimentacao.lancamentoProduto.localizacaoDeposito.deposito
+              .descricao,
+          produto: movimentacao.lancamentoProduto.produto.nome,
+          quantidadeEmEstoque:
+            movimentacao.tipoMovimentacao === 'Entrada'
+              ? movimentacao.quantidade
+              : -movimentacao.quantidade,
+          lote: movimentacao.lancamentoProduto.lote,
+        });
+      } else {
+        const index = dados.findIndex(
+          (m) => m.lote === movimentacao.lancamentoProduto.lote,
+        );
+        if (index != -1) {
+          dados[index].quantidadeEmEstoque =
+            dados[index].quantidadeEmEstoque +
+            (movimentacao.tipoMovimentacao == 'Entrada'
+              ? movimentacao.quantidade
+              : -movimentacao.quantidade);
+        } else {
+          dados.push({
+            deposito:
+              movimentacao.lancamentoProduto.localizacaoDeposito.deposito
+                .descricao,
+            produto: movimentacao.lancamentoProduto.produto.nome,
+            quantidadeEmEstoque:
+              movimentacao.tipoMovimentacao === 'Entrada'
+                ? movimentacao.quantidade
+                : -movimentacao.quantidade,
+            lote: movimentacao.lancamentoProduto.lote,
+          });
+        }
+      }
+    }
+
+    return dados;
+  }
+
   private async obtemEntidadeEstrangeira(entidade: any, service: any) {
     if (entidade.id) {
       const entidadeBD = await service.findOne(entidade.id);

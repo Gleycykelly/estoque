@@ -13,9 +13,11 @@
           <v-tooltip activator="parent" location="top">Emitir em PDF</v-tooltip>
         </v-btn>
 
-        <v-btn icon color="#AA00FF" @click="emitirEmCSV()">
+        <v-btn icon color="#AA00FF" @click="emitirEmExcel()">
           <v-icon>mdi-microsoft-excel</v-icon>
-          <v-tooltip activator="parent" location="top">Emitir em CSV</v-tooltip>
+          <v-tooltip activator="parent" location="top">
+            Emitir em Excel
+          </v-tooltip>
         </v-btn>
       </v-toolbar>
 
@@ -27,7 +29,6 @@
           item-value="id"
           v-model="modelo.deposito"
           variant="outlined"
-          cleatable
         ></v-combobox>
       </v-card-text>
     </v-card>
@@ -76,6 +77,33 @@ export default {
             console.log(this.depositos);
           }
         });
+    },
+    async emitirEmExcel() {
+      console.log(this.modelo);
+      try {
+        api
+          .post(
+            `http://localhost:3000/excel/produtos-por-estoque`,
+            this.modelo,
+            {
+              headers: {
+                Authorization: `Bearer ${this.obterToken()}`,
+              },
+              responseType: 'blob',
+            },
+          )
+          .then((response) => {
+            console.log(response.data);
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'filename.xlsx');
+            document.body.appendChild(link);
+            link.click();
+          });
+      } catch (error) {
+        console.error('Erro ao baixar o arquivo Excel', error);
+      }
     },
   },
   created() {
