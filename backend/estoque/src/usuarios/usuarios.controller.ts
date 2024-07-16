@@ -25,7 +25,7 @@ const AllowUnauthorizedRequest = () =>
 
 @UseGuards(AuthGuard, RoleGuard)
 @ApiTags('usuarios')
-@ApiBearerAuth()
+// @ApiBearerAuth()
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
@@ -54,6 +54,7 @@ export class UsuariosController {
   @Roles(Role.Administrador)
   @Post('/obter-usuario-logado')
   obterUsuarioLogado(@Headers('Authorization') token: string) {
+    console.log(token);
     return this.usuariosService.obterUsuarioLogado(token);
   }
 

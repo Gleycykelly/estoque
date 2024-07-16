@@ -35,6 +35,7 @@ const comunicacaoAbstrata = (caminho) => {
   );
 
   return {
+    instancia,
     criar: (modelo) => instancia.post(`${caminho}/`, modelo),
     atualizar: (id, modelo) => instancia.patch(`${caminho}/${id}`, modelo),
     obterPorId: (id) => instancia.get(`${caminho}/${id}`),
