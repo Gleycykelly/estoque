@@ -41,7 +41,9 @@ export default {
   methods: {
     voltar() {
       if (this.dadosOutraTela && this.dadosOutraTela.indoParaCriacao) {
-        this.dadosOutraTela.dadosOriginais.categoria = this.modelo;
+        if (this.modelo && this.modelo.id) {
+          this.dadosOutraTela.dadosOriginais.categoria = this.modelo;
+        }
 
         const dadosOutraTela = {
           dadosOriginais: this.dadosOutraTela.dadosOriginais,

@@ -59,7 +59,21 @@ export class ProdutosService {
       ...createProdutoDto,
     });
 
-    return this.produtoRepository.save(produto);
+    const produtoCadastrado = await this.produtoRepository.save(produto);
+
+    if (createProdutoDto.porcoes && createProdutoDto.porcoes.length > 0) {
+      const porcoes = createProdutoDto.porcoes;
+
+      createProdutoDto.porcoes = [];
+
+      for (const porcao of porcoes) {
+        porcao.produto = produtoCadastrado;
+        createProdutoDto.porcoes.push(
+          await this.obtemEntidadeEstrangeira(porcao, this.porcaoService),
+        );
+      }
+    }
+    return produtoCadastrado;
   }
 
   async update(id: number, updateProdutoDto: UpdateProdutoDto) {

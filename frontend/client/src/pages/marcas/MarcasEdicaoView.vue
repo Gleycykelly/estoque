@@ -41,7 +41,10 @@ export default {
   methods: {
     voltar() {
       if (this.dadosOutraTela && this.dadosOutraTela.indoParaCriacao) {
-        this.dadosOutraTela.dadosOriginais.marca = this.modelo;
+        if (this.modelo && this.modelo.id) {
+          this.dadosOutraTela.dadosOriginais.marca = this.modelo;
+        }
+
         const dadosOutraTela = {
           dadosOriginais: this.dadosOutraTela.dadosOriginais,
           rotaOriginal: this.dadosOutraTela.rotaOriginal,
@@ -64,7 +67,7 @@ export default {
 
       if (this.dados && this.dados.ehTelaAtualizacao) {
         await comunicacaoMarcas
-          .atualizar(this.dados.id)
+          .atualizar(this.dados.id, this.modelo)
           .then(() => {
             useAlerta().exibirSnackbar(
               'A marca foi atualizada com sucesso!',

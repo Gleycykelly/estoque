@@ -526,7 +526,6 @@ import comunicacaoMarcas from '@/services/marcas/comunicacao-marcas';
 import comunicacaoPorcoes from '@/services/porcoes/comunicacao-porcoes';
 import comunicacaoProdutos from '@/services/produtos/comunicacao-produtos';
 import comunicacaoUnidadesMedidas from '@/services/unidades-medidas/comunicacao-unidade-medidas';
-import comunicacaoUsuarios from '@/services/usuarios/comunicacao-usuarios';
 import { useDadosStore, useAlerta, useDadosDeOutraTela } from '@/store/index';
 
 export default {
@@ -534,7 +533,9 @@ export default {
   data() {
     return {
       dialog: false,
-      modelo: {},
+      modelo: {
+        porcoes: [],
+      },
       categorias: [],
       unidadesDeMedida: [],
       marcas: [],
@@ -629,7 +630,7 @@ export default {
             }
           });
       } else {
-        await comunicacaoUsuarios
+        await comunicacaoProdutos
           .criar(this.modelo)
           .then((resultado) => {
             useAlerta().exibirSnackbar(
