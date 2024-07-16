@@ -13,6 +13,7 @@ import { LancamentosProdutosService } from 'src/lancamentos-produtos/lancamentos
 import { AuthService } from 'src/auth/auth.service';
 import { ObterParcialMovimentacaoDto } from './dto/obter-parcial-movimentacao.dto';
 import { LancamentosProdutos } from 'src/lancamentos-produtos/entities/lancamento-produto.entity';
+import { format } from 'date-fns';
 
 @Injectable()
 export class MovimentacoesService {
@@ -327,35 +328,42 @@ export class MovimentacoesService {
     };
   }
 
-  async obterProdutosPorEstoque(id: number) {
-    const movimentacoes = await this.movimentacaoRepository.find({
-      where: {
-        lancamentoProduto: {
-          localizacaoDeposito: {
-            deposito: {
-              id: id,
+  async obterProdutosPorEstoque(idDeposito?: number) {
+    let movimentacoes = [];
+
+    if (idDeposito) {
+      movimentacoes = await this.movimentacaoRepository.find({
+        where: {
+          lancamentoProduto: {
+            localizacaoDeposito: {
+              deposito: {
+                id: idDeposito,
+              },
             },
           },
         },
-      },
-      relations: [
-        'lancamentoProduto',
-        'lancamentoProduto.produto',
-        'lancamentoProduto.produto.porcoes',
-        'lancamentoProduto.produto.porcoes.unidadeMedida',
-        'lancamentoProduto.produto.porcoes.valorNutricional',
-        'lancamentoProduto.produto.porcoes.informacaoNutricional',
-        'lancamentoProduto.fornecedor',
-        'lancamentoProduto.fornecedor.endereco',
-        'lancamentoProduto.localizacaoDeposito',
-        'lancamentoProduto.localizacaoDeposito.deposito',
-        'usuario',
-      ],
-    });
+        relations: [
+          'lancamentoProduto',
+          'lancamentoProduto.produto',
+          'lancamentoProduto.produto.porcoes',
+          'lancamentoProduto.produto.porcoes.unidadeMedida',
+          'lancamentoProduto.produto.porcoes.valorNutricional',
+          'lancamentoProduto.produto.porcoes.informacaoNutricional',
+          'lancamentoProduto.fornecedor',
+          'lancamentoProduto.fornecedor.endereco',
+          'lancamentoProduto.localizacaoDeposito',
+          'lancamentoProduto.localizacaoDeposito.deposito',
+          'usuario',
+        ],
+      });
+    } else {
+      movimentacoes = await this.findAll();
+    }
 
     if (movimentacoes == null || movimentacoes.length <= 0) {
-      throw new NotFoundException('Nenhum dado encontrado!');
+      throw new NotFoundException('Nenhum item encontrado para emissão!');
     }
+
     const dados = [];
 
     for (const movimentacao of movimentacoes) {
@@ -364,7 +372,12 @@ export class MovimentacoesService {
           deposito:
             movimentacao.lancamentoProduto.localizacaoDeposito.deposito
               .descricao,
+          codigoProduto: movimentacao.lancamentoProduto.produto.codigoProduto,
           produto: movimentacao.lancamentoProduto.produto.nome,
+          dataValidade: format(
+            movimentacao.lancamentoProduto.dataValidade,
+            'dd/MM/yyyy',
+          ),
           quantidadeEmEstoque:
             movimentacao.tipoMovimentacao === 'Entrada'
               ? movimentacao.quantidade
@@ -386,6 +399,11 @@ export class MovimentacoesService {
             deposito:
               movimentacao.lancamentoProduto.localizacaoDeposito.deposito
                 .descricao,
+            codigoProduto: movimentacao.lancamentoProduto.produto.codigoProduto,
+            dataValidade: format(
+              movimentacao.lancamentoProduto.dataValidade,
+              'dd/MM/yyyy',
+            ),
             produto: movimentacao.lancamentoProduto.produto.nome,
             quantidadeEmEstoque:
               movimentacao.tipoMovimentacao === 'Entrada'

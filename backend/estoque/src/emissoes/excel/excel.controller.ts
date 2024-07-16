@@ -15,7 +15,7 @@ export class ExcelController {
     @Res() res: Response,
   ): Promise<void> {
     const filePath =
-      await this.excelService.produtosPorEstoque(dadosEmissaoExcelDto); // Passa o filtro para o serviço
+      await this.excelService.produtosPorEstoque(dadosEmissaoExcelDto);
     res.download(filePath, () => {
       this.excelService.deleteFile(filePath);
     });

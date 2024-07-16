@@ -29,6 +29,7 @@
           item-value="id"
           v-model="modelo.deposito"
           variant="outlined"
+          clearable
         ></v-combobox>
       </v-card-text>
     </v-card>
@@ -37,7 +38,7 @@
 
 <script>
 import api from '@/services/api';
-import { useAuthStore } from '@/store/index';
+import { useAuthStore, useAlerta } from '@/store/index';
 
 export default {
   name: 'ProdutosPorEstoque',
@@ -74,39 +75,40 @@ export default {
 
           for (const deposito of response.data) {
             this.depositos.push(deposito);
-            console.log(this.depositos);
           }
         });
     },
     async emitirEmExcel() {
-      console.log(this.modelo);
-      try {
-        api
-          .post(
-            `http://localhost:3000/excel/produtos-por-estoque`,
-            this.modelo,
-            {
-              headers: {
-                Authorization: `Bearer ${this.obterToken()}`,
-              },
-              responseType: 'blob',
-            },
-          )
-          .then((response) => {
-            console.log(response.data);
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'filename.xlsx');
-            document.body.appendChild(link);
-            link.click();
-          });
-      } catch (error) {
-        console.error('Erro ao baixar o arquivo Excel', error);
-      }
+      api
+        .post(`http://localhost:3000/excel/produtos-por-estoque`, this.modelo, {
+          headers: {
+            Authorization: `Bearer ${this.obterToken()}`,
+          },
+          responseType: 'blob',
+        })
+        .then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', `produtos.xlsx`);
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch((error) => {
+          if (error.response && error.response.status == 404) {
+            useAlerta().exibirSnackbar(
+              'Nenhum item encontrado para emissão!',
+              'red',
+            );
+          } else {
+            useAlerta().exibirSnackbar(
+              'Não foi possível realizar a emissão. Entre em contato com o suporte!',
+              'red',
+            );
+          }
+        });
     },
     async emitirEmPDF() {
-      console.log(this.modelo);
       try {
         api
           .post(`http://localhost:3000/pdf/produtos-por-estoque`, this.modelo, {
@@ -116,7 +118,6 @@ export default {
             responseType: 'blob',
           })
           .then((response) => {
-            console.log(response.data);
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
