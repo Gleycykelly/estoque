@@ -14,8 +14,6 @@ export class ExcelController {
     @Body() dadosEmissaoExcelDto: DadosEmissaoExcelDto,
     @Res() res: Response,
   ): Promise<void> {
-    console.log('emissao');
-    console.log(dadosEmissaoExcelDto);
     const filePath =
       await this.excelService.produtosPorEstoque(dadosEmissaoExcelDto);
     res.download(filePath, () => {
