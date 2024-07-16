@@ -174,6 +174,7 @@
                 color="#AA00FF"
                 variant="outlined"
                 persistent-hint
+                clearable
               ></v-select>
 
               <v-select
@@ -187,6 +188,7 @@
                 color="#AA00FF"
                 variant="outlined"
                 persistent-hint
+                clearable
               ></v-select>
 
               <v-combobox
@@ -197,6 +199,8 @@
                 item-value="id"
                 v-model="filtros.tipoMovimentacao"
                 variant="outlined"
+                clearable
+                color="#AA00FF"
                 @update:model-value="
                   filtros.quantidadeMaiorQue = null;
                   filtros.quantidadeMenorQue = null;
@@ -216,6 +220,7 @@
                 color="#AA00FF"
                 variant="outlined"
                 persistent-hint
+                clearable
               ></v-select>
 
               <v-select
@@ -232,6 +237,7 @@
                 color="#AA00FF"
                 variant="outlined"
                 persistent-hint
+                clearable
               ></v-select>
 
               <v-select
@@ -245,6 +251,7 @@
                 color="#AA00FF"
                 variant="outlined"
                 persistent-hint
+                clearable
               ></v-select>
 
               <v-select
@@ -258,6 +265,7 @@
                 color="#AA00FF"
                 variant="outlined"
                 persistent-hint
+                clearable
               ></v-select>
 
               <v-text-field
@@ -267,6 +275,7 @@
                 v-model="filtros.quantidadeMaiorQue"
                 variant="outlined"
                 type="number"
+                clearable
                 @update:model-value="
                   filtros.quantidadeMenorQue = null;
                   filtros.tipoMovimentacao = 'Entrada';
@@ -280,6 +289,7 @@
                 v-model="filtros.quantidadeMenorQue"
                 variant="outlined"
                 type="number"
+                clearable
                 @update:model-value="
                   filtros.quantidadeMaiorQue = null;
                   filtros.tipoMovimentacao = 'Entrada';
@@ -293,6 +303,7 @@
                 v-model="filtros.diasParaVencer"
                 variant="outlined"
                 type="number"
+                clearable
                 @update:model-value="filtros.tipoMovimentacao = 'Entrada'"
               ></v-text-field>
 
@@ -304,6 +315,7 @@
                 color="#AA00FF"
                 hide-details
                 inset
+                clearable
                 @update:model-value="filtros.tipoMovimentacao = 'Entrada'"
               ></v-switch>
 
@@ -315,6 +327,8 @@
                 item-value="id"
                 v-model="filtros.generoUsuario"
                 variant="outlined"
+                clearable
+                color="#AA00FF"
               ></v-combobox>
 
               <v-combobox
@@ -325,6 +339,8 @@
                 item-value="id"
                 v-model="filtros.permissaoUsuario"
                 variant="outlined"
+                clearable
+                color="#AA00FF"
               ></v-combobox>
             </div>
           </v-card-text>
