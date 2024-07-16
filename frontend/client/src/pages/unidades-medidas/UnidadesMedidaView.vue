@@ -22,7 +22,9 @@ export default {
     Aterrissagem,
   },
   data() {
-    return comunicacaoUnidadesMedidas;
+    return {
+      comunicacaoUnidadesMedidas,
+    };
   },
 };
 </script>
