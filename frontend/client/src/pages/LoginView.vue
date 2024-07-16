@@ -55,9 +55,7 @@
 </template>
 
 <script>
-import comunicacaoAutenticacao, {
-  login,
-} from '@/services/autenticacao/comunicacao-autenticacao';
+import { login } from '@/services/autenticacao/comunicacao-autenticacao';
 import { useAuthStore, useAlerta } from '@/store/index';
 
 export default {
@@ -82,7 +80,6 @@ export default {
         return;
       }
 
-      await comunicacaoAutenticacao;
       login({
         email: this.form.email,
         senha: this.form.senha,
