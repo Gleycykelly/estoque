@@ -13,6 +13,7 @@ const instancia = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  responseType: 'blob',
 });
 
 instancia.interceptors.request.use(
@@ -34,5 +35,5 @@ instancia.interceptors.request.use(
 );
 
 export const emissaoProdutosPorEstoque = (modelo) => {
-  return instancia.post(`excel/produtos-por-estoque`, modelo);
+  return instancia.post(`/excel/produtos-por-estoque`, modelo);
 };
