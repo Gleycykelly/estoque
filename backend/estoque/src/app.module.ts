@@ -33,7 +33,6 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/auth.guard';
 import { ExcelModule } from './emissoes/excel/excel.module';
-import { PdfModule } from './emissoes/pdf/pdf.module';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -88,7 +87,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     PorcoesModule,
     InformacoesNutricionaisModule,
     ExcelModule,
-    PdfModule,
   ],
   controllers: [AppController],
   providers: [
