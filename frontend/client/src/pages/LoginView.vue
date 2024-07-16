@@ -55,7 +55,9 @@
 </template>
 
 <script>
-import api from '@/services/api';
+import comunicacaoAutenticacao, {
+  login,
+} from '@/services/autenticacao/comunicacao-autenticacao';
 import { useAuthStore, useAlerta } from '@/store/index';
 
 export default {
@@ -80,11 +82,11 @@ export default {
         return;
       }
 
-      api
-        .post(`http://localhost:3000/autenticacao/entrar/`, {
-          email: this.form.email,
-          senha: this.form.senha,
-        })
+      await comunicacaoAutenticacao;
+      login({
+        email: this.form.email,
+        senha: this.form.senha,
+      })
         .then((response) => {
           const token = response.data;
           const authStore = useAuthStore();

@@ -3,6 +3,7 @@
     titulo="Fornecedores"
     :provider="'fornecedores'"
     :telaEdicao="'fornecedores-edicao'"
+    :comunicacao="comunicacaoFornecedores"
     :colunasAterrissagem="[
       { title: 'Identificador', value: 'id' },
       { title: 'CNPJ', value: 'cnpj' },
@@ -13,11 +14,17 @@
 </template>
 
 <script>
+import comunicacaoFornecedores from '@/services/fornecedores/comunicacao-fornecedores';
 import Aterrissagem from '../../components/Aterrisagem.vue';
 export default {
   name: 'fornecedores',
   components: {
     Aterrissagem,
+  },
+  data() {
+    return {
+      comunicacaoFornecedores,
+    };
   },
 };
 </script>

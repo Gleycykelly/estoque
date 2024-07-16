@@ -521,13 +521,13 @@
 </template>
 
 <script>
-import api from '@/services/api';
-import {
-  useAuthStore,
-  useDadosStore,
-  useAlerta,
-  useDadosDeOutraTela,
-} from '@/store/index';
+import comunicacaoCategorias from '@/services/categorias/comunicacao-categorias';
+import comunicacaoMarcas from '@/services/marcas/comunicacao-marcas';
+import comunicacaoPorcoes from '@/services/porcoes/comunicacao-porcoes';
+import comunicacaoProdutos from '@/services/produtos/comunicacao-produtos';
+import comunicacaoUnidadesMedidas from '@/services/unidades-medidas/comunicacao-unidade-medidas';
+import comunicacaoUsuarios from '@/services/usuarios/comunicacao-usuarios';
+import { useDadosStore, useAlerta, useDadosDeOutraTela } from '@/store/index';
 
 export default {
   name: 'ProdutosEdicao',
@@ -547,17 +547,6 @@ export default {
     };
   },
   methods: {
-    obterToken() {
-      const authStore = useAuthStore();
-      const token = authStore.getToken();
-
-      if (!token) {
-        this.$router.push('/login');
-      }
-
-      return token;
-    },
-
     voltar() {
       if (this.dadosDeOutraTela && this.dadosDeOutraTela.indoParaCriacao) {
         if (this.modelo.codigoProduto) {
@@ -623,16 +612,8 @@ export default {
       }
 
       if (this.dados && this.dados.ehTelaAtualizacao) {
-        api
-          .patch(
-            `http://localhost:3000/produtos/${this.dados.id}`,
-            this.modelo,
-            {
-              headers: {
-                Authorization: `Bearer ${this.obterToken()}`,
-              },
-            },
-          )
+        await comunicacaoProdutos
+          .atualizar(this.dados.id, this.modelo)
           .then(() => {
             useAlerta().exibirSnackbar(
               'O produto foi atualizado com sucesso!',
@@ -648,12 +629,8 @@ export default {
             }
           });
       } else {
-        api
-          .post(`http://localhost:3000/produtos/`, this.modelo, {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          })
+        await comunicacaoUsuarios
+          .criar(this.modelo)
           .then((resultado) => {
             useAlerta().exibirSnackbar(
               'O produto foi criado com sucesso!',
@@ -674,59 +651,35 @@ export default {
     },
 
     async obterProdutos() {
-      api
-        .get(`http://localhost:3000/produtos/${this.dados.id}`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.modelo = null;
+      await comunicacaoProdutos.obterPorId(this.dados.id).then((response) => {
+        this.modelo = null;
 
-          this.modelo = response.data;
-        });
+        this.modelo = response.data;
+      });
     },
 
     async obterCategorias() {
-      api
-        .get(`http://localhost:3000/categorias/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.categorias = [];
+      await comunicacaoCategorias.obterTodos().then((response) => {
+        this.categorias = [];
 
-          this.categorias = response.data;
-        });
+        this.categorias = response.data;
+      });
     },
 
     async obterUnidadesMedidas() {
-      api
-        .get(`http://localhost:3000/unidades-medidas/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.unidadesDeMedida = [];
+      await comunicacaoUnidadesMedidas.obterTodos().then((response) => {
+        this.unidadesDeMedida = [];
 
-          this.unidadesDeMedida = response.data;
-        });
+        this.unidadesDeMedida = response.data;
+      });
     },
 
     async obterMarcas() {
-      api
-        .get(`http://localhost:3000/marcas/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.marcas = [];
+      await comunicacaoMarcas.obterTodos(0).then((response) => {
+        this.marcas = [];
 
-          this.marcas = response.data;
-        });
+        this.marcas = response.data;
+      });
     },
 
     adicionarCategoria() {
@@ -785,14 +738,10 @@ export default {
       };
     },
 
-    excluirPorcao(porcao) {
+    async excluirPorcao(porcao) {
       if (porcao.id) {
-        api
-          .delete(`http://localhost:3000/porcoes/${porcao.id}`, {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          })
+        await comunicacaoPorcoes
+          .excluir(porcao.id)
           .then(() => {
             useAlerta().exibirSnackbar('Porção excluída com sucesso!', 'green');
 

@@ -36,8 +36,8 @@
 </template>
 
 <script>
-import api from '@/services/api';
-import { useAuthStore } from '@/store/index';
+import comunicacaoMovimentacoes from '@/services/movimentacoes/comunicacao-movimentacoes';
+
 export default {
   name: 'HomeView',
   data() {
@@ -48,27 +48,9 @@ export default {
     };
   },
   methods: {
-    obterToken() {
-      const authStore = useAuthStore();
-      const token = authStore.getToken();
-
-      if (!token) {
-        this.$router.push('/login');
-      }
-
-      return token;
-    },
-
     async obterValoresTotais() {
-      api
-        .get(
-          `http://localhost:3000/movimentacoes/valor-total-entradas-saidas/`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          },
-        )
+      await comunicacaoMovimentacoes
+        .valorTotalEntradasESaidas()
         .then((response) => {
           this.modelo = null;
 
@@ -76,21 +58,15 @@ export default {
         });
     },
     async obterUltimasMovimentacoes() {
-      api
-        .get(`http://localhost:3000/movimentacoes/ultimas-movimentacoes/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.modelo.movimentacoes = [];
+      await comunicacaoMovimentacoes.ultimasMovimentacoes().then((response) => {
+        this.modelo.movimentacoes = [];
 
-          const dados = response.data;
+        const dados = response.data;
 
-          for (const dado of dados) {
-            this.modelo.movimentacoes.push(dado);
-          }
-        });
+        for (const dado of dados) {
+          this.modelo.movimentacoes.push(dado);
+        }
+      });
     },
   },
   created() {

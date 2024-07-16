@@ -29,13 +29,8 @@
 </template>
 
 <script>
-import api from '@/services/api';
-import {
-  useAuthStore,
-  useDadosStore,
-  useAlerta,
-  useDadosDeOutraTela,
-} from '@/store/index';
+import comunicacaoCategorias from '@/services/categorias/comunicacao-categorias';
+import { useDadosStore, useAlerta, useDadosDeOutraTela } from '@/store/index';
 export default {
   name: 'CategoriaEdicao',
   data() {
@@ -44,17 +39,6 @@ export default {
     };
   },
   methods: {
-    obterToken() {
-      const authStore = useAuthStore();
-      const token = authStore.getToken();
-
-      if (!token) {
-        this.$router.push('/login');
-      }
-
-      return token;
-    },
-
     voltar() {
       if (this.dadosOutraTela && this.dadosOutraTela.indoParaCriacao) {
         this.dadosOutraTela.dadosOriginais.categoria = this.modelo;
@@ -79,16 +63,8 @@ export default {
       }
 
       if (this.dados && this.dados.ehTelaAtualizacao) {
-        api
-          .patch(
-            `http://localhost:3000/categorias/${this.dados.id}`,
-            this.modelo,
-            {
-              headers: {
-                Authorization: `Bearer ${this.obterToken()}`,
-              },
-            },
-          )
+        await comunicacaoCategorias
+          .atualizar(this.dados.id, this.modelo)
           .then(() => {
             useAlerta().exibirSnackbar(
               'A categoria foi atualizada com sucesso!',
@@ -105,12 +81,8 @@ export default {
             }
           });
       } else {
-        api
-          .post(`http://localhost:3000/categorias/`, this.modelo, {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          })
+        await comunicacaoCategorias
+          .criar(this.modelo)
           .then((resultado) => {
             useAlerta().exibirSnackbar(
               'A categoria foi criada com sucesso!',
@@ -130,17 +102,11 @@ export default {
     },
 
     async obterCategoria() {
-      api
-        .get(`http://localhost:3000/categorias/${this.dados.id}`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.modelo = null;
+      await comunicacaoCategorias.obterPorId(this.dados.id).then((response) => {
+        this.modelo = null;
 
-          this.modelo = response.data;
-        });
+        this.modelo = response.data;
+      });
     },
   },
   created() {

@@ -29,13 +29,8 @@
 </template>
 
 <script>
-import api from '@/services/api';
-import {
-  useAuthStore,
-  useDadosStore,
-  useAlerta,
-  useDadosDeOutraTela,
-} from '@/store/index';
+import comunicacaoMarcas from '@/services/marcas/comunicacao-marcas';
+import { useDadosStore, useAlerta, useDadosDeOutraTela } from '@/store/index';
 export default {
   name: 'MarcasEdicao',
   data() {
@@ -44,17 +39,6 @@ export default {
     };
   },
   methods: {
-    obterToken() {
-      const authStore = useAuthStore();
-      const token = authStore.getToken();
-
-      if (!token) {
-        this.$router.push('/login');
-      }
-
-      return token;
-    },
-
     voltar() {
       if (this.dadosOutraTela && this.dadosOutraTela.indoParaCriacao) {
         this.dadosOutraTela.dadosOriginais.marca = this.modelo;
@@ -79,12 +63,8 @@ export default {
       }
 
       if (this.dados && this.dados.ehTelaAtualizacao) {
-        api
-          .patch(`http://localhost:3000/marcas/${this.dados.id}`, this.modelo, {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          })
+        await comunicacaoMarcas
+          .atualizar(this.dados.id)
           .then(() => {
             useAlerta().exibirSnackbar(
               'A marca foi atualizada com sucesso!',
@@ -101,12 +81,8 @@ export default {
             }
           });
       } else {
-        api
-          .post(`http://localhost:3000/marcas/`, this.modelo, {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          })
+        await comunicacaoMarcas
+          .criar(this.modelo)
           .then((resultado) => {
             useAlerta().exibirSnackbar(
               'A marca foi criada com sucesso!',
@@ -126,17 +102,11 @@ export default {
     },
 
     async obterMarcas() {
-      api
-        .get(`http://localhost:3000/marcas/${this.dados.id}`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.modelo = null;
+      await comunicacaoMarcas.obterPorId(this.dados.id).then((response) => {
+        this.modelo = null;
 
-          this.modelo = response.data;
-        });
+        this.modelo = response.data;
+      });
     },
   },
   created() {

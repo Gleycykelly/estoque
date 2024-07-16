@@ -104,16 +104,11 @@
 </template>
 
 <script>
-import api from '@/services/api';
-import {
-  useAuthStore,
-  useDadosStore,
-  useAlerta,
-  useDadosDeOutraTela,
-} from '@/store/index';
-// import MensagensAlerta from '../../components/MensagensAlerta.vue';
+import comunicacaoDepositos from '@/services/depositos/comunicacao-deposito';
+import comunicacaoEstados from '@/services/estados/comunicacao-estados';
+import comunicacaoMunicipios from '@/services/municipios/comunicacao-municipios';
+import { useDadosStore, useAlerta, useDadosDeOutraTela } from '@/store/index';
 export default {
-  // components: { MensagensAlerta },
   name: 'DepositosEdicao',
   data() {
     return {
@@ -137,17 +132,6 @@ export default {
     };
   },
   methods: {
-    obterToken() {
-      const authStore = useAuthStore();
-      const token = authStore.getToken();
-
-      if (!token) {
-        this.$router.push('/login');
-      }
-
-      return token;
-    },
-
     voltar() {
       if (this.dadosOutraTela && this.dadosOutraTela.indoParaCriacao) {
         this.dadosOutraTela.dadosOriginais.lancamentoProduto.localizacaoDeposito.deposito =
@@ -214,20 +198,8 @@ export default {
       }
 
       if (this.dados && this.dados.ehTelaAtualizacao) {
-        this.modelo.id = null;
-        api
-          .patch(
-            `http://localhost:3000/depositos/${this.dados.id}`,
-            {
-              descricao: this.modelo.descricao,
-              endereco: this.modelo.endereco,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${this.obterToken()}`,
-              },
-            },
-          )
+        await comunicacaoDepositos
+          .atualizar(this.dados.id, this.modelo)
           .then(() => {
             useAlerta().exibirSnackbar(
               'O depósito foi atualizado com sucesso!',
@@ -244,12 +216,8 @@ export default {
             }
           });
       } else {
-        api
-          .post(`http://localhost:3000/depositos/`, this.modelo, {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          })
+        await comunicacaoDepositos
+          .criar(this.modelo)
           .then((resultado) => {
             useAlerta().exibirSnackbar(
               'O depósito foi criado com sucesso!',
@@ -270,35 +238,21 @@ export default {
     },
 
     async obterDepositos() {
-      api
-        .get(`http://localhost:3000/depositos/${this.dados.id}`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.modelo = null;
+      await comunicacaoDepositos.obterPorId(this.dados.id).then((response) => {
+        this.modelo = null;
 
-          this.modelo = response.data;
+        this.modelo = response.data;
 
-          this.modelo.endereco.estado = this.modelo.endereco.municipio.uf;
-          this.obterCidadesPorEstado(this.modelo.endereco.estado);
-        });
+        this.modelo.endereco.estado = this.modelo.endereco.municipio.uf;
+        this.obterCidadesPorEstado(this.modelo.endereco.estado);
+      });
     },
 
     async obterEstados(termo = '') {
-      api
-        .post(
-          `http://localhost:3000/estados/obter-parcial`,
-          {
-            termoDePesquisa: termo,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          },
-        )
+      await comunicacaoEstados
+        .obterParcialFiltro({
+          termoDePesquisa: termo,
+        })
         .then((response) => {
           this.estados = [];
 
@@ -316,18 +270,10 @@ export default {
 
     async obterCidades(estadoSelecionado) {
       if (estadoSelecionado) {
-        api
-          .post(
-            `http://localhost:3000/municipios/obter-parcial`,
-            {
-              uf: estadoSelecionado.uf,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${this.obterToken()}`,
-              },
-            },
-          )
+        await comunicacaoMunicipios
+          .obterParcialFiltro({
+            uf: estadoSelecionado.uf,
+          })
           .then((response) => {
             this.cidades = [];
 

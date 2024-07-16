@@ -71,8 +71,8 @@
 </template>
 
 <script>
-import api from '@/services/api';
-import { useAuthStore, useDadosStore, useAlerta } from '@/store/index';
+import comunicacaoUsuarios from '@/services/usuarios/comunicacao-usuarios';
+import { useDadosStore, useAlerta } from '@/store/index';
 
 export default {
   name: 'Perfil',
@@ -82,17 +82,6 @@ export default {
     };
   },
   methods: {
-    obterToken() {
-      const authStore = useAuthStore();
-      const token = authStore.getToken();
-
-      if (!token) {
-        this.$router.push('/login');
-      }
-
-      return token;
-    },
-
     podeGravar() {
       if (!this.modelo.nome) {
         useAlerta().exibirSnackbar('O nome é obrigatório!', 'orange');
@@ -142,16 +131,8 @@ export default {
         return;
       }
       if (this.modelo) {
-        api
-          .patch(
-            `http://localhost:3000/usuarios/${this.modelo.id}`,
-            this.modelo,
-            {
-              headers: {
-                Authorization: `Bearer ${this.obterToken()}`,
-              },
-            },
-          )
+        await comunicacaoUsuarios
+          .atualizar(this.modelo.id, this.modelo)
           .then(() => {
             useAlerta().exibirSnackbar(
               'Usuário alterado com sucesso!',
@@ -169,21 +150,11 @@ export default {
     },
 
     async obterUsuario() {
-      api
-        .post(
-          `http://localhost:3000/usuarios/obter-usuario-logado`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          },
-        )
-        .then((response) => {
-          this.modelo = null;
+      await comunicacaoUsuarios.obterUsuarioLogado().then((response) => {
+        this.modelo = null;
 
-          this.modelo = response.data;
-        });
+        this.modelo = response.data;
+      });
     },
   },
   created() {

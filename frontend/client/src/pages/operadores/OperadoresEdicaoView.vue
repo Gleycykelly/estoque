@@ -305,8 +305,11 @@
 </template>
 
 <script>
-import api from '@/services/api';
-import { useAuthStore, useDadosStore, useAlerta } from '@/store/index';
+import comunicacaoUsuarios from '@/services/usuarios/comunicacao-usuarios';
+import comunicacaoDepositos from '@/services/depositos/comunicacao-deposito';
+import { useDadosStore, useAlerta } from '@/store/index';
+import comunicacaoEstados from '@/services/estados/comunicacao-estados';
+import comunicacaoMunicipios from '@/services/municipios/comunicacao-municipios';
 export default {
   name: 'OperadoresEdicao',
   data() {
@@ -325,17 +328,6 @@ export default {
     };
   },
   methods: {
-    obterToken() {
-      const authStore = useAuthStore();
-      const token = authStore.getToken();
-
-      if (!token) {
-        this.$router.push('/login');
-      }
-
-      return token;
-    },
-
     voltar() {
       this.$router.push('/operadores');
     },
@@ -436,16 +428,8 @@ export default {
       }
 
       if (this.dados && this.dados.ehTelaAtualizacao) {
-        api
-          .patch(
-            `http://localhost:3000/usuarios/${this.dados.id}`,
-            this.modelo,
-            {
-              headers: {
-                Authorization: `Bearer ${this.obterToken()}`,
-              },
-            },
-          )
+        await comunicacaoUsuarios
+          .atualizar(this.dados.id, this.modelo)
           .then(() => {
             useAlerta().exibirSnackbar(
               'O operador foi atualizado com sucesso!',
@@ -461,12 +445,8 @@ export default {
             }
           });
       } else {
-        api
-          .post(`http://localhost:3000/usuarios/`, this.modelo, {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          })
+        await comunicacaoUsuarios
+          .criar(this.modelo)
           .then(() => {
             useAlerta().exibirSnackbar(
               'O operador foi criado com sucesso',
@@ -486,54 +466,33 @@ export default {
     },
 
     async obterOperadores() {
-      api
-        .get(`http://localhost:3000/usuarios/${this.dados.id}`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.modelo = null;
-          this.modelo = response.data;
+      await comunicacaoUsuarios.obterPorId(this.dados.id).then((response) => {
+        this.modelo = null;
+        this.modelo = response.data;
 
-          if (!this.modelo.usuariosTelefones)
-            this.modelo.usuariosTelefones = {};
+        if (!this.modelo.usuariosTelefones) this.modelo.usuariosTelefones = {};
 
-          for (const endereco of this.modelo.enderecos) {
-            endereco.estado = endereco.municipio.uf;
-          }
-        });
+        for (const endereco of this.modelo.enderecos) {
+          endereco.estado = endereco.municipio.uf;
+        }
+      });
     },
 
     async obterDepositos() {
-      api
-        .get(`http://localhost:3000/depositos/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.depositos = [];
+      comunicacaoDepositos.obterTodos().then((response) => {
+        this.depositos = [];
 
-          for (const deposito of response.data) {
-            this.depositos.push(deposito);
-          }
-        });
+        for (const deposito of response.data) {
+          this.depositos.push(deposito);
+        }
+      });
     },
 
     async obterEstados(termo = '') {
-      api
-        .post(
-          `http://localhost:3000/estados/obter-parcial`,
-          {
-            termoDePesquisa: termo,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          },
-        )
+      comunicacaoEstados
+        .obterParcialFiltro({
+          termoDePesquisa: termo,
+        })
         .then((response) => {
           this.estados = [];
 
@@ -550,27 +509,17 @@ export default {
     },
 
     async obterCidades(estadoSelecionado) {
-      if (estadoSelecionado) {
-        api
-          .post(
-            `http://localhost:3000/municipios/obter-parcial`,
-            {
-              uf: estadoSelecionado.uf,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${this.obterToken()}`,
-              },
-            },
-          )
-          .then((response) => {
-            this.cidades = [];
+      comunicacaoMunicipios
+        .obterParcialFiltro({
+          uf: estadoSelecionado.uf,
+        })
+        .then((response) => {
+          this.cidades = [];
 
-            for (const dado of response.data) {
-              this.cidades.push(dado);
-            }
-          });
-      }
+          for (const dado of response.data) {
+            this.cidades.push(dado);
+          }
+        });
     },
 
     sairDoModalNovoEndereco() {

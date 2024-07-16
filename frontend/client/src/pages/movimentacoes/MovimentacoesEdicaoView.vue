@@ -267,13 +267,11 @@
 </template>
 
 <script>
-import api from '@/services/api';
-import {
-  useAuthStore,
-  useDadosStore,
-  useAlerta,
-  useDadosDeOutraTela,
-} from '@/store/index';
+import comunicacaoDepositos from '@/services/depositos/comunicacao-deposito';
+import comunicacaoFornecedores from '@/services/fornecedores/comunicacao-fornecedores';
+import comunicacaoMovimentacoes from '@/services/movimentacoes/comunicacao-movimentacoes';
+import comunicacaoProdutos from '@/services/produtos/comunicacao-produtos';
+import { useDadosStore, useAlerta, useDadosDeOutraTela } from '@/store/index';
 
 export default {
   name: 'MovimentacoesEdicao',
@@ -297,17 +295,6 @@ export default {
     };
   },
   methods: {
-    obterToken() {
-      const authStore = useAuthStore();
-      const token = authStore.getToken();
-
-      if (!token) {
-        this.$router.push('/login');
-      }
-
-      return token;
-    },
-
     voltar() {
       this.$router.push('/movimentacoes');
     },
@@ -404,7 +391,7 @@ export default {
       return true;
     },
 
-    salvar() {
+    async salvar() {
       if (!this.podeGravar()) {
         return;
       }
@@ -412,16 +399,8 @@ export default {
       this.modelo.quantidade = parseInt(this.modelo.quantidade, 10);
 
       if (this.dados && this.dados.ehTelaAtualizacao) {
-        api
-          .patch(
-            `http://localhost:3000/movimentacoes/${this.dados.id}`,
-            this.modelo,
-            {
-              headers: {
-                Authorization: `Bearer ${this.obterToken()}`,
-              },
-            },
-          )
+        await comunicacaoMovimentacoes
+          .atualizar(this.dados.id, this.modelo)
           .then(() => {
             useAlerta().exibirSnackbar(
               'A movimentação foi atualizada com sucesso!',
@@ -437,12 +416,8 @@ export default {
             }
           });
       } else {
-        api
-          .post(`http://localhost:3000/movimentacoes/`, this.modelo, {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          })
+        await comunicacaoMovimentacoes
+          .criar(this.modelo)
           .then(() => {
             useAlerta().exibirSnackbar(
               'A movimentação foi criada com sucesso!',
@@ -461,12 +436,8 @@ export default {
     },
 
     async obterMovimentacao() {
-      api
-        .get(`http://localhost:3000/movimentacoes/${this.dados.id}`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
+      await comunicacaoMovimentacoes
+        .obterPorId(this.dados.id)
         .then((response) => {
           this.modelo = null;
 
@@ -490,51 +461,33 @@ export default {
     },
 
     async obterProdutos() {
-      api
-        .get(`http://localhost:3000/produtos/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.produtos = [];
+      await comunicacaoProdutos.obterTodos().then((response) => {
+        this.produtos = [];
 
-          for (const produto of response.data) {
-            this.produtos.push(produto);
-          }
-        });
+        for (const produto of response.data) {
+          this.produtos.push(produto);
+        }
+      });
     },
 
     async obterFornecedores() {
-      api
-        .get(`http://localhost:3000/fornecedores/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.fornecedores = [];
+      await comunicacaoFornecedores.obterTodos().then((response) => {
+        this.fornecedores = [];
 
-          for (const fornecedor of response.data) {
-            this.fornecedores.push(fornecedor);
-          }
-        });
+        for (const fornecedor of response.data) {
+          this.fornecedores.push(fornecedor);
+        }
+      });
     },
 
     async obterDepositos() {
-      api
-        .get(`http://localhost:3000/depositos/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.depositos = [];
+      await comunicacaoDepositos.obterTodos().then((response) => {
+        this.depositos = [];
 
-          for (const deposito of response.data) {
-            this.depositos.push(deposito);
-          }
-        });
+        for (const deposito of response.data) {
+          this.depositos.push(deposito);
+        }
+      });
     },
     adicionarProduto() {
       const dadosOutraTela = {
@@ -571,17 +524,10 @@ export default {
       this.$router.push('fornecedores-edicao');
     },
 
-    obterDadosPorLote(lote) {
+    async obterDadosPorLote(lote) {
       this.loading = true;
-      api
-        .get(
-          `http://localhost:3000/movimentacoes/obter-movimentacoes-por-lote/${lote}`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          },
-        )
+      await comunicacaoMovimentacoes
+        .obterMovimentacoesPorLote(lote)
         .then((response) => {
           this.modelo = null;
 

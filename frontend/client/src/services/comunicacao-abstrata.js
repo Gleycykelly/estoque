@@ -13,7 +13,6 @@ const comunicacaoAbstrata = (caminho) => {
     baseURL,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.obterToken()}`,
     },
   });
 
@@ -39,7 +38,10 @@ const comunicacaoAbstrata = (caminho) => {
     criar: (modelo) => instancia.post(`${caminho}/`, modelo),
     atualizar: (id, modelo) => instancia.patch(`${caminho}/${id}`, modelo),
     obterPorId: (id) => instancia.get(`${caminho}/${id}`),
+    excluir: (id) => instancia.delete(`${caminho}/${id}`),
     obterTodos: () => instancia.get(`${caminho}/`),
+    obterParcialFiltro: (filtros) =>
+      instancia.post(`${caminho}/obter-parcial`, filtros),
   };
 };
 

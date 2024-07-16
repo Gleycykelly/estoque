@@ -4,6 +4,7 @@
     :provider="'movimentacoes'"
     :telaEdicao="'movimentacoes-edicao'"
     :telaParaFiltrar="'movimentacoes'"
+    :comunicacao="comunicacaoMovimentacoes"
     :mostrarBotaoDeFiltro="true"
     :colunasAterrissagem="[
       { title: 'Identificador', value: 'id' },
@@ -18,12 +19,18 @@
 </template>
 
 <script>
+import comunicacaoMovimentacoes from '@/services/movimentacoes/comunicacao-movimentacoes';
 import Aterrissagem from '../../components/Aterrisagem.vue';
 
 export default {
   name: 'movimentacoes',
   components: {
     Aterrissagem,
+  },
+  data() {
+    return {
+      comunicacaoMovimentacoes,
+    };
   },
 };
 </script>

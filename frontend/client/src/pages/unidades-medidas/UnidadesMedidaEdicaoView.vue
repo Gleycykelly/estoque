@@ -34,13 +34,8 @@
 </template>
 
 <script>
-import api from '@/services/api';
-import {
-  useAuthStore,
-  useDadosStore,
-  useAlerta,
-  useDadosDeOutraTela,
-} from '@/store/index';
+import comunicacaoUnidadesMedidas from '@/services/unidades-medidas/comunicacao-unidade-medidas';
+import { useDadosStore, useAlerta, useDadosDeOutraTela } from '@/store/index';
 
 export default {
   name: 'UnidadesMedidasEdicao',
@@ -50,17 +45,6 @@ export default {
     };
   },
   methods: {
-    obterToken() {
-      const authStore = useAuthStore();
-      const token = authStore.getToken();
-
-      if (!token) {
-        this.$router.push('/login');
-      }
-
-      return token;
-    },
-
     voltar() {
       if (this.dadosOutraTela && this.dadosOutraTela.indoParaCriacao) {
         this.dadosOutraTela.dadosOriginais.unidadeMedida = this.modelo;
@@ -98,16 +82,8 @@ export default {
       }
 
       if (this.dados && this.dados.ehTelaAtualizacao) {
-        api
-          .patch(
-            `http://localhost:3000/unidades-medidas/${this.dados.id}`,
-            this.modelo,
-            {
-              headers: {
-                Authorization: `Bearer ${this.obterToken()}`,
-              },
-            },
-          )
+        await comunicacaoUnidadesMedidas
+          .atualizar(this.dados.id, this.modelo)
           .then(() => {
             useAlerta().exibirSnackbar(
               'A unidade de medida atualizada com sucesso!',
@@ -124,12 +100,8 @@ export default {
             }
           });
       } else {
-        api
-          .post(`http://localhost:3000/unidades-medidas/`, this.modelo, {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          })
+        await comunicacaoUnidadesMedidas
+          .criar(this.modelo)
           .then((resultado) => {
             useAlerta().exibirSnackbar(
               'A unidade de medida foi criada com sucesso!',
@@ -151,12 +123,8 @@ export default {
     },
 
     async obterUnidadesMedida() {
-      api
-        .get(`http://localhost:3000/unidades-medidas/${this.dados.id}`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
+      await comunicacaoUnidadesMedidas
+        .obterPorId(this.dados.id)
         .then((response) => {
           this.modelo = null;
 

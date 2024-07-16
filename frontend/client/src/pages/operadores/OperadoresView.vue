@@ -4,6 +4,7 @@
     :provider="'usuarios'"
     :telaEdicao="'operadores-edicao'"
     :telaParaFiltrar="'operadores'"
+    :comunicacao="comunicacaoUsuarios"
     :mostrarBotaoDeFiltro="true"
     :colunasAterrissagem="[
       { title: 'Identificador', value: 'id' },
@@ -19,11 +20,17 @@
 </template>
 
 <script>
+import comunicacaoUsuarios from '@/services/usuarios/comunicacao-usuarios';
 import Aterrissagem from '../../components/Aterrisagem.vue';
 export default {
   name: 'operadores',
   components: {
     Aterrissagem,
+  },
+  data() {
+    return {
+      comunicacaoUsuarios,
+    };
   },
 };
 </script>

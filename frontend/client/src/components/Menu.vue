@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import api from '@/services/api';
+import comunicacaoUsuarios from '@/services/usuarios/comunicacao-usuarios';
 import { useAuthStore } from '@/store/index';
 export default {
   name: 'Menu',
@@ -130,31 +130,12 @@ export default {
     };
   },
   methods: {
-    obterToken() {
-      const authStore = useAuthStore();
-      const token = authStore.getToken();
-
-      if (!token) {
-        this.$router.push('/login');
-      }
-
-      return token;
-    },
     async obterUsuario() {
-      api
-        .post(
-          `http://localhost:3000/usuarios/obter-usuario-logado`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          },
-        )
-        .then((response) => {
-          this.ehAdministrador =
-            response.data.permissaoUsuario === 'Administrador';
-        });
+      await comunicacaoUsuarios.obterUsuarioLogado();
+      await comunicacaoUsuarios.obterUsuarioLogado().then((response) => {
+        this.ehAdministrador =
+          response.data.permissaoUsuario === 'Administrador';
+      });
     },
 
     sair() {

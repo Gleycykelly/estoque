@@ -8,11 +8,6 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon color="#AA00FF" @click="emitirEmPDF()">
-          <v-icon>mdi-file-pdf-box</v-icon>
-          <v-tooltip activator="parent" location="top">Emitir em PDF</v-tooltip>
-        </v-btn>
-
         <v-btn icon color="#AA00FF" @click="emitirEmExcel()">
           <v-icon>mdi-microsoft-excel</v-icon>
           <v-tooltip activator="parent" location="top">
@@ -37,8 +32,9 @@
 </template>
 
 <script>
-import api from '@/services/api';
-import { useAuthStore, useAlerta } from '@/store/index';
+import comunicacaoDepositos from '@/services/depositos/comunicacao-deposito';
+import { emissaoProdutosPorEstoque } from '@/services/relatorios/comunicacao-relatorios';
+import { useAlerta } from '@/store/index';
 
 export default {
   name: 'ProdutosPorEstoque',
@@ -49,43 +45,20 @@ export default {
     };
   },
   methods: {
-    obterToken() {
-      const authStore = useAuthStore();
-      const token = authStore.getToken();
-
-      if (!token) {
-        this.$router.push('/login');
-      }
-
-      return token;
-    },
-
     voltar() {
       this.$router.push('/operadores');
     },
     async obterDepositos() {
-      api
-        .get(`http://localhost:3000/depositos/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.depositos = [];
+      await comunicacaoDepositos.obterTodos().then((response) => {
+        this.depositos = [];
 
-          for (const deposito of response.data) {
-            this.depositos.push(deposito);
-          }
-        });
+        for (const deposito of response.data) {
+          this.depositos.push(deposito);
+        }
+      });
     },
     async emitirEmExcel() {
-      api
-        .post(`http://localhost:3000/excel/produtos-por-estoque`, this.modelo, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-          responseType: 'blob',
-        })
+      await emissaoProdutosPorEstoque(this.modelo)
         .then((response) => {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
@@ -107,27 +80,6 @@ export default {
             );
           }
         });
-    },
-    async emitirEmPDF() {
-      try {
-        api
-          .post(`http://localhost:3000/pdf/produtos-por-estoque`, this.modelo, {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-            responseType: 'blob',
-          })
-          .then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'documento.pdf');
-            document.body.appendChild(link);
-            link.click();
-          });
-      } catch (error) {
-        console.error('Erro ao baixar o arquivo Excel', error);
-      }
     },
   },
   created() {

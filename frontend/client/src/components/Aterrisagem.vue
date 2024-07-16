@@ -356,14 +356,23 @@
 </template>
 
 <script>
-import api from '@/services/api';
-import { useAuthStore, useDadosStore, useAlerta } from '@/store/index';
+import comunicacaoCategorias from '@/services/categorias/comunicacao-categorias';
+import comunicacaoDepositos from '@/services/depositos/comunicacao-deposito';
+import comunicacaoFornecedores from '@/services/fornecedores/comunicacao-fornecedores';
+import comunicacaoMarcas from '@/services/marcas/comunicacao-marcas';
+import comunicacaoProdutos from '@/services/produtos/comunicacao-produtos';
+import comunicacaoUsuarios from '@/services/usuarios/comunicacao-usuarios';
+import { useDadosStore, useAlerta } from '@/store/index';
 
 export default {
   name: 'Aterrissagem',
   props: {
     titulo: String,
     provider: String,
+    comunicacao: {
+      type: Object,
+      required: true,
+    },
     colunasAterrissagem: [],
     telaEdicao: String,
     telaParaFiltrar: String,
@@ -390,31 +399,15 @@ export default {
       const cardHeight = document.querySelector('.fill-height').clientHeight;
       return cardHeight;
     },
-    obterToken() {
-      const authStore = useAuthStore();
-      const token = authStore.getToken();
-
-      if (!token) {
-        this.$router.push('/login');
-      }
-
-      return token;
-    },
 
     async obtemDados() {
-      api
-        .get(`http://localhost:3000/${this.provider}/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.dados = [];
+      await this.comunicacao.obterTodos().then((response) => {
+        this.dados = [];
 
-          for (const dado of response.data) {
-            this.dados.push(dado);
-          }
-        });
+        for (const dado of response.data) {
+          this.dados.push(dado);
+        }
+      });
 
       return this.dados;
     },
@@ -427,16 +420,8 @@ export default {
       }
 
       this.filtros.termoDePesquisa = this.termoDePesquisa;
-      api
-        .post(
-          `http://localhost:3000/${this.provider}/obter-parcial`,
-          this.filtros,
-          {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          },
-        )
+      await this.comunicacao
+        .obterParcialFiltro(this.filtros)
         .then((response) => {
           this.dados = [];
           for (const dado of response.data) {
@@ -478,7 +463,7 @@ export default {
       this.$router.push(this.telaEdicao);
     },
 
-    deletarItem() {
+    async deletarItem() {
       if (this.selected.length > 1) {
         useAlerta().exibirSnackbar(
           'Selecione apenas um item para exclusão!',
@@ -487,12 +472,8 @@ export default {
         return;
       }
 
-      api
-        .delete(`http://localhost:3000/${this.provider}/${this.selected[0]}`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
+      await this.comunicacao
+        .excluir(this.selected[0])
         .then(() => {
           useAlerta().exibirSnackbar('Item excluído com sucesso!', 'green');
           this.selected = null;
@@ -519,99 +500,63 @@ export default {
     },
 
     async obterCategorias() {
-      api
-        .get(`http://localhost:3000/categorias/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.categorias = [];
+      await comunicacaoCategorias.obterTodos().then((response) => {
+        this.categorias = [];
 
-          for (const dado of response.data) {
-            this.categorias.push(dado);
-          }
-        });
+        for (const dado of response.data) {
+          this.categorias.push(dado);
+        }
+      });
     },
 
     async obterMarcas() {
-      api
-        .get(`http://localhost:3000/marcas/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.marcas = [];
+      await comunicacaoMarcas.obterTodos().then((response) => {
+        this.marcas = [];
 
-          for (const dado of response.data) {
-            this.marcas.push(dado);
-          }
-        });
+        for (const dado of response.data) {
+          this.marcas.push(dado);
+        }
+      });
     },
 
     async obterOperadores() {
-      api
-        .get(`http://localhost:3000/usuarios/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.operadores = [];
+      await comunicacaoUsuarios.obterTodos().then((response) => {
+        this.operadores = [];
 
-          for (const dado of response.data) {
-            this.operadores.push(dado);
-          }
-        });
+        for (const dado of response.data) {
+          this.operadores.push(dado);
+        }
+      });
     },
 
     async obterDepositos() {
-      api
-        .get(`http://localhost:3000/depositos/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.depositos = [];
+      await comunicacaoDepositos.obterTodos().then((response) => {
+        this.depositos = [];
 
-          for (const dado of response.data) {
-            this.depositos.push(dado);
-          }
-        });
+        for (const dado of response.data) {
+          this.depositos.push(dado);
+        }
+      });
     },
 
     async obterFornecedores() {
-      api
-        .get(`http://localhost:3000/fornecedores/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.fornecedores = [];
+      await comunicacaoFornecedores.obterTodos().then((response) => {
+        this.fornecedores = [];
 
-          for (const dado of response.data) {
-            this.fornecedores.push(dado);
-          }
-        });
+        for (const dado of response.data) {
+          this.fornecedores.push(dado);
+        }
+      });
     },
 
     async obterProdutos() {
-      api
-        .get(`http://localhost:3000/produtos/`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
-        .then((response) => {
-          this.produtos = [];
+      await comunicacaoProdutos.obterTodos().then((response) => {
+        this.produtos = [];
 
-          for (const dado of response.data) {
-            this.produtos.push(dado);
-          }
-        });
+        for (const dado of response.data) {
+          this.produtos.push(dado);
+        }
+      });
     },
   },
   created() {

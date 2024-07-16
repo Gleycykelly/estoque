@@ -122,13 +122,10 @@
 </template>
 
 <script>
-import api from '@/services/api';
-import {
-  useAuthStore,
-  useDadosStore,
-  useAlerta,
-  useDadosDeOutraTela,
-} from '@/store/index';
+import comunicacaoEstados from '@/services/estados/comunicacao-estados';
+import comunicacaoFornecedores from '@/services/fornecedores/comunicacao-fornecedores';
+import comunicacaoMunicipios from '@/services/municipios/comunicacao-municipios';
+import { useDadosStore, useAlerta, useDadosDeOutraTela } from '@/store/index';
 
 export default {
   name: 'FornecedoresEdicao',
@@ -142,17 +139,6 @@ export default {
     };
   },
   methods: {
-    obterToken() {
-      const authStore = useAuthStore();
-      const token = authStore.getToken();
-
-      if (!token) {
-        this.$router.push('/login');
-      }
-
-      return token;
-    },
-
     podeGravar() {
       if (!this.modelo.cnpj) {
         useAlerta().exibirSnackbar('O CNPJ é obrigatório!', 'orange');
@@ -197,18 +183,10 @@ export default {
     },
 
     async obterEstados(termo = '') {
-      api
-        .post(
-          `http://localhost:3000/estados/obter-parcial`,
-          {
-            termoDePesquisa: termo,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          },
-        )
+      await comunicacaoEstados
+        .obterParcialFiltro({
+          termoDePesquisa: termo,
+        })
         .then((response) => {
           this.estados = [];
 
@@ -226,18 +204,10 @@ export default {
 
     async obterCidades(estadoSelecionado) {
       if (estadoSelecionado) {
-        api
-          .post(
-            `http://localhost:3000/municipios/obter-parcial`,
-            {
-              uf: estadoSelecionado.uf,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${this.obterToken()}`,
-              },
-            },
-          )
+        await comunicacaoMunicipios
+          .obterParcialFiltro({
+            uf: estadoSelecionado.uf,
+          })
           .then((response) => {
             this.cidades = [];
 
@@ -272,16 +242,8 @@ export default {
       }
 
       if (this.dados && this.dados.ehTelaAtualizacao) {
-        api
-          .patch(
-            `http://localhost:3000/fornecedores/${this.dados.id}`,
-            this.modelo,
-            {
-              headers: {
-                Authorization: `Bearer ${this.obterToken()}`,
-              },
-            },
-          )
+        await comunicacaoFornecedores
+          .atualizar(this.dados.id, this.modelo)
           .then(() => {
             useAlerta().exibirSnackbar(
               'O fornecedor foi atualizado com sucesso!',
@@ -297,12 +259,8 @@ export default {
             }
           });
       } else {
-        api
-          .post(`http://localhost:3000/fornecedores/`, this.modelo, {
-            headers: {
-              Authorization: `Bearer ${this.obterToken()}`,
-            },
-          })
+        await comunicacaoFornecedores
+          .criar(this.modelo)
           .then((resultado) => {
             useAlerta().exibirSnackbar(
               'O fornecedor foi criado com sucesso!',
@@ -322,12 +280,8 @@ export default {
     },
 
     async obterFornecedores() {
-      api
-        .get(`http://localhost:3000/fornecedores/${this.dados.id}`, {
-          headers: {
-            Authorization: `Bearer ${this.obterToken()}`,
-          },
-        })
+      await comunicacaoFornecedores
+        .obterPorId(this.dados.id)
         .then((response) => {
           this.modelo = null;
 
