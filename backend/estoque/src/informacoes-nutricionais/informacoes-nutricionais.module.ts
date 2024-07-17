@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
 import { InformacoesNutricionaisService } from './informacoes-nutricionais.service';
 import { InformacoesNutricionaisController } from './informacoes-nutricionais.controller';
-import { InformacoesNutricionais } from './entities/informacao-nutricional.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { InformacoesNutricionaisRepository } from './informacoes-nutricionais.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([InformacoesNutricionais])],
+  imports: [TypeOrmModule.forFeature([InformacoesNutricionaisRepository])],
   controllers: [InformacoesNutricionaisController],
-  providers: [InformacoesNutricionaisService],
+  providers: [
+    InformacoesNutricionaisService,
+    InformacoesNutricionaisRepository,
+  ],
   exports: [InformacoesNutricionaisService],
 })
 export class InformacoesNutricionaisModule {}
