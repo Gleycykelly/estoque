@@ -1,20 +1,15 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateLocalizacoesDepositoDto } from './dto/create-localizacoes-deposito.dto';
 import { UpdateLocalizacoesDepositoDto } from './dto/update-localizacoes-deposito.dto';
-import { LocalizacoesDepositos } from './entities/localizacao-deposito.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { DepositosService } from 'src/depositos/depositos.service';
+import { LocalizacoesDepositosRepository } from './localizacoes-depositos.repository';
 
 @Injectable()
 export class LocalizacoesDepositosService {
-  constructor(private readonly depositoService: DepositosService) {}
-  @InjectRepository(LocalizacoesDepositos)
-  private readonly localizacoesDepositosRepository: Repository<LocalizacoesDepositos>;
+  constructor(
+    private readonly repositorio: LocalizacoesDepositosRepository,
+    private readonly depositoService: DepositosService,
+  ) {}
 
   async create(createLocalizacoesDepositoDto: CreateLocalizacoesDepositoDto) {
     createLocalizacoesDepositoDto.deposito =
@@ -22,24 +17,17 @@ export class LocalizacoesDepositosService {
         createLocalizacoesDepositoDto.deposito,
         this.depositoService,
       );
-
-    const localizacao = this.localizacoesDepositosRepository.create({
-      ...createLocalizacoesDepositoDto,
-    });
-    return this.localizacoesDepositosRepository.save(localizacao);
+    return await this.repositorio.createLocalizacaoDeposito(
+      createLocalizacoesDepositoDto,
+    );
   }
 
   async findAll() {
-    return await this.localizacoesDepositosRepository.find({
-      relations: ['deposito'],
-    });
+    return await this.repositorio.obterTodos();
   }
 
   async findOne(id: number) {
-    return await this.localizacoesDepositosRepository.findOne({
-      where: { id },
-      relations: ['deposito'],
-    });
+    return await this.repositorio.obterPorId(id);
   }
 
   async update(
@@ -52,28 +40,15 @@ export class LocalizacoesDepositosService {
         this.depositoService,
       );
 
-    const localizacaoDeposito =
-      await this.localizacoesDepositosRepository.preload({
-        ...updateLocalizacoesDepositoDto,
-        id,
-      });
-
-    if (!localizacaoDeposito) {
-      throw new NotFoundException(
-        `Nenhuma localização de deposito econtrada para o id ${id}`,
-      );
-    }
-
-    return this.localizacoesDepositosRepository.save(localizacaoDeposito);
+    return await this.repositorio.updateLocalizacaoDeposito(
+      id,
+      updateLocalizacoesDepositoDto,
+    );
   }
 
   async remove(id: number) {
     try {
-      const localizacaoDeposito = await this.findOne(id);
-
-      return await this.localizacoesDepositosRepository.remove(
-        localizacaoDeposito,
-      );
+      return await this.repositorio.excluir(id);
     } catch (error) {
       throw new ConflictException(
         'Não foi possível excluir a localização do depósito',
