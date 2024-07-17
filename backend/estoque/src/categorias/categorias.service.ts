@@ -4,25 +4,19 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Categorias } from './entities/categoria.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
-import { Repository } from 'typeorm';
 import { ObterParcialCategoriaDto } from './dto/obter-parcial-categoria.dto';
+import { CategoriasRepository } from './categorias.repository';
 
 @Injectable()
 export class CategoriasService {
-  @InjectRepository(Categorias)
-  private readonly categoriaRepository: Repository<Categorias>;
+  constructor(private repositorio: CategoriasRepository) {}
 
   async create(createCategoriaDto: CreateCategoriaDto) {
     await this.categoriaJaExiste(createCategoriaDto.descricao);
 
-    const categoria = await this.categoriaRepository.create({
-      ...createCategoriaDto,
-    });
-
-    return this.categoriaRepository.save(categoria);
+    this.repositorio.createCategoria(createCategoriaDto);
   }
 
   async update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
@@ -32,9 +26,9 @@ export class CategoriasService {
     );
 
     if (jaExiste) {
-      const categoriaAtual = await this.categoriaRepository.findOne({
-        where: { descricao: updateCategoriaDto.descricao },
-      });
+      const categoriaAtual = await this.repositorio.obterPelaDescricao(
+        updateCategoriaDto.descricao,
+      );
 
       if (categoriaAtual.id != id) {
         throw new ConflictException(
@@ -43,24 +37,11 @@ export class CategoriasService {
       }
     }
 
-    const categoria = await this.categoriaRepository.preload({
-      ...updateCategoriaDto,
-      id,
-    });
-
-    if (!categoria) {
-      throw new NotFoundException(
-        `Nenhuma categoria encontrada para o id ${id}`,
-      );
-    }
-
-    return this.categoriaRepository.save(categoria);
+    this.repositorio.updateCategoria(id, updateCategoriaDto);
   }
 
   async findOne(id: number): Promise<Categorias> {
-    const categoria = await this.categoriaRepository.findOne({
-      where: { id },
-    });
+    const categoria = await this.repositorio.obterPorId(id);
 
     if (!categoria) {
       throw new NotFoundException(
@@ -72,33 +53,18 @@ export class CategoriasService {
   }
 
   async findAll(): Promise<Categorias[]> {
-    return await this.categoriaRepository.find({
-      order: {
-        id: 'ASC',
-      },
-    });
+    return await this.repositorio.obterTodos();
   }
 
   async obterParcial(
     obterParcialCategoriaDto: ObterParcialCategoriaDto,
   ): Promise<Categorias[]> {
-    if (!obterParcialCategoriaDto.termoDePesquisa) {
-      return this.findAll();
-    }
-
-    return await this.categoriaRepository
-      .createQueryBuilder('categoria')
-      .where('LOWER(categoria.descricao) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialCategoriaDto.termoDePesquisa}%`,
-      })
-      .getMany();
+    return await this.repositorio.obterParcial(obterParcialCategoriaDto);
   }
 
   async remove(id: number) {
     try {
-      const categoria = await this.findOne(id);
-
-      return await this.categoriaRepository.remove(categoria);
+      await this.repositorio.excluir(id);
     } catch (error) {
       throw new ConflictException(
         'Não foi possível excluir a categoria porque há produtos associados a ela.',
@@ -107,9 +73,7 @@ export class CategoriasService {
   }
 
   async categoriaJaExiste(descricao: string, ehAtualizacao = false) {
-    const jaExiste = await this.categoriaRepository.count({
-      where: { descricao: descricao },
-    });
+    const jaExiste = await this.repositorio.categoriaJaExiste(descricao);
 
     if (jaExiste && !ehAtualizacao) {
       throw new ConflictException(`A categoria ${descricao} já existe!`);

@@ -231,24 +231,39 @@ export class UsuariosService {
   async obterParcial(
     obterParcialUsuarioDto: ObterParcialUsuarioDto,
   ): Promise<Usuarios[]> {
-    if (!obterParcialUsuarioDto.termoDePesquisa) {
-      return this.findAll();
+    let query = await this.usuarioRepository.createQueryBuilder('usuario');
+
+    if (obterParcialUsuarioDto.termoDePesquisa) {
+      query = query
+        .where('LOWER(usuario.cpf) LIKE LOWER(:termo)', {
+          termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
+        })
+        .orWhere('LOWER(usuario.rg) LIKE LOWER(:termo)', {
+          termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
+        })
+        .orWhere('LOWER(usuario.nome) LIKE LOWER(:termo)', {
+          termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
+        })
+        .orWhere('LOWER(usuario.email) LIKE LOWER(:termo)', {
+          termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
+        });
     }
-    return await this.usuarioRepository
-      .createQueryBuilder('usuario')
-      .where('LOWER(usuario.cpf) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
-      })
-      .orWhere('LOWER(usuario.rg) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
-      })
-      .orWhere('LOWER(usuario.nome) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
-      })
-      .orWhere('LOWER(usuario.email) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
-      })
-      .getMany();
+
+    if (obterParcialUsuarioDto.generoUsuario) {
+      query = query.andWhere(' usuario.generoUsuario = :generoUsuario', {
+        generoUsuario: obterParcialUsuarioDto.generoUsuario,
+      });
+    }
+
+    if (obterParcialUsuarioDto.permissaoUsuario) {
+      query = query.andWhere(' usuario.permissao = :permissaoUsuario', {
+        permissaoUsuario: obterParcialUsuarioDto.permissaoUsuario,
+      });
+    }
+
+    query.orderBy('usuario.id', 'ASC');
+    const result = await query.getMany();
+    return result;
   }
 
   async remove(id: number) {

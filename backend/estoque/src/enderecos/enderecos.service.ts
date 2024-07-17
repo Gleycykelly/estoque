@@ -51,6 +51,9 @@ export class EnderecosService {
   async findAll() {
     return await this.enderecoRepository.find({
       relations: ['municipio', 'municipio.uf'],
+      order: {
+        id: 'ASC',
+      },
     });
   }
 

@@ -9,10 +9,17 @@ import { Enderecos } from 'src/enderecos/entities/endereco.entity';
 import { Depositos } from 'src/depositos/entities/deposito.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsuariosModule } from 'src/usuarios/usuarios.module';
+import { CategoriasRepository } from './categorias.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Categorias, Usuarios, Enderecos, Depositos]),
+    TypeOrmModule.forFeature([
+      Categorias,
+      Usuarios,
+      Enderecos,
+      Depositos,
+      CategoriasRepository,
+    ]),
     JwtModule.register({
       secret: process.env.ENCRYPT_JWT_SECRET,
       signOptions: {
@@ -23,7 +30,7 @@ import { UsuariosModule } from 'src/usuarios/usuarios.module';
     UsuariosModule,
   ],
   controllers: [CategoriasController],
-  providers: [CategoriasService],
+  providers: [CategoriasService, CategoriasRepository],
   exports: [CategoriasService],
 })
 export class CategoriasModule {}
