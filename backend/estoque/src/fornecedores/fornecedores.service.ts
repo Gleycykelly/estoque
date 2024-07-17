@@ -1,21 +1,17 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateFornecedoreDto } from './dto/create-fornecedor.dto';
 import { UpdateFornecedoreDto } from './dto/update-fornecedor.dto';
 import { Fornecedores } from './entities/fornecedor.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ObterParcialFornecedorDto } from './dto/obter-parcial-fornecedores.dto';
 import { EnderecosService } from 'src/enderecos/enderecos.service';
-import { Repository } from 'typeorm';
+import { FornecedoresRepository } from './fornecedores.repository';
 
 @Injectable()
 export class FornecedoresService {
-  constructor(private readonly enderecoService: EnderecosService) {}
-  @InjectRepository(Fornecedores)
-  private readonly fornecedoresRepository: Repository<Fornecedores>;
+  constructor(
+    private repositorio: FornecedoresRepository,
+    private readonly enderecoService: EnderecosService,
+  ) {}
 
   async create(createFornecedoreDto: CreateFornecedoreDto) {
     await this.fornecedorJaCadastrado(createFornecedoreDto.cnpj);
@@ -25,11 +21,7 @@ export class FornecedoresService {
       this.enderecoService,
     );
 
-    const fornecedor = this.fornecedoresRepository.create({
-      ...createFornecedoreDto,
-    });
-
-    return this.fornecedoresRepository.save(fornecedor);
+    return await this.repositorio.createFornecedor(createFornecedoreDto);
   }
 
   async update(
@@ -47,9 +39,9 @@ export class FornecedoresService {
     );
 
     if (JaCadastrado) {
-      const fornecedorAtual = await this.fornecedoresRepository.findOne({
-        where: { cnpj: updateFornecedoreDto.cnpj },
-      });
+      const fornecedorAtual = await this.repositorio.obterPeloCnpj(
+        updateFornecedoreDto.cnpj,
+      );
 
       if (fornecedorAtual.id != id) {
         throw new ConflictException(
@@ -58,61 +50,26 @@ export class FornecedoresService {
       }
     }
 
-    const fornecedor = await this.fornecedoresRepository.preload({
-      ...updateFornecedoreDto,
-      id,
-    });
-
-    if (!fornecedor) {
-      throw new NotFoundException(
-        `Nenhum fornecedor encontrado para o id ${id}`,
-      );
-    }
-
-    return this.fornecedoresRepository.save(fornecedor);
+    return await this.repositorio.updateFornecedor(id, updateFornecedoreDto);
   }
 
   async findAll() {
-    return await this.fornecedoresRepository.find({
-      relations: ['endereco', 'endereco.municipio', 'endereco.municipio.uf'],
-      order: {
-        id: 'ASC',
-      },
-    });
+    return await this.repositorio.obterTodos();
   }
 
   async findOne(id: number) {
-    return await this.fornecedoresRepository.findOne({
-      where: { id },
-      relations: ['endereco', 'endereco.municipio', 'endereco.municipio.uf'],
-    });
+    return await this.repositorio.obterPorId(id);
   }
 
   async obterParcial(
     obterParcialFornecedorDto: ObterParcialFornecedorDto,
   ): Promise<Fornecedores[]> {
-    if (!obterParcialFornecedorDto.termoDePesquisa) {
-      return this.findAll();
-    }
-    return await this.fornecedoresRepository
-      .createQueryBuilder('fornecedor')
-      .where('LOWER(fornecedor.cnpj) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialFornecedorDto.termoDePesquisa}%`,
-      })
-      .orWhere('LOWER(fornecedor.telefone) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialFornecedorDto.termoDePesquisa}%`,
-      })
-      .orWhere('LOWER(fornecedor.razaoSocial) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialFornecedorDto.termoDePesquisa}%`,
-      })
-      .getMany();
+    return await this.repositorio.obterParcial(obterParcialFornecedorDto);
   }
 
   async remove(id: number) {
     try {
-      const fornecedor = await this.findOne(id);
-
-      return await this.fornecedoresRepository.remove(fornecedor);
+      return await this.repositorio.excluir(id);
     } catch (error) {
       throw new ConflictException(
         'Não foi possível excluir o fornecedor porque há lançamentos de produtos associados a ele.',
@@ -121,9 +78,7 @@ export class FornecedoresService {
   }
 
   async fornecedorJaCadastrado(cnpj: string, ehAtualizacao = false) {
-    const jaExiste = await this.fornecedoresRepository.count({
-      where: { cnpj: cnpj },
-    });
+    const jaExiste = this.repositorio.existeFornecedor(cnpj);
 
     if (jaExiste && !ehAtualizacao) {
       throw new ConflictException(
