@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateEnderecoDto } from './dto/create-endereco.dto';
 import { UpdateEnderecoDto } from './dto/update-endereco.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,12 +10,14 @@ import { Enderecos } from './entities/endereco.entity';
 import { Repository } from 'typeorm';
 import { Municipios } from 'src/municipios/entities/municipio.entity';
 import { MunicipiosService } from 'src/municipios/municipios.service';
+import { EnderecosRepository } from './enderecos.repository';
 
 @Injectable()
 export class EnderecosService {
-  constructor(private readonly municipioService: MunicipiosService) {}
-  @InjectRepository(Enderecos)
-  private readonly enderecoRepository: Repository<Enderecos>;
+  constructor(
+    private repositorio: EnderecosRepository,
+    private readonly municipioService: MunicipiosService,
+  ) {}
 
   @InjectRepository(Municipios)
   private readonly municipiosRepository: Repository<Municipios>;
@@ -23,10 +29,7 @@ export class EnderecosService {
       'Município não encontrado para o id',
     );
 
-    const endereco = this.enderecoRepository.create({
-      ...createEnderecoDto,
-    });
-    return this.enderecoRepository.save(endereco);
+    return await this.repositorio.createEndereco(createEnderecoDto);
   }
 
   private async obtemMunicipio(
@@ -49,62 +52,25 @@ export class EnderecosService {
   }
 
   async findAll() {
-    return await this.enderecoRepository.find({
-      relations: ['municipio', 'municipio.uf'],
-      order: {
-        id: 'ASC',
-      },
-    });
+    return await this.repositorio.obterTodos();
   }
 
   async findOne(id: number) {
-    return await this.enderecoRepository.findOne({
-      where: { id },
-      relations: ['municipio', 'municipio.uf'],
-    });
+    return await this.repositorio.obterPorId(id);
   }
 
   async update(
     id: number,
     updateEnderecoDto: UpdateEnderecoDto,
   ): Promise<Enderecos> {
-    const endereco = await this.enderecoRepository.preload({
-      ...updateEnderecoDto,
-      id,
-    });
-
-    if (!endereco) {
-      throw new NotFoundException(`Nenhum depósito econtrado para o id ${id}`);
-    }
-
-    return this.enderecoRepository.save(endereco);
+    return await this.repositorio.updateEndereco(id, updateEnderecoDto);
   }
 
   async remove(id: number) {
-    const endereco = await this.enderecoRepository.findOne({ where: { id } });
-
-    if (!endereco) {
-      throw new NotFoundException(`Nenhum endereço encontrado para o id ${id}`);
+    try {
+      return await this.repositorio.excluir(id);
+    } catch (error) {
+      throw new ConflictException('Não foi possível excluir o endereço.');
     }
-
-    return this.enderecoRepository.remove(endereco);
-  }
-
-  public async obtemEndereco(endereco: Enderecos): Promise<Enderecos> {
-    if (endereco.id) {
-      const enderecoBD = await this.enderecoRepository.findOne({
-        where: { id: endereco.id },
-      });
-
-      if (!enderecoBD) {
-        throw new NotFoundException(
-          `Endereço não encontrado para o id ${endereco.id}`,
-        );
-      }
-      return enderecoBD;
-    }
-
-    const novoEndereco = await this.enderecoRepository.create({ ...endereco });
-    return await this.enderecoRepository.save(novoEndereco);
   }
 }
