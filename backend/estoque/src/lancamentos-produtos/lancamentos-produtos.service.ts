@@ -1,26 +1,20 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateLancamentosProdutoDto } from './dto/create-lancamentos-produto.dto';
 import { UpdateLancamentosProdutoDto } from './dto/update-lancamentos-produto.dto';
-import { LancamentosProdutos } from './entities/lancamento-produto.entity';
-import { QueryRunner, Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { QueryRunner } from 'typeorm';
 import { LocalizacoesDepositosService } from 'src/localizacoes-depositos/localizacoes-depositos.service';
 import { ProdutosService } from 'src/produtos/produtos.service';
 import { FornecedoresService } from 'src/fornecedores/fornecedores.service';
+import { LancamentosProdutosRepository } from './lancamentos-produtos.repository';
 
 @Injectable()
 export class LancamentosProdutosService {
   constructor(
+    private readonly repositorio: LancamentosProdutosRepository,
     private readonly localizacaoDepositoService: LocalizacoesDepositosService,
     private readonly produtoService: ProdutosService,
     private readonly fornecedorService: FornecedoresService,
   ) {}
-  @InjectRepository(LancamentosProdutos)
-  private readonly lancamentoRepository: Repository<LancamentosProdutos>;
 
   async create(createLancamentosProdutoDto: CreateLancamentosProdutoDto) {
     await this.loteJaCadastrado(createLancamentosProdutoDto.lote);
@@ -41,11 +35,9 @@ export class LancamentosProdutosService {
         createLancamentosProdutoDto.localizacaoDeposito,
         this.localizacaoDepositoService,
       );
-
-    const lancamento = this.lancamentoRepository.create({
-      ...createLancamentosProdutoDto,
-    });
-    return this.lancamentoRepository.save(lancamento);
+    return await this.repositorio.createLancamentosProduto(
+      createLancamentosProdutoDto,
+    );
   }
 
   async update(
@@ -58,11 +50,9 @@ export class LancamentosProdutosService {
     );
 
     if (JaCadastrado) {
-      const loteAtual = await this.lancamentoRepository.findOne({
-        where: {
-          lote: updateLancamentosProdutoDto.lote,
-        },
-      });
+      const loteAtual = await this.repositorio.obterPeloLote(
+        updateLancamentosProdutoDto.lote,
+      );
 
       if (loteAtual.id != id) {
         throw new ConflictException(
@@ -88,73 +78,23 @@ export class LancamentosProdutosService {
         this.localizacaoDepositoService,
       );
 
-    const lancamentoProduto = await this.lancamentoRepository.preload({
-      ...updateLancamentosProdutoDto,
+    return await this.repositorio.updateLancamentosProduto(
       id,
-    });
-
-    if (!lancamentoProduto) {
-      throw new NotFoundException(
-        `Nenhum lançamento encontrado para o id ${id}`,
-      );
-    }
-
-    return this.lancamentoRepository.save(lancamentoProduto);
+      updateLancamentosProdutoDto,
+    );
   }
 
   async findAll() {
-    return await this.lancamentoRepository.find({
-      relations: [
-        'produto',
-        'fornecedor',
-        'localizacaoDeposito',
-        'localizacaoDeposito.deposito',
-        'usuario',
-      ],
-    });
+    return await this.repositorio.obterTodos();
   }
 
   async findOne(id: number) {
-    return await this.lancamentoRepository.findOne({
-      where: { id },
-      relations: [
-        'produto',
-        'fornecedor',
-        'localizacaoDeposito',
-        'localizacaoDeposito.deposito',
-      ],
-    });
+    return await this.repositorio.obterPorId(id);
   }
 
   async remove(id: number, queryRunner?: QueryRunner) {
     try {
-      let lancamentoProduto: LancamentosProdutos;
-
-      if (queryRunner) {
-        lancamentoProduto = await queryRunner.manager.findOne(
-          LancamentosProdutos,
-          {
-            where: { id },
-          },
-        );
-      } else {
-        lancamentoProduto = await this.findOne(id);
-      }
-
-      if (!lancamentoProduto) {
-        throw new NotFoundException(
-          `Nenhum lançamento de produto encontrado para o id ${id}`,
-        );
-      }
-
-      if (queryRunner) {
-        await queryRunner.manager.remove(
-          LancamentosProdutos,
-          lancamentoProduto,
-        );
-      } else {
-        await this.lancamentoRepository.remove(lancamentoProduto);
-      }
+      return await this.repositorio.excluir(id, queryRunner);
     } catch (error) {
       throw new ConflictException(
         'Não foi possível excluir o lançamento do produto porque há movimentações associadas a ele.',
@@ -162,16 +102,8 @@ export class LancamentosProdutosService {
     }
   }
 
-  async buscarPorLote(lote: string) {
-    return await this.lancamentoRepository.find({
-      where: { lote },
-    });
-  }
-
   async loteJaCadastrado(lote: string, ehAtualizacao = false) {
-    const jaExiste = await this.lancamentoRepository.count({
-      where: { lote: lote },
-    });
+    const jaExiste = await this.repositorio.existeLancamentoParaOLote(lote);
 
     if (jaExiste && !ehAtualizacao) {
       throw new ConflictException(`Já existe uma entrada para o lote ${lote}`);
