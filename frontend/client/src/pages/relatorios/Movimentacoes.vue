@@ -3,7 +3,7 @@
     <v-card min-height="90vh" width="calc(100% - 100px)" style="margin: 0 auto">
       <v-toolbar flat>
         <v-toolbar-title class="text-grey">
-          Emissão de produtos por estoque
+          Emissão movimentações
         </v-toolbar-title>
 
         <v-spacer></v-spacer>
@@ -18,44 +18,51 @@
 
       <v-card-text>
         <v-combobox
-          label="Depósitos"
-          :items="depositos"
+          label="Tipo de movimentação"
+          :items="['Entrada', 'Saída']"
           item-title="descricao"
           item-value="id"
-          v-model="modelo.deposito"
+          v-model="modelo.tipoMovimentacao"
           variant="outlined"
           clearable
+          color="#AA00FF"
         ></v-combobox>
+        <div class="periodo-datas">
+          <v-text-field
+            variant="outlined"
+            type="date"
+            v-model="modelo.dataInicial"
+            label="Data inicial"
+            clearable
+          ></v-text-field>
+          <v-text-field
+            class="data-secundaria"
+            variant="outlined"
+            type="date"
+            v-model="modelo.dataFinal"
+            label="Data final"
+            clearable
+          ></v-text-field>
+        </div>
       </v-card-text>
     </v-card>
   </v-main>
 </template>
 
 <script>
-import comunicacaoDepositos from '@/services/depositos/comunicacao-deposito';
-import { emissaoProdutosPorEstoque } from '@/services/relatorios/comunicacao-relatorios';
+import { emissaoMovimentacoes } from '@/services/relatorios/comunicacao-relatorios';
 import { useAlerta } from '@/store/index';
 
 export default {
-  name: 'ProdutosPorEstoque',
+  name: 'EmissaoMovimentacao',
   data() {
     return {
       modelo: {},
-      depositos: [],
     };
   },
   methods: {
-    async obterDepositos() {
-      await comunicacaoDepositos.obterTodos().then((response) => {
-        this.depositos = [];
-
-        for (const deposito of response.data) {
-          this.depositos.push(deposito);
-        }
-      });
-    },
     async emitirEmExcel() {
-      await emissaoProdutosPorEstoque(this.modelo)
+      await emissaoMovimentacoes(this.modelo)
         .then((response) => {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
@@ -79,8 +86,22 @@ export default {
         });
     },
   },
-  created() {
-    this.obterDepositos();
-  },
 };
 </script>
+
+<style>
+.periodo-datas {
+  @media (min-width: 850px) {
+    display: flex;
+  }
+
+  @media (max-width: 849px) {
+    display: block;
+  }
+}
+.data-secundaria {
+  @media (min-width: 850px) {
+    margin-left: 15px;
+  }
+}
+</style>

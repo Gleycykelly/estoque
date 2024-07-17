@@ -37,3 +37,7 @@ instancia.interceptors.request.use(
 export const emissaoProdutosPorEstoque = (modelo) => {
   return instancia.post(`/excel/produtos-por-estoque`, modelo);
 };
+
+export const emissaoMovimentacoes = (modelo) => {
+  return instancia.post(`/excel/movimentacoes`, modelo);
+};

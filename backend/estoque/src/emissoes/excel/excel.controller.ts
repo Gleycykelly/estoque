@@ -20,4 +20,16 @@ export class ExcelController {
       this.excelService.deleteFile(filePath);
     });
   }
+
+  @Post('movimentacoes')
+  async emissaoMovimentacoes(
+    @Body() dadosEmissaoExcelDto: DadosEmissaoExcelDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    const filePath =
+      await this.excelService.emissaoMovimentacoes(dadosEmissaoExcelDto);
+    res.download(filePath, () => {
+      this.excelService.deleteFile(filePath);
+    });
+  }
 }

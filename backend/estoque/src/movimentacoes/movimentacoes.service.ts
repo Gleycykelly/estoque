@@ -14,6 +14,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { ObterParcialMovimentacaoDto } from './dto/obter-parcial-movimentacao.dto';
 import { LancamentosProdutos } from 'src/lancamentos-produtos/entities/lancamento-produto.entity';
 import { format } from 'date-fns';
+import { DadosEmissaoExcelDto } from 'src/emissoes/excel/dto/dados-emissao-excel.dto';
 
 @Injectable()
 export class MovimentacoesService {
@@ -145,6 +146,7 @@ export class MovimentacoesService {
           termo: `%${obterParcialMovimentacaoDto.termoDePesquisa}%`,
         });
     }
+
     if (
       obterParcialMovimentacaoDto.depositos &&
       obterParcialMovimentacaoDto.depositos.length > 0
@@ -413,6 +415,71 @@ export class MovimentacoesService {
           });
         }
       }
+    }
+
+    return dados;
+  }
+
+  async obterMovimentacoesParaEmissao(
+    dadosEmissaoExcelDto: DadosEmissaoExcelDto,
+  ) {
+    let query = await this.movimentacaoRepository
+      .createQueryBuilder('movimentacao')
+      .leftJoinAndSelect('movimentacao.lancamentoProduto', 'lancamento')
+      .leftJoinAndSelect('lancamento.produto', 'produto')
+      .leftJoinAndSelect('movimentacao.usuario', 'usuario')
+      .leftJoinAndSelect('lancamento.localizacaoDeposito', 'localiza')
+      .leftJoinAndSelect('localiza.deposito', 'deposito')
+      .leftJoinAndSelect('lancamento.fornecedor', 'fornecedor');
+
+    if (dadosEmissaoExcelDto.dataInicial) {
+      query = query.andWhere(
+        ' movimentacao.dataMovimentacao >= (:dataInicial)',
+        {
+          dataInicial: dadosEmissaoExcelDto.dataInicial,
+        },
+      );
+    }
+
+    if (dadosEmissaoExcelDto.dataFinal) {
+      query = query.andWhere(' movimentacao.dataMovimentacao <= (:dataFinal)', {
+        dataFinal: dadosEmissaoExcelDto.dataFinal,
+      });
+    }
+
+    if (dadosEmissaoExcelDto.tipoMovimentacao) {
+      query = query.andWhere(
+        ' movimentacao.tipoMovimentacao = :tipoMovimentacao',
+        {
+          tipoMovimentacao: dadosEmissaoExcelDto.tipoMovimentacao,
+        },
+      );
+    }
+
+    query.orderBy('movimentacao.dataMovimentacao', 'ASC');
+    const movimentacoes = await query.getMany();
+
+    if (movimentacoes == null || movimentacoes.length <= 0) {
+      throw new NotFoundException('Nenhum item encontrado para emissão!');
+    }
+
+    const dados = [];
+
+    for (const movimentacao of movimentacoes) {
+      dados.push({
+        tipoMovimentacao: movimentacao.tipoMovimentacao,
+        dataMovimentacao: movimentacao.dataMovimentacao,
+        lote: movimentacao.lancamentoProduto.lote,
+        produto: movimentacao.lancamentoProduto.produto.nome,
+        validade: movimentacao.lancamentoProduto.dataValidade,
+        precoCusto: movimentacao.lancamentoProduto.precoCusto,
+        precoVenda: movimentacao.lancamentoProduto.precoVenda,
+        quantidade: movimentacao.quantidade,
+        fornecedor: movimentacao.lancamentoProduto.fornecedor.razaoSocial,
+        deposito:
+          movimentacao.lancamentoProduto.localizacaoDeposito.deposito.descricao,
+        operador: movimentacao.usuario.nome,
+      });
     }
 
     return dados;

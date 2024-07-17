@@ -72,6 +72,9 @@
         <v-list-item class="sub-titulo" :to="{ name: 'produtos-por-estoque' }">
           Produtos por estoque
         </v-list-item>
+        <v-list-item class="sub-titulo" :to="{ name: 'emissao-movimentacoes' }">
+          Movimentações
+        </v-list-item>
       </v-list-group>
 
       <v-list-group value="Administrativo" no-action>
@@ -157,9 +160,6 @@ export default {
 .menu-opcoes {
   text-align: left !important;
 }
-
-/* .titulo-item {
-} */
 
 .titulo {
   font-size: 16px !important;
