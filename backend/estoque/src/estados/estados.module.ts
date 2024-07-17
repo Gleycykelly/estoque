@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { EstadosService } from './estados.service';
 import { EstadosController } from './estados.controller';
-import { Estados } from './entities/estado.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EstadosRepository } from './estados.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Estados])],
+  imports: [TypeOrmModule.forFeature([EstadosRepository])],
   controllers: [EstadosController],
-  providers: [EstadosService],
+  providers: [EstadosService, EstadosRepository],
 })
 export class EstadosModule {}

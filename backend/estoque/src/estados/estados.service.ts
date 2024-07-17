@@ -1,34 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { Estados } from './entities/estado.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { ObterParcialEstadosDto } from './dto/obter-parcial-estados.dto';
+import { EstadosRepository } from './estados.repository';
 
 @Injectable()
 export class EstadosService {
-  @InjectRepository(Estados)
-  private readonly estadosRepository: Repository<Estados>;
+  constructor(private repositorio: EstadosRepository) {}
 
   async findAll() {
-    return await this.estadosRepository.find();
+    return await this.repositorio.obterTodos();
   }
 
   async findOne(id: number) {
-    return await this.estadosRepository.findOne({
-      where: { id },
-    });
+    return await this.repositorio.obterPorId(id);
   }
   async obterParcial(
     obterParcialEstadosDto: ObterParcialEstadosDto,
   ): Promise<Estados[]> {
-    if (!obterParcialEstadosDto.termoDePesquisa) {
-      return this.findAll();
-    }
-    return await this.estadosRepository
-      .createQueryBuilder('estado')
-      .where('LOWER(estado.nome) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialEstadosDto.termoDePesquisa}%`,
-      })
-      .getMany();
+    return await this.repositorio.obterParcial(obterParcialEstadosDto);
   }
 }
