@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CategoriasService } from './categorias.service';
 import { CategoriasController } from './categorias.controller';
-import { Categorias } from './entities/categoria.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { Usuarios } from 'src/usuarios/entities/usuario.entity';
@@ -14,11 +13,10 @@ import { CategoriasRepository } from './categorias.repository';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Categorias,
+      CategoriasRepository,
       Usuarios,
       Enderecos,
       Depositos,
-      CategoriasRepository,
     ]),
     JwtModule.register({
       secret: process.env.ENCRYPT_JWT_SECRET,
