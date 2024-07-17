@@ -64,7 +64,7 @@ export class CategoriasService {
 
   async remove(id: number) {
     try {
-      await this.repositorio.excluir(id);
+      return await this.repositorio.excluir(id);
     } catch (error) {
       throw new ConflictException(
         'Não foi possível excluir a categoria porque há produtos associados a ela.',

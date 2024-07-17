@@ -1,21 +1,17 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateDepositoDto } from './dto/create-deposito.dto';
 import { UpdateDepositoDto } from './dto/update-deposito.dto';
 import { Depositos } from './entities/deposito.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ObterParcialDepositoDto } from './dto/obter-parcial-deposito.dto';
 import { EnderecosService } from 'src/enderecos/enderecos.service';
+import { DepositosRepository } from './depositos.repository';
 
 @Injectable()
 export class DepositosService {
-  constructor(private readonly enderecoService: EnderecosService) {}
-  @InjectRepository(Depositos)
-  private readonly depositoRepository: Repository<Depositos>;
+  constructor(
+    private repositorio: DepositosRepository,
+    private readonly enderecoService: EnderecosService,
+  ) {}
 
   async create(createDepositoDto: CreateDepositoDto) {
     await this.depositoJaCadastrado(createDepositoDto.descricao);
@@ -25,10 +21,7 @@ export class DepositosService {
       this.enderecoService,
     );
 
-    const deposito = this.depositoRepository.create({
-      ...createDepositoDto,
-    });
-    return this.depositoRepository.save(deposito);
+    this.repositorio.createDeposito(createDepositoDto);
   }
 
   async update(id: number, updateDepositoDto: UpdateDepositoDto) {
@@ -38,9 +31,9 @@ export class DepositosService {
     );
 
     if (JaCadastrado) {
-      const depositoAtual = await this.depositoRepository.findOne({
-        where: { descricao: updateDepositoDto.descricao },
-      });
+      const depositoAtual = await this.repositorio.obterPelaDescricao(
+        updateDepositoDto.descricao,
+      );
 
       if (depositoAtual.id != id) {
         throw new ConflictException(
@@ -54,64 +47,33 @@ export class DepositosService {
       this.enderecoService,
     );
 
-    const deposito = await this.depositoRepository.preload({
-      ...updateDepositoDto,
-      id,
-    });
-
-    if (!deposito) {
-      throw new NotFoundException(`Nenhum depósito encontrado para o id ${id}`);
-    }
-
-    return this.depositoRepository.save(deposito);
+    return await this.repositorio.updateDeposito(id, updateDepositoDto);
   }
 
   async findAll() {
-    return await this.depositoRepository.find({
-      relations: ['endereco', 'endereco.municipio', 'endereco.municipio.uf'],
-      order: {
-        id: 'ASC',
-      },
-    });
+    return await this.repositorio.obterTodos();
   }
 
   async findOne(id: number) {
-    return await this.depositoRepository.findOne({
-      where: { id },
-      relations: ['endereco', 'endereco.municipio', 'endereco.municipio.uf'],
-    });
+    return await this.repositorio.obterPorId(id);
   }
 
   async obterParcial(
     obterParcialDepositoDto: ObterParcialDepositoDto,
   ): Promise<Depositos[]> {
-    let query = await this.depositoRepository.createQueryBuilder('deposito');
-
-    if (obterParcialDepositoDto.termoDePesquisa) {
-      query = query.where('LOWER(deposito.descricao) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialDepositoDto.termoDePesquisa}%`,
-      });
-    }
-
-    query.orderBy('deposito.id', 'ASC');
-    const result = await query.getMany();
-    return result;
+    return await this.repositorio.obterParcial(obterParcialDepositoDto);
   }
 
   async remove(id: number) {
     try {
-      const deposito = await this.findOne(id);
-
-      return await this.depositoRepository.remove(deposito);
+      return await this.repositorio.excluir(id);
     } catch (error) {
       throw new ConflictException('Não foi possível excluir o depósito.');
     }
   }
 
   async depositoJaCadastrado(descricao: string, ehAtualizacao = false) {
-    const jaExiste = await this.depositoRepository.count({
-      where: { descricao: descricao },
-    });
+    const jaExiste = await this.repositorio.existeDeposito(descricao);
 
     if (jaExiste && !ehAtualizacao) {
       throw new ConflictException(
