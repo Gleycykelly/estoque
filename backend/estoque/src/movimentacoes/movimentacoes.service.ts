@@ -121,22 +121,7 @@ export class MovimentacoesService {
   }
 
   async obterPorLote(lote: string) {
-    const movimentacoes = await this.movimentacaoRepository.find({
-      where: { lancamentoProduto: { lote: lote } },
-      relations: [
-        'lancamentoProduto',
-        'lancamentoProduto.produto',
-        'lancamentoProduto.produto.porcoes',
-        'lancamentoProduto.produto.porcoes.unidadeMedida',
-        'lancamentoProduto.produto.porcoes.valorNutricional',
-        'lancamentoProduto.produto.porcoes.informacaoNutricional',
-        'lancamentoProduto.fornecedor',
-        'lancamentoProduto.fornecedor.endereco',
-        'lancamentoProduto.localizacaoDeposito',
-        'lancamentoProduto.localizacaoDeposito.deposito',
-        'usuario',
-      ],
-    });
+    const movimentacoes = await this.repositorio.obterPorLote(lote);
 
     if (!movimentacoes || movimentacoes.length <= 0) {
       throw new NotFoundException(
@@ -172,54 +157,10 @@ export class MovimentacoesService {
   async obterMovimentacaoProdutosParaEmissao(
     dadosEmissaoExcelDto: DadosEmissaoExcelDto,
   ) {
-    let query = await this.movimentacaoRepository
-      .createQueryBuilder('movimentacao')
-      .leftJoinAndSelect('movimentacao.lancamentoProduto', 'lancamento')
-      .leftJoinAndSelect('lancamento.produto', 'produto')
-      .leftJoinAndSelect('movimentacao.usuario', 'usuario')
-      .leftJoinAndSelect('lancamento.localizacaoDeposito', 'localiza')
-      .leftJoinAndSelect('localiza.deposito', 'deposito')
-      .leftJoinAndSelect('lancamento.fornecedor', 'fornecedor');
-
-    if (
-      dadosEmissaoExcelDto.depositos &&
-      dadosEmissaoExcelDto.depositos.length > 0
-    ) {
-      query = query.andWhere('deposito.id IN (:...depositos)', {
-        depositos: dadosEmissaoExcelDto.depositos,
-      });
-    }
-
-    if (
-      dadosEmissaoExcelDto.fornecedores &&
-      dadosEmissaoExcelDto.fornecedores.length > 0
-    ) {
-      query = query.andWhere('fornecedor.id IN (:...fornecedores)', {
-        fornecedores: dadosEmissaoExcelDto.fornecedores,
-      });
-    }
-
-    if (dadosEmissaoExcelDto.diasParaVencer) {
-      const dataVencimento = new Date();
-      dataVencimento.setDate(
-        dataVencimento.getDate() + Number(dadosEmissaoExcelDto.diasParaVencer),
+    const movimentacoes =
+      await this.repositorio.obterMovimentacaoProdutosParaEmissao(
+        dadosEmissaoExcelDto,
       );
-
-      query = query.andWhere('lancamento.dataValidade = (:dataVencimento)', {
-        dataVencimento: dataVencimento.toISOString(),
-      });
-    }
-
-    if (dadosEmissaoExcelDto.produtosVencidos) {
-      const dataAtual = new Date();
-
-      query = query.andWhere(' lancamento.dataValidade < (:dataAtual)', {
-        dataAtual: dataAtual.toISOString(),
-      });
-    }
-
-    query.orderBy('produto.nome', 'ASC');
-    const movimentacoes = await query.getMany();
 
     if (movimentacoes == null || movimentacoes.length <= 0) {
       throw new NotFoundException('Nenhum item encontrado para emissão!');
@@ -307,41 +248,10 @@ export class MovimentacoesService {
   async obterMovimentacoesParaEmissao(
     dadosEmissaoExcelDto: DadosEmissaoExcelDto,
   ) {
-    let query = await this.movimentacaoRepository
-      .createQueryBuilder('movimentacao')
-      .leftJoinAndSelect('movimentacao.lancamentoProduto', 'lancamento')
-      .leftJoinAndSelect('lancamento.produto', 'produto')
-      .leftJoinAndSelect('movimentacao.usuario', 'usuario')
-      .leftJoinAndSelect('lancamento.localizacaoDeposito', 'localiza')
-      .leftJoinAndSelect('localiza.deposito', 'deposito')
-      .leftJoinAndSelect('lancamento.fornecedor', 'fornecedor');
-
-    if (dadosEmissaoExcelDto.dataInicial) {
-      query = query.andWhere(
-        ' movimentacao.dataMovimentacao >= (:dataInicial)',
-        {
-          dataInicial: dadosEmissaoExcelDto.dataInicial,
-        },
+    const movimentacoes =
+      await this.repositorio.obterMovimentacoesParaEmissao(
+        dadosEmissaoExcelDto,
       );
-    }
-
-    if (dadosEmissaoExcelDto.dataFinal) {
-      query = query.andWhere(' movimentacao.dataMovimentacao <= (:dataFinal)', {
-        dataFinal: dadosEmissaoExcelDto.dataFinal,
-      });
-    }
-
-    if (dadosEmissaoExcelDto.tipoMovimentacao) {
-      query = query.andWhere(
-        ' movimentacao.tipoMovimentacao = :tipoMovimentacao',
-        {
-          tipoMovimentacao: dadosEmissaoExcelDto.tipoMovimentacao,
-        },
-      );
-    }
-
-    query.orderBy('movimentacao.dataMovimentacao', 'ASC');
-    const movimentacoes = await query.getMany();
 
     if (movimentacoes == null || movimentacoes.length <= 0) {
       throw new NotFoundException('Nenhum item encontrado para emissão!');
@@ -378,29 +288,12 @@ export class MovimentacoesService {
   }
 
   async valorTotalEntradasSaidas() {
-    const query = `
-       SELECT
-          SUM(CASE WHEN m."tipo_movimentacao"  = 'Entrada' THEN lp."preco_custo" * m."quantidade" ELSE 0 END) AS total_entrada,
-          SUM(CASE WHEN m."tipo_movimentacao" = 'Saída' THEN lp."preco_venda" * m."quantidade" ELSE 0 END) AS total_saida
-      from movimentacoes m
-       inner join lancamentos_produtos lp on lp."id" = m."id_lancamento_produto";
-    `;
-
-    const results = await this.movimentacaoRepository.query(query);
-
+    const results = await this.repositorio.valorTotalEntradasSaidas();
     const { total_entrada, total_saida } = results[0];
     return { totalEntrada: total_entrada || 0, totalSaida: total_saida || 0 };
   }
 
   async ultimasMovimentacoes() {
-    const query = `
-      select  p."nome", m."quantidade", m."tipo_movimentacao"  from movimentacoes m 
-inner join lancamentos_produtos lp on lp."id" = m."id_lancamento_produto"
-inner join produtos p on p."id" = lp."id_produto" limit 5;
-    `;
-
-    const results = await this.movimentacaoRepository.query(query);
-
-    return results;
+    return await this.repositorio.ultimasMovimentacoes();
   }
 }
