@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MarcasService } from './marcas.service';
 import { MarcasController } from './marcas.controller';
-import { Marcas } from './entities/marca.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MarcasRepository } from './marcas.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Marcas])],
+  imports: [TypeOrmModule.forFeature([MarcasRepository])],
   controllers: [MarcasController],
-  providers: [MarcasService],
+  providers: [MarcasService, MarcasRepository],
   exports: [MarcasService],
 })
 export class MarcasModule {}

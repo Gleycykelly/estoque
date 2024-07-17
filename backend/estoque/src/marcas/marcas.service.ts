@@ -1,28 +1,18 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateMarcaDto } from './dto/create-marca.dto';
 import { UpdateMarcaDto } from './dto/update-marca.dto';
 import { Marcas } from './entities/marca.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ObterParcialMarcaDto } from './dto/obter-parcial-marca.dto';
+import { MarcasRepository } from './marcas.repository';
 
 @Injectable()
 export class MarcasService {
-  @InjectRepository(Marcas)
-  private readonly marcasRepository: Repository<Marcas>;
+  constructor(private readonly repositorio: MarcasRepository) {}
 
   async create(createMarcaDto: CreateMarcaDto) {
     await this.marcaJaCadastrada(createMarcaDto.descricao);
 
-    const marca = this.marcasRepository.create({
-      ...createMarcaDto,
-    });
-
-    return this.marcasRepository.save(marca);
+    return await this, this.repositorio.createMarcas(createMarcaDto);
   }
 
   async update(id: number, updateMarcaDto: UpdateMarcaDto) {
@@ -32,9 +22,9 @@ export class MarcasService {
     );
 
     if (JaCadastrado) {
-      const marcaAtual = await this.marcasRepository.findOne({
-        where: { descricao: updateMarcaDto.descricao },
-      });
+      const marcaAtual = await this.repositorio.obterPelaDescricao(
+        updateMarcaDto.descricao,
+      );
 
       if (marcaAtual.id != id) {
         throw new ConflictException(
@@ -43,51 +33,26 @@ export class MarcasService {
       }
     }
 
-    const marca = await this.marcasRepository.preload({
-      ...updateMarcaDto,
-      id,
-    });
-
-    if (!marca) {
-      throw new NotFoundException(`Nenhum marca encontrada para o id ${id}`);
-    }
-
-    return this.marcasRepository.save(marca);
+    return await this.repositorio.updateMarcas(id, updateMarcaDto);
   }
 
   async findAll() {
-    return await this.marcasRepository.find({
-      order: {
-        id: 'ASC',
-      },
-    });
+    return await this.repositorio.obterTodos();
   }
 
   async findOne(id: number) {
-    return await this.marcasRepository.findOne({
-      where: { id },
-    });
+    return await this.repositorio.obterPorId(id);
   }
 
   async obterParcial(
     obterParcialMarcaDto: ObterParcialMarcaDto,
   ): Promise<Marcas[]> {
-    if (!obterParcialMarcaDto.termoDePesquisa) {
-      return this.findAll();
-    }
-    return await this.marcasRepository
-      .createQueryBuilder('marca')
-      .where('LOWER(marca.descricao) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialMarcaDto.termoDePesquisa}%`,
-      })
-      .getMany();
+    return await this.repositorio.obterParcial(obterParcialMarcaDto);
   }
 
   async remove(id: number) {
     try {
-      const marca = await this.findOne(id);
-
-      return await this.marcasRepository.remove(marca);
+      return await this.repositorio.excluir(id);
     } catch (error) {
       throw new ConflictException(
         'Não foi possível excluir a marca porque há produtos associados a ela.',
@@ -96,9 +61,7 @@ export class MarcasService {
   }
 
   async marcaJaCadastrada(descricao: string, ehAtualizacao = false) {
-    const jaExiste = await this.marcasRepository.count({
-      where: { descricao: descricao },
-    });
+    const jaExiste = await this.repositorio.existeMarca(descricao);
 
     if (jaExiste && !ehAtualizacao) {
       throw new ConflictException(`A marca ${descricao} já está cadastrada!`);
