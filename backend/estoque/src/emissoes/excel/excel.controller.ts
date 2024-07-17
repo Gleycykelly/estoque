@@ -9,13 +9,13 @@ import { Response } from 'express';
 export class ExcelController {
   constructor(private readonly excelService: ExcelService) {}
 
-  @Post('produtos-por-estoque')
-  async produtosPorEstoque(
+  @Post('produtos')
+  async emissaoProdutos(
     @Body() dadosEmissaoExcelDto: DadosEmissaoExcelDto,
     @Res() res: Response,
   ): Promise<void> {
     const filePath =
-      await this.excelService.produtosPorEstoque(dadosEmissaoExcelDto);
+      await this.excelService.emissaoProdutos(dadosEmissaoExcelDto);
     res.download(filePath, () => {
       this.excelService.deleteFile(filePath);
     });
