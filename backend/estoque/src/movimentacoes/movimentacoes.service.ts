@@ -6,8 +6,7 @@ import {
 import { CreateMovimentacoeDto } from './dto/create-movimentacoe.dto';
 import { UpdateMovimentacoeDto } from './dto/update-movimentacoe.dto';
 import { Movimentacoes } from './entities/movimentacao.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
 import { LancamentosProdutosService } from 'src/lancamentos-produtos/lancamentos-produtos.service';
 import { AuthService } from 'src/auth/auth.service';
@@ -15,18 +14,17 @@ import { ObterParcialMovimentacaoDto } from './dto/obter-parcial-movimentacao.dt
 import { LancamentosProdutos } from 'src/lancamentos-produtos/entities/lancamento-produto.entity';
 import { format } from 'date-fns';
 import { DadosEmissaoExcelDto } from 'src/emissoes/excel/dto/dados-emissao-excel.dto';
+import { MovimentacoesRepository } from './movimentacoes.repository';
 
 @Injectable()
 export class MovimentacoesService {
   constructor(
+    private readonly repositorio: MovimentacoesRepository,
     private dataSource: DataSource,
     private readonly authService: AuthService,
     private readonly usuarioService: UsuariosService,
     private readonly lancamentoProdutoService: LancamentosProdutosService,
   ) {}
-
-  @InjectRepository(Movimentacoes)
-  private readonly movimentacaoRepository: Repository<Movimentacoes>;
 
   async create(createMovimentacoeDto: CreateMovimentacoeDto, token: string) {
     createMovimentacoeDto.dataMovimentacao = new Date();
@@ -42,11 +40,7 @@ export class MovimentacoesService {
         createMovimentacoeDto.lancamentoProduto,
         this.lancamentoProdutoService,
       );
-
-    const movimentacao = this.movimentacaoRepository.create({
-      ...createMovimentacoeDto,
-    });
-    return this.movimentacaoRepository.save(movimentacao);
+    return this.repositorio.createMovimentacao(createMovimentacoeDto);
   }
 
   async update(id: number, updateMovimentacoeDto: UpdateMovimentacoeDto) {
@@ -61,185 +55,30 @@ export class MovimentacoesService {
     updateMovimentacoeDto.usuario = await this.usuarioService.findOne(
       updateMovimentacoeDto.usuario.id,
     );
-
-    const movimentacao = await this.movimentacaoRepository.preload({
-      ...updateMovimentacoeDto,
-      id,
-    });
-
-    if (!movimentacao) {
-      throw new NotFoundException(
-        `Nenhuma movimentação encontrada para o id ${id}`,
-      );
-    }
-
-    return this.movimentacaoRepository.save(movimentacao);
+    return await this.repositorio.updateMovimentacao(id, updateMovimentacoeDto);
   }
 
   async findAll() {
-    return await this.movimentacaoRepository.find({
-      relations: [
-        'lancamentoProduto',
-        'lancamentoProduto.produto',
-        'lancamentoProduto.produto.porcoes',
-        'lancamentoProduto.produto.porcoes.unidadeMedida',
-        'lancamentoProduto.produto.porcoes.valorNutricional',
-        'lancamentoProduto.produto.porcoes.informacaoNutricional',
-        'lancamentoProduto.fornecedor',
-        'lancamentoProduto.fornecedor.endereco',
-        'lancamentoProduto.localizacaoDeposito',
-        'lancamentoProduto.localizacaoDeposito.deposito',
-        'usuario',
-      ],
-      order: {
-        id: 'ASC',
-      },
-    });
+    return this.repositorio.obterTodos();
   }
 
   async findOne(id: number) {
-    return await this.movimentacaoRepository.findOne({
-      where: { id },
-      relations: [
-        'lancamentoProduto',
-        'lancamentoProduto.produto',
-        'lancamentoProduto.produto.porcoes',
-        'lancamentoProduto.produto.porcoes.unidadeMedida',
-        'lancamentoProduto.produto.porcoes.valorNutricional',
-        'lancamentoProduto.produto.porcoes.informacaoNutricional',
-        'lancamentoProduto.fornecedor',
-        'lancamentoProduto.fornecedor.endereco',
-        'lancamentoProduto.localizacaoDeposito',
-        'lancamentoProduto.localizacaoDeposito.deposito',
-        'lancamentoProduto.localizacaoDeposito.deposito.endereco',
-        'lancamentoProduto.localizacaoDeposito.deposito.endereco.municipio',
-        'lancamentoProduto.localizacaoDeposito.deposito.endereco.municipio.uf',
-        'usuario',
-      ],
-    });
+    return await this.repositorio.obterPorId(id);
   }
 
   async obterParcial(
     obterParcialMovimentacaoDto: ObterParcialMovimentacaoDto,
   ): Promise<Movimentacoes[]> {
-    if (!obterParcialMovimentacaoDto) {
-      return this.findAll();
-    }
-
-    let query = await this.movimentacaoRepository
-      .createQueryBuilder('movimentacao')
-      .leftJoinAndSelect('movimentacao.lancamentoProduto', 'lancamento')
-      .leftJoinAndSelect('lancamento.produto', 'produto')
-      .leftJoinAndSelect('movimentacao.usuario', 'usuario')
-      .leftJoinAndSelect('lancamento.localizacaoDeposito', 'localiza')
-      .leftJoinAndSelect('localiza.deposito', 'deposito')
-      .leftJoinAndSelect('lancamento.fornecedor', 'fornecedor');
-
-    if (obterParcialMovimentacaoDto.termoDePesquisa) {
-      query = query
-        .leftJoinAndSelect(
-          'movimentacao.lancamentoProduto',
-          'lancamentoProduto',
-        )
-        .leftJoinAndSelect('lancamentoProduto.produto', 'produto')
-        .where('LOWER(produto.nome) LIKE LOWER(:termo)', {
-          termo: `%${obterParcialMovimentacaoDto.termoDePesquisa}%`,
-        });
-    }
-
-    if (
-      obterParcialMovimentacaoDto.depositos &&
-      obterParcialMovimentacaoDto.depositos.length > 0
-    ) {
-      query = query.andWhere('deposito.id IN (:...depositos)', {
-        depositos: obterParcialMovimentacaoDto.depositos,
-      });
-    }
-
-    if (
-      obterParcialMovimentacaoDto.produtos &&
-      obterParcialMovimentacaoDto.produtos.length > 0
-    ) {
-      query = query.andWhere('produto.id IN (:...produtos)', {
-        produtos: obterParcialMovimentacaoDto.produtos,
-      });
-    }
-
-    if (
-      obterParcialMovimentacaoDto.fornecedores &&
-      obterParcialMovimentacaoDto.fornecedores.length > 0
-    ) {
-      query = query.andWhere('fornecedor.id IN (:...fornecedores)', {
-        fornecedores: obterParcialMovimentacaoDto.fornecedores,
-      });
-    }
-
-    if (
-      obterParcialMovimentacaoDto.operadores &&
-      obterParcialMovimentacaoDto.operadores.length > 0
-    ) {
-      query = query.andWhere('usuario.id IN (:...operadores)', {
-        operadores: obterParcialMovimentacaoDto.operadores,
-      });
-    }
-
-    if (obterParcialMovimentacaoDto.quantidadeMaiorQue) {
-      query = query.andWhere('movimentacao.quantidade > (:maiorQue)', {
-        maiorQue: obterParcialMovimentacaoDto.quantidadeMaiorQue,
-      });
-    }
-
-    if (obterParcialMovimentacaoDto.quantidadeMenorQue) {
-      query = query.andWhere('movimentacao.quantidade < (:menorQue)', {
-        menorQue: obterParcialMovimentacaoDto.quantidadeMenorQue,
-      });
-    }
-
-    if (obterParcialMovimentacaoDto.diasParaVencer) {
-      const dataVencimento = new Date();
-      dataVencimento.setDate(
-        dataVencimento.getDate() +
-          Number(obterParcialMovimentacaoDto.diasParaVencer),
-      );
-
-      query = query.andWhere('lancamento.dataValidade = (:dataVencimento)', {
-        dataVencimento: dataVencimento.toISOString(),
-      });
-    }
-
-    if (obterParcialMovimentacaoDto.produtosVencidos) {
-      const dataAtual = new Date();
-
-      query = query.andWhere(' lancamento.dataValidade < (:dataAtual)', {
-        dataAtual: dataAtual.toISOString(),
-      });
-    }
-
-    if (obterParcialMovimentacaoDto.tipoMovimentacao) {
-      query = query.andWhere(
-        ' movimentacao.tipoMovimentacao = :tipoMovimentacao',
-        {
-          tipoMovimentacao: obterParcialMovimentacaoDto.tipoMovimentacao,
-        },
-      );
-    }
-
-    query.orderBy('movimentacao.id', 'ASC');
-    const result = await query.getMany();
-    return result;
+    return await this.repositorio.obterParcial(obterParcialMovimentacaoDto);
   }
 
   async remove(id: number) {
-    const queryRunner =
-      this.movimentacaoRepository.manager.connection.createQueryRunner();
+    const queryRunner = this.repositorio.manager.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const movimentacao = await this.movimentacaoRepository.findOne({
-        relations: ['lancamentoProduto'],
-        where: { id },
-      });
+      const movimentacao = await this.repositorio.obterPorId(id);
 
       if (!movimentacao) {
         throw new NotFoundException(
@@ -258,7 +97,7 @@ export class MovimentacoesService {
 
       const lancamentoParaRemover = movimentacao.lancamentoProduto.id;
 
-      const movimetacoesSaida = await this.movimentacaoRepository.find({
+      const movimetacoesSaida = await this.repositorio.find({
         where: { lancamentoProduto: { id: lancamentoParaRemover } },
       });
 
