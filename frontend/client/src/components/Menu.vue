@@ -69,8 +69,8 @@
           </v-list-item>
         </template>
 
-        <v-list-item class="sub-titulo" :to="{ name: 'produtos-por-estoque' }">
-          Produtos por estoque
+        <v-list-item class="sub-titulo" :to="{ name: 'emissao-produtos' }">
+          Produtos
         </v-list-item>
         <v-list-item class="sub-titulo" :to="{ name: 'emissao-movimentacoes' }">
           Movimentações

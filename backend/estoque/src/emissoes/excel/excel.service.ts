@@ -8,12 +8,13 @@ import * as fs from 'fs';
 export class ExcelService {
   constructor(private readonly movimentacaoService: MovimentacoesService) {}
 
-  async produtosPorEstoque(
+  async emissaoProdutos(
     dadosEmissaoExcelDto: DadosEmissaoExcelDto,
   ): Promise<string> {
-    const data = await this.movimentacaoService.obterProdutosPorEstoque(
-      dadosEmissaoExcelDto.deposito ? dadosEmissaoExcelDto.deposito.id : null,
-    );
+    const data =
+      await this.movimentacaoService.obterMovimentacaoProdutosParaEmissao(
+        dadosEmissaoExcelDto,
+      );
 
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('Produtos');
@@ -29,17 +30,15 @@ export class ExcelService {
         key: 'quantidadeEmEstoque',
         width: 21,
       },
+      {
+        header: 'Localização no estoque',
+        key: 'localizacao',
+        width: 100,
+      },
     ];
 
     data.forEach((item) => {
-      worksheet.addRow({
-        deposito: item.deposito,
-        codigoProduto: item.codigoProduto,
-        lote: item.lote,
-        produto: item.produto,
-        dataValidade: item.dataValidade,
-        quantidadeEmEstoque: item.quantidadeEmEstoque,
-      });
+      worksheet.addRow(item);
     });
 
     const tempFilePath = `temp/excel-${Date.now()}.xlsx`;

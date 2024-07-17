@@ -330,43 +330,63 @@ export class MovimentacoesService {
     };
   }
 
-  async obterProdutosPorEstoque(idDeposito?: number) {
-    let movimentacoes = [];
+  async obterMovimentacaoProdutosParaEmissao(
+    dadosEmissaoExcelDto: DadosEmissaoExcelDto,
+  ) {
+    let query = await this.movimentacaoRepository
+      .createQueryBuilder('movimentacao')
+      .leftJoinAndSelect('movimentacao.lancamentoProduto', 'lancamento')
+      .leftJoinAndSelect('lancamento.produto', 'produto')
+      .leftJoinAndSelect('movimentacao.usuario', 'usuario')
+      .leftJoinAndSelect('lancamento.localizacaoDeposito', 'localiza')
+      .leftJoinAndSelect('localiza.deposito', 'deposito')
+      .leftJoinAndSelect('lancamento.fornecedor', 'fornecedor');
 
-    if (idDeposito) {
-      movimentacoes = await this.movimentacaoRepository.find({
-        where: {
-          lancamentoProduto: {
-            localizacaoDeposito: {
-              deposito: {
-                id: idDeposito,
-              },
-            },
-          },
-        },
-        relations: [
-          'lancamentoProduto',
-          'lancamentoProduto.produto',
-          'lancamentoProduto.produto.porcoes',
-          'lancamentoProduto.produto.porcoes.unidadeMedida',
-          'lancamentoProduto.produto.porcoes.valorNutricional',
-          'lancamentoProduto.produto.porcoes.informacaoNutricional',
-          'lancamentoProduto.fornecedor',
-          'lancamentoProduto.fornecedor.endereco',
-          'lancamentoProduto.localizacaoDeposito',
-          'lancamentoProduto.localizacaoDeposito.deposito',
-          'usuario',
-        ],
+    if (
+      dadosEmissaoExcelDto.depositos &&
+      dadosEmissaoExcelDto.depositos.length > 0
+    ) {
+      query = query.andWhere('deposito.id IN (:...depositos)', {
+        depositos: dadosEmissaoExcelDto.depositos,
       });
-    } else {
-      movimentacoes = await this.findAll();
     }
+
+    if (
+      dadosEmissaoExcelDto.fornecedores &&
+      dadosEmissaoExcelDto.fornecedores.length > 0
+    ) {
+      query = query.andWhere('fornecedor.id IN (:...fornecedores)', {
+        fornecedores: dadosEmissaoExcelDto.fornecedores,
+      });
+    }
+
+    if (dadosEmissaoExcelDto.diasParaVencer) {
+      const dataVencimento = new Date();
+      dataVencimento.setDate(
+        dataVencimento.getDate() + Number(dadosEmissaoExcelDto.diasParaVencer),
+      );
+
+      query = query.andWhere('lancamento.dataValidade = (:dataVencimento)', {
+        dataVencimento: dataVencimento.toISOString(),
+      });
+    }
+
+    if (dadosEmissaoExcelDto.produtosVencidos) {
+      const dataAtual = new Date();
+
+      query = query.andWhere(' lancamento.dataValidade < (:dataAtual)', {
+        dataAtual: dataAtual.toISOString(),
+      });
+    }
+
+    query.orderBy('produto.nome', 'ASC');
+    const movimentacoes = await query.getMany();
 
     if (movimentacoes == null || movimentacoes.length <= 0) {
       throw new NotFoundException('Nenhum item encontrado para emissão!');
     }
 
-    const dados = [];
+    let dados = [];
 
     for (const movimentacao of movimentacoes) {
       if (dados.length <= 0) {
@@ -385,6 +405,7 @@ export class MovimentacoesService {
               ? movimentacao.quantidade
               : -movimentacao.quantidade,
           lote: movimentacao.lancamentoProduto.lote,
+          localizacao: `Corredor: ${movimentacao.lancamentoProduto.localizacaoDeposito.corredor} - Prateleira: ${movimentacao.lancamentoProduto.localizacaoDeposito.prateleira}`,
         });
       } else {
         const index = dados.findIndex(
@@ -412,8 +433,32 @@ export class MovimentacoesService {
                 ? movimentacao.quantidade
                 : -movimentacao.quantidade,
             lote: movimentacao.lancamentoProduto.lote,
+            localizacao: `Corredor: ${movimentacao.lancamentoProduto.localizacaoDeposito.corredor} - Prateleira: ${movimentacao.lancamentoProduto.localizacaoDeposito.prateleira}`,
           });
         }
+      }
+
+      if (dadosEmissaoExcelDto.quantidadeMenorQue) {
+        dados = dados.filter(
+          (m) =>
+            Number(m.quantidadeEmEstoque) <
+            Number(dadosEmissaoExcelDto.quantidadeMenorQue),
+        );
+      }
+
+      if (dadosEmissaoExcelDto.quantidadeMaiorQue) {
+        dados = dados.filter(
+          (m) =>
+            Number(m.quantidadeEmEstoque) >
+            Number(dadosEmissaoExcelDto.quantidadeMaiorQue),
+        );
+      }
+
+      if (
+        dadosEmissaoExcelDto.diasParaVencer ||
+        dadosEmissaoExcelDto.produtosVencidos
+      ) {
+        dados = dados.filter((m) => m.quantidadeEmEstoque > 0);
       }
     }
 

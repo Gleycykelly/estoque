@@ -1,10 +1,6 @@
 import { IsOptional } from 'class-validator';
-import { Depositos } from 'src/depositos/entities/deposito.entity';
 
 export class DadosEmissaoExcelDto {
-  @IsOptional()
-  deposito: Depositos;
-
   @IsOptional()
   dataInicial: string;
 
@@ -13,4 +9,22 @@ export class DadosEmissaoExcelDto {
 
   @IsOptional()
   tipoMovimentacao: string;
+
+  @IsOptional()
+  fornecedores: number[];
+
+  @IsOptional()
+  depositos: number[];
+
+  @IsOptional()
+  quantidadeMaiorQue: number;
+
+  @IsOptional()
+  quantidadeMenorQue: number;
+
+  @IsOptional()
+  diasParaVencer: number;
+
+  @IsOptional()
+  produtosVencidos: boolean;
 }
