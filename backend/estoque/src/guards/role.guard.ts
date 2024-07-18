@@ -15,6 +15,7 @@ export class RoleGuard implements CanActivate {
     if (!regrasNoMetodoAtual) {
       return true;
     }
+
     const { user } = context.switchToHttp().getRequest();
 
     const regras = regrasNoMetodoAtual.filter(

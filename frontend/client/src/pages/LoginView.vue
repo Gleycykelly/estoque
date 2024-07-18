@@ -86,9 +86,11 @@ export default {
       })
         .then((response) => {
           const token = response.data;
+
           const authStore = useAuthStore();
           authStore.setToken(token);
-          this.$router.push('/home');
+
+          this.$router.push('/');
         })
         .catch((error) => {
           if (error.response && error.response.data) {

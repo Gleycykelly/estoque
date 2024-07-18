@@ -52,7 +52,6 @@ export class UsuariosController {
     return this.usuariosService.obterParcial(obterParcialUsuarioDto);
   }
 
-  @Roles(Role.Administrador)
   @Post('/obter-usuario-logado')
   obterUsuarioLogado(@Headers('Authorization') token: string) {
     return this.usuariosService.obterUsuarioLogado(token);
