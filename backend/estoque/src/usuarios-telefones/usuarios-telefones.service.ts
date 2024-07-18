@@ -1,60 +1,39 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateUsuariosTelefoneDto } from './dto/create-usuarios-telefone.dto';
 import { UpdateUsuariosTelefoneDto } from './dto/update-usuarios-telefone.dto';
-import { UsuariosTelefones } from './entities/usuario-telefone.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { UsuariosTelefonesRepository } from './usuarios-telefones.repository';
 
 @Injectable()
 export class UsuariosTelefonesService {
-  @InjectRepository(UsuariosTelefones)
-  private readonly usuarioTelefonesRepository: Repository<UsuariosTelefones>;
+  constructor(private readonly repositorio: UsuariosTelefonesRepository) {}
 
   async create(createUsuariosTelefoneDto: CreateUsuariosTelefoneDto) {
-    const usuarioTelefones = this.usuarioTelefonesRepository.create({
-      ...createUsuariosTelefoneDto,
-    });
-
-    return this.usuarioTelefonesRepository.save(usuarioTelefones);
+    return await this.repositorio.createUsuariosTelefones(
+      createUsuariosTelefoneDto,
+    );
   }
 
   async findAll() {
-    return await this.usuarioTelefonesRepository.find();
+    return await this.repositorio.obterTodos();
   }
 
   async findOne(id: number) {
-    return await this.usuarioTelefonesRepository.findOne({
-      where: { id },
-    });
+    return await this.repositorio.obterPorId(id);
   }
 
   async update(
     id: number,
     updateUsuariosTelefoneDto: UpdateUsuariosTelefoneDto,
   ) {
-    const usuarioTelefones = await this.usuarioTelefonesRepository.preload({
-      ...updateUsuariosTelefoneDto,
+    return await this.repositorio.updateUsuarioTelefones(
       id,
-    });
-
-    if (!usuarioTelefones) {
-      throw new NotFoundException(
-        `Nenhuma relação entre usuário e telefones encontrada para o id ${id}`,
-      );
-    }
-
-    return this.usuarioTelefonesRepository.save(usuarioTelefones);
+      updateUsuariosTelefoneDto,
+    );
   }
 
   async remove(id: number) {
     try {
-      const usuario = await this.findOne(id);
-
-      return await this.usuarioTelefonesRepository.remove(usuario);
+      return await this.repositorio.excluir(id);
     } catch (error) {
       throw new ConflictException(
         'Não foi possível excluir os telefones cadastrados para este usuário!.',
