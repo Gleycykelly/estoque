@@ -56,8 +56,12 @@ export class MovimentacoesController {
   @Post('/obter-parcial')
   obterParcial(
     @Body() obterParcialMovimentacaoDto: ObterParcialMovimentacaoDto,
+    @Headers('Authorization') token: string,
   ) {
-    return this.movimentacoesService.obterParcial(obterParcialMovimentacaoDto);
+    return this.movimentacoesService.obterParcial(
+      obterParcialMovimentacaoDto,
+      token,
+    );
   }
 
   @Patch(':id')

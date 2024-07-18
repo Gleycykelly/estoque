@@ -60,7 +60,7 @@ export class MarcasRepository extends Repository<Marcas> {
       });
     }
 
-    query.orderBy('fornecedor.id', 'ASC');
+    query.orderBy('marca.id', 'ASC');
     const result = await query.getMany();
     return result;
   }

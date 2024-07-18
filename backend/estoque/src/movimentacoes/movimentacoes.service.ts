@@ -68,7 +68,18 @@ export class MovimentacoesService {
 
   async obterParcial(
     obterParcialMovimentacaoDto: ObterParcialMovimentacaoDto,
+    token: string,
   ): Promise<Movimentacoes[]> {
+    const dadosUsuarioLogado =
+      await this.usuarioService.obterUsuarioLogado(token);
+
+    if (dadosUsuarioLogado.permissaoUsuario != 'Administrador') {
+      obterParcialMovimentacaoDto.depositos = [];
+      for (const deposito of dadosUsuarioLogado.depositos) {
+        obterParcialMovimentacaoDto.depositos.push(deposito.id);
+      }
+    }
+
     return await this.repositorio.obterParcial(obterParcialMovimentacaoDto);
   }
 
@@ -156,7 +167,18 @@ export class MovimentacoesService {
 
   async obterMovimentacaoProdutosParaEmissao(
     dadosEmissaoExcelDto: DadosEmissaoExcelDto,
+    token: string,
   ) {
+    const dadosUsuarioLogado =
+      await this.usuarioService.obterUsuarioLogado(token);
+
+    if (dadosUsuarioLogado.permissaoUsuario != 'Administrador') {
+      dadosEmissaoExcelDto.depositos = [];
+      for (const deposito of dadosUsuarioLogado.depositos) {
+        dadosEmissaoExcelDto.depositos.push(deposito.id);
+      }
+    }
+
     const movimentacoes =
       await this.repositorio.obterMovimentacaoProdutosParaEmissao(
         dadosEmissaoExcelDto,
@@ -247,7 +269,18 @@ export class MovimentacoesService {
 
   async obterMovimentacoesParaEmissao(
     dadosEmissaoExcelDto: DadosEmissaoExcelDto,
+    token: string,
   ) {
+    const dadosUsuarioLogado =
+      await this.usuarioService.obterUsuarioLogado(token);
+
+    if (dadosUsuarioLogado.permissaoUsuario != 'Administrador') {
+      dadosEmissaoExcelDto.depositos = [];
+      for (const deposito of dadosUsuarioLogado.depositos) {
+        dadosEmissaoExcelDto.depositos.push(deposito.id);
+      }
+    }
+
     const movimentacoes =
       await this.repositorio.obterMovimentacoesParaEmissao(
         dadosEmissaoExcelDto,

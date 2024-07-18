@@ -53,6 +53,15 @@ export class DepositosRepository extends Repository<Depositos> {
       });
     }
 
+    if (
+      obterParcialDepositoDto.depositos != null &&
+      obterParcialDepositoDto.depositos.length > 0
+    ) {
+      query = query.where('deposito.id in (:...depositos)', {
+        depositos: obterParcialDepositoDto.depositos,
+      });
+    }
+
     query.orderBy('deposito.id', 'ASC');
     const result = await query.getMany();
     return result;

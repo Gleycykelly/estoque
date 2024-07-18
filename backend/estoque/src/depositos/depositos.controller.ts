@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Headers,
 } from '@nestjs/common';
 import { DepositosService } from './depositos.service';
 import { CreateDepositoDto } from './dto/create-deposito.dto';
@@ -30,8 +31,11 @@ export class DepositosController {
   }
 
   @Post('/obter-parcial')
-  obterParcial(@Body() obterParcialDepositoDto: ObterParcialDepositoDto) {
-    return this.depositosService.obterParcial(obterParcialDepositoDto);
+  obterParcial(
+    @Body() obterParcialDepositoDto: ObterParcialDepositoDto,
+    @Headers('Authorization') token: string,
+  ) {
+    return this.depositosService.obterParcial(obterParcialDepositoDto, token);
   }
 
   @Get(':id')

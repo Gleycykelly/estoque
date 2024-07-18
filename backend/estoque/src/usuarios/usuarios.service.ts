@@ -22,9 +22,11 @@ export class UsuariosService {
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
 
+    @Inject(forwardRef(() => DepositosService))
+    private readonly depositoService: DepositosService,
+
     private readonly repositorio: UsuariosRepository,
     private readonly enderecoService: EnderecosService,
-    private readonly depositoService: DepositosService,
     private readonly usuariosTelefonesService: UsuariosTelefonesService,
   ) {}
 

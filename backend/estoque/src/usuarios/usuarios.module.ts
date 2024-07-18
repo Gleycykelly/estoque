@@ -23,7 +23,7 @@ import { UsuariosRepository } from './usuarios.repository';
     }),
     forwardRef(() => AuthModule),
     EnderecosModule,
-    DepositosModule,
+    forwardRef(() => DepositosModule),
     UsuariosTelefonesModule,
   ],
   controllers: [UsuariosController],

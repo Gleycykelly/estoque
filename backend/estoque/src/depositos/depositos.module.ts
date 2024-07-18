@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { DepositosService } from './depositos.service';
 import { DepositosController } from './depositos.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { Usuarios } from 'src/usuarios/entities/usuario.entity';
 import { EnderecosModule } from 'src/enderecos/enderecos.module';
 import { DepositosRepository } from './depositos.repository';
+import { UsuariosModule } from 'src/usuarios/usuarios.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { DepositosRepository } from './depositos.repository';
       },
     }),
     EnderecosModule,
+    forwardRef(() => UsuariosModule),
   ],
   controllers: [DepositosController],
   providers: [DepositosService, DepositosRepository],

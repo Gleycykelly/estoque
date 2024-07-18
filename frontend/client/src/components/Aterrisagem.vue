@@ -87,7 +87,7 @@
           prepend-icon="mdi-magnify"
           hide-details
           single-line
-          v-model="termoDePesquisa"
+          v-model="filtros.termoDePesquisa"
           placeholder="Digite um termo para pesquisa"
           @update:model-value="obterParcial()"
           variant="outlined"
@@ -242,6 +242,7 @@
 
               <v-select
                 v-if="telaParaFiltrar == 'movimentacoes'"
+                :disabled="filtros.naoEhAdministrador"
                 v-model="filtros.depositos"
                 item-title="descricao"
                 item-value="id"
@@ -416,18 +417,6 @@ export default {
       return cardHeight;
     },
 
-    async obtemDados() {
-      await this.comunicacao.obterTodos().then((response) => {
-        this.dados = [];
-
-        for (const dado of response.data) {
-          this.dados.push(dado);
-        }
-      });
-
-      return this.dados;
-    },
-
     async obterdadosParaFiltrar() {},
 
     async obterParcial() {
@@ -435,7 +424,6 @@ export default {
         this.modalAberto = false;
       }
 
-      this.filtros.termoDePesquisa = this.termoDePesquisa;
       await this.comunicacao
         .obterParcialFiltro(this.filtros)
         .then((response) => {
@@ -493,7 +481,7 @@ export default {
         .then(() => {
           useAlerta().exibirSnackbar('Item excluído com sucesso!', 'green');
           this.selected = null;
-          this.obtemDados();
+          this.obterParcial();
         })
         .catch((error) => {
           if (error.response && error.response.data) {
@@ -546,7 +534,7 @@ export default {
     },
 
     async obterDepositos() {
-      await comunicacaoDepositos.obterTodos().then((response) => {
+      await comunicacaoDepositos.obterParcialFiltro().then((response) => {
         this.depositos = [];
 
         for (const dado of response.data) {
@@ -576,7 +564,7 @@ export default {
     },
   },
   created() {
-    this.obtemDados();
+    this.obterParcial();
     if (this.mostrarBotaoDeFiltro) {
       if (this.telaParaFiltrar === 'produtos') {
         this.obterCategorias();

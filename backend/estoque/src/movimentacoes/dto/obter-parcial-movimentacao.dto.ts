@@ -18,6 +18,9 @@ export class ObterParcialMovimentacaoDto {
   depositos: number[];
 
   @IsOptional()
+  naoEhAdministrador: boolean;
+
+  @IsOptional()
   fornecedores: number[];
 
   @IsOptional()

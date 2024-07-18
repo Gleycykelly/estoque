@@ -479,7 +479,7 @@ export default {
     },
 
     async obterDepositos() {
-      comunicacaoDepositos.obterTodos().then((response) => {
+      comunicacaoDepositos.obterParcialFiltro().then((response) => {
         this.depositos = [];
 
         for (const deposito of response.data) {

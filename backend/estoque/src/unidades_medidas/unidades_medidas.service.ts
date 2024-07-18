@@ -63,7 +63,7 @@ export class UnidadesMedidasService {
   async obterParcial(
     obterParcialUnidadeMedidaDto: ObterParcialUnidadeMedidaDto,
   ): Promise<UnidadesMedidas[]> {
-    return await this.obterParcial(obterParcialUnidadeMedidaDto);
+    return await this.respositorio.obterParcial(obterParcialUnidadeMedidaDto);
   }
 
   async remove(id: number) {

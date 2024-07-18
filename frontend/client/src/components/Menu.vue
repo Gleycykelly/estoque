@@ -134,7 +134,6 @@ export default {
   },
   methods: {
     async obterUsuario() {
-      await comunicacaoUsuarios.obterUsuarioLogado();
       await comunicacaoUsuarios.obterUsuarioLogado().then((response) => {
         this.ehAdministrador =
           response.data.permissaoUsuario === 'Administrador';

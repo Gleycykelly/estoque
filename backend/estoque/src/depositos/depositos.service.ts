@@ -1,15 +1,23 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
 import { CreateDepositoDto } from './dto/create-deposito.dto';
 import { UpdateDepositoDto } from './dto/update-deposito.dto';
 import { Depositos } from './entities/deposito.entity';
 import { ObterParcialDepositoDto } from './dto/obter-parcial-deposito.dto';
 import { EnderecosService } from 'src/enderecos/enderecos.service';
 import { DepositosRepository } from './depositos.repository';
+import { UsuariosService } from 'src/usuarios/usuarios.service';
 
 @Injectable()
 export class DepositosService {
   constructor(
     private repositorio: DepositosRepository,
+    @Inject(forwardRef(() => UsuariosService))
+    private readonly usuarioService: UsuariosService,
     private readonly enderecoService: EnderecosService,
   ) {}
 
@@ -60,7 +68,17 @@ export class DepositosService {
 
   async obterParcial(
     obterParcialDepositoDto: ObterParcialDepositoDto,
+    token: string,
   ): Promise<Depositos[]> {
+    const dadosUsuarioLogado =
+      await this.usuarioService.obterUsuarioLogado(token);
+
+    if (dadosUsuarioLogado.permissaoUsuario != 'Administrador') {
+      obterParcialDepositoDto.depositos = [];
+      for (const deposito of dadosUsuarioLogado.depositos) {
+        obterParcialDepositoDto.depositos.push(deposito.id);
+      }
+    }
     return await this.repositorio.obterParcial(obterParcialDepositoDto);
   }
 

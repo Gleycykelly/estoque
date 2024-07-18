@@ -10,10 +10,12 @@ export class ExcelService {
 
   async emissaoProdutos(
     dadosEmissaoExcelDto: DadosEmissaoExcelDto,
+    token: string,
   ): Promise<string> {
     const data =
       await this.movimentacaoService.obterMovimentacaoProdutosParaEmissao(
         dadosEmissaoExcelDto,
+        token,
       );
 
     const workbook = new Workbook();
@@ -49,11 +51,12 @@ export class ExcelService {
 
   async emissaoMovimentacoes(
     dadosEmissaoExcelDto: DadosEmissaoExcelDto,
+    token: string,
   ): Promise<string> {
-    const data =
-      await this.movimentacaoService.obterMovimentacoesParaEmissao(
-        dadosEmissaoExcelDto,
-      );
+    const data = await this.movimentacaoService.obterMovimentacoesParaEmissao(
+      dadosEmissaoExcelDto,
+      token,
+    );
 
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('Produtos');

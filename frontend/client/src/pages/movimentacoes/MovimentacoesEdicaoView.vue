@@ -481,7 +481,7 @@ export default {
     },
 
     async obterDepositos() {
-      await comunicacaoDepositos.obterTodos().then((response) => {
+      await comunicacaoDepositos.obterParcialFiltro().then((response) => {
         this.depositos = [];
 
         for (const deposito of response.data) {

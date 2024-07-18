@@ -100,13 +100,15 @@ export default {
   },
   methods: {
     async obterDepositos() {
-      await comunicacaoDepositos.obterTodos().then((response) => {
-        this.depositos = [];
+      await comunicacaoDepositos
+        .obterParcialFiltro(this.modelo)
+        .then((response) => {
+          this.depositos = [];
 
-        for (const deposito of response.data) {
-          this.depositos.push(deposito);
-        }
-      });
+          for (const deposito of response.data) {
+            this.depositos.push(deposito);
+          }
+        });
     },
 
     async obterFornecedores() {

@@ -112,6 +112,8 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
       query = query.andWhere('deposito.id IN (:...depositos)', {
         depositos: obterParcialMovimentacaoDto.depositos,
       });
+    } else if (obterParcialMovimentacaoDto.naoEhAdministrador) {
+      return;
     }
 
     if (
@@ -279,6 +281,15 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
           tipoMovimentacao: dadosEmissaoExcelDto.tipoMovimentacao,
         },
       );
+    }
+
+    if (
+      dadosEmissaoExcelDto.depositos &&
+      dadosEmissaoExcelDto.depositos.length > 0
+    ) {
+      query = query.andWhere('deposito.id IN (:...depositos)', {
+        depositos: dadosEmissaoExcelDto.depositos,
+      });
     }
 
     query.orderBy('movimentacao.dataMovimentacao', 'ASC');
