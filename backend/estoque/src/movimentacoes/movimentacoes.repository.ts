@@ -141,18 +141,6 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
       });
     }
 
-    if (obterParcialMovimentacaoDto.quantidadeMaiorQue) {
-      query = query.andWhere('movimentacao.quantidade > (:maiorQue)', {
-        maiorQue: obterParcialMovimentacaoDto.quantidadeMaiorQue,
-      });
-    }
-
-    if (obterParcialMovimentacaoDto.quantidadeMenorQue) {
-      query = query.andWhere('movimentacao.quantidade < (:menorQue)', {
-        menorQue: obterParcialMovimentacaoDto.quantidadeMenorQue,
-      });
-    }
-
     if (obterParcialMovimentacaoDto.diasParaVencer) {
       const dataVencimento = new Date();
       dataVencimento.setDate(
