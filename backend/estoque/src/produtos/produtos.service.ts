@@ -2,8 +2,6 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { Produtos } from './entities/produto.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { AuthService } from 'src/auth/auth.service';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
 import { CategoriasService } from 'src/categorias/categorias.service';
