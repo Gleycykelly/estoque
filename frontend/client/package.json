@@ -12,6 +12,7 @@
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
     "core-js": "^3.8.3",
+    "nprogress": "^0.2.0",
     "pinia": "^2.1.4",
     "roboto-fontface": "*",
     "v-mask": "^2.3.0",

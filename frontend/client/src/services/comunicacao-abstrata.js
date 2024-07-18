@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useAuthStore } from '@/store';
+import NProgress from '../plugins/nprogress';
 
 const baseURL = 'http://localhost:3000/';
 
@@ -18,6 +19,7 @@ const comunicacaoAbstrata = (caminho) => {
 
   instancia.interceptors.request.use(
     (config) => {
+      NProgress.start();
       const token = obterToken();
       if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;
@@ -33,6 +35,11 @@ const comunicacaoAbstrata = (caminho) => {
       return Promise.reject(error);
     },
   );
+
+  instancia.interceptors.response.use((response) => {
+    NProgress.done();
+    return response;
+  });
 
   return {
     instancia,

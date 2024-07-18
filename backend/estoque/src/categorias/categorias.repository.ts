@@ -18,7 +18,7 @@ export class CategoriasRepository extends Repository<Categorias> {
       ...createCategoriaDto,
     });
 
-    return this.save(categoria);
+    return await this.save(categoria);
   }
 
   async updateCategoria(

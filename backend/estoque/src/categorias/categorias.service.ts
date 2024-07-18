@@ -15,8 +15,12 @@ export class CategoriasService {
 
   async create(createCategoriaDto: CreateCategoriaDto) {
     await this.categoriaJaExiste(createCategoriaDto.descricao);
+    await this.delay(60000); // 60 segundos
+    return this.repositorio.createCategoria(createCategoriaDto);
+  }
 
-    this.repositorio.createCategoria(createCategoriaDto);
+  private delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   async update(id: number, updateCategoriaDto: UpdateCategoriaDto) {

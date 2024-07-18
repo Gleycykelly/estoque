@@ -20,6 +20,7 @@ import FornecedoresView from '../pages/fornecedores/FornecedoresView.vue';
 import FornecedoresEdicaoView from '../pages/fornecedores/FornecedoresEdicaoView.vue';
 import EmissaoProdutos from '../pages/relatorios/Produtos.vue';
 import EmissaoMovimentacao from '../pages/relatorios/Movimentacoes.vue';
+import NProgress from '../plugins/nprogress';
 
 const routes = [
   {
@@ -133,6 +134,19 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+// ...
+
+router.beforeResolve((to, from, next) => {
+  if (to.name) {
+    NProgress.start();
+  }
+  next();
+});
+
+router.afterEach(() => {
+  NProgress.done();
 });
 
 export default router;
