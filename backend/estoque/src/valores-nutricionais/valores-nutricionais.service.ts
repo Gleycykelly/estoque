@@ -1,66 +1,43 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateValoresNutricionaiDto } from './dto/create-valores-nutricionai.dto';
 import { UpdateValoresNutricionaiDto } from './dto/update-valores-nutricionai.dto';
-import { ValoresNutricionais } from './entities/valor-nutricional.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { ValoresNutricionaisRepository } from './valores-nutriconais.repository';
 
 @Injectable()
 export class ValoresNutricionaisService {
-  @InjectRepository(ValoresNutricionais)
-  private readonly valorNutricionalRepository: Repository<ValoresNutricionais>;
+  constructor(private readonly repositorio: ValoresNutricionaisRepository) {}
 
-  create(createValoresNutricionaiDto: CreateValoresNutricionaiDto) {
-    const valorNutricional = this.valorNutricionalRepository.create({
-      ...createValoresNutricionaiDto,
-    });
-
-    return this.valorNutricionalRepository.save(valorNutricional);
+  async create(createValoresNutricionaiDto: CreateValoresNutricionaiDto) {
+    return await this.repositorio.createValoresNutricionais(
+      createValoresNutricionaiDto,
+    );
   }
 
   async update(
     id: number,
     updateValoresNutricionaiDto: UpdateValoresNutricionaiDto,
   ) {
-    const valorNutricional = await this.valorNutricionalRepository.preload({
-      ...updateValoresNutricionaiDto,
+    return await this.repositorio.updateValoresNutricionais(
       id,
-    });
-
-    if (!valorNutricional) {
-      throw new NotFoundException(
-        `Nenhum valor nutricional encontrado para o id ${id}`,
-      );
-    }
-
-    return this.valorNutricionalRepository.save(valorNutricional);
+      updateValoresNutricionaiDto,
+    );
   }
 
   async findAll() {
-    return await this.valorNutricionalRepository.find({
-      order: {
-        id: 'ASC',
-      },
-    });
+    return await this.repositorio.obterTodos();
   }
 
   async findOne(id: number) {
-    return await this.valorNutricionalRepository.findOne({
-      where: { id },
-    });
+    return await this.repositorio.obterPorId(id);
   }
 
   async remove(id: number) {
-    const valorNutricional = await this.valorNutricionalRepository.findOne({
-      where: { id },
-    });
-
-    if (!valorNutricional) {
-      throw new NotFoundException(
-        `Nenhum valor nutricional encontrado para o id ${id}`,
+    try {
+      return await this.repositorio.excluir(id);
+    } catch (error) {
+      throw new ConflictException(
+        'Não foi possível excluir os valores nutricionais"!.',
       );
     }
-
-    return this.valorNutricionalRepository.remove(valorNutricional);
   }
 }

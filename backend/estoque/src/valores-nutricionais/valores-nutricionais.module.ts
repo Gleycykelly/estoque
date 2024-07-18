@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ValoresNutricionaisService } from './valores-nutricionais.service';
 import { ValoresNutricionaisController } from './valores-nutricionais.controller';
-import { ValoresNutricionais } from './entities/valor-nutricional.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ValoresNutricionaisRepository } from './valores-nutriconais.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ValoresNutricionais])],
+  imports: [TypeOrmModule.forFeature([ValoresNutricionaisRepository])],
   controllers: [ValoresNutricionaisController],
-  providers: [ValoresNutricionaisService],
+  providers: [ValoresNutricionaisService, ValoresNutricionaisRepository],
   exports: [ValoresNutricionaisService],
 })
 export class ValoresNutricionaisModule {}
