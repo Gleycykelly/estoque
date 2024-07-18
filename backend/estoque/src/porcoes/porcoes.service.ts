@@ -2,30 +2,26 @@ import {
   ConflictException,
   Inject,
   Injectable,
-  NotFoundException,
   forwardRef,
 } from '@nestjs/common';
 import { CreatePorcoeDto } from './dto/create-porcoe.dto';
 import { UpdatePorcoeDto } from './dto/update-porcoe.dto';
-import { Porcoes } from './entities/porcao.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ProdutosService } from 'src/produtos/produtos.service';
 import { UnidadesMedidasService } from 'src/unidades_medidas/unidades_medidas.service';
 import { ValoresNutricionaisService } from 'src/valores-nutricionais/valores-nutricionais.service';
 import { InformacoesNutricionaisService } from 'src/informacoes-nutricionais/informacoes-nutricionais.service';
+import { PorcoesRepository } from './porcoes.repository';
 
 @Injectable()
 export class PorcoesService {
   constructor(
     @Inject(forwardRef(() => ProdutosService))
+    private repositorio: PorcoesRepository,
     private readonly produtoService: ProdutosService,
     private readonly unidadeMedidaService: UnidadesMedidasService,
     private readonly valorNutricionalService: ValoresNutricionaisService,
     private readonly informacaoNutricionalService: InformacoesNutricionaisService,
   ) {}
-  @InjectRepository(Porcoes)
-  private readonly porcoesRepository: Repository<Porcoes>;
 
   async create(createPorcoeDto: CreatePorcoeDto) {
     await this.porcaoJaCadastrada(
@@ -48,11 +44,7 @@ export class PorcoesService {
       this.unidadeMedidaService,
     );
 
-    const porcao = this.porcoesRepository.create({
-      ...createPorcoeDto,
-    });
-
-    return this.porcoesRepository.save(porcao);
+    return await this.repositorio.createPorcao(createPorcoeDto);
   }
 
   async update(id: number, updatePorcoeDto: UpdatePorcoeDto) {
@@ -78,12 +70,10 @@ export class PorcoesService {
     );
 
     if (JaCadastrado) {
-      const porcaoAtual = await this.porcoesRepository.findOne({
-        where: {
-          porcao: updatePorcoeDto.porcao,
-          produto: { id: updatePorcoeDto.produto.id },
-        },
-      });
+      const porcaoAtual = await this.repositorio.porcaoPorProduto(
+        updatePorcoeDto.porcao,
+        updatePorcoeDto.produto.id,
+      );
       if (porcaoAtual.id != id) {
         throw new ConflictException(
           `Porção ${updatePorcoeDto.porcao} já cadastrada!`,
@@ -91,52 +81,23 @@ export class PorcoesService {
       }
     }
 
-    const porcao = await this.porcoesRepository.preload({
-      ...updatePorcoeDto,
-      id,
-    });
-
-    if (!porcao) {
-      throw new NotFoundException(`Nenhuma porção encontrada para o id ${id}`);
-    }
-
-    return this.porcoesRepository.save(porcao);
+    return await this.repositorio.updatePorcao(id, updatePorcoeDto);
   }
 
   async findAll() {
-    return await this.porcoesRepository.find({
-      relations: [
-        'produto',
-        'unidadeMedida',
-        'valorNutricional',
-        'informacaoNutricional',
-      ],
-      order: {
-        id: 'ASC',
-      },
-    });
+    return await this.repositorio.obterTodos();
   }
 
   async findOne(id: number) {
-    return await this.porcoesRepository.findOne({
-      where: { id },
-      relations: [
-        'produto',
-        'unidadeMedida',
-        'valorNutricional',
-        'informacaoNutricional',
-      ],
-    });
+    return await this.repositorio.obterPorId(id);
   }
 
   async remove(id: number) {
-    const porcao = await this.findOne(id);
-
-    if (!porcao) {
-      throw new NotFoundException(`Nenhuma porção encontrada para o id ${id}`);
+    try {
+      return await this.repositorio.excluir(id);
+    } catch (error) {
+      throw new ConflictException('Não foi possível excluir a porção.');
     }
-
-    return this.porcoesRepository.remove(porcao);
   }
 
   async porcaoJaCadastrada(
@@ -144,9 +105,7 @@ export class PorcoesService {
     produto: any,
     ehAtualizacao = false,
   ) {
-    const jaExiste = await this.porcoesRepository.count({
-      where: { porcao: porcao, produto: { id: produto.id } },
-    });
+    const jaExiste = await this.repositorio.existePorcao(porcao, produto.id);
 
     if (jaExiste && !ehAtualizacao) {
       throw new ConflictException(`Porção ${porcao} já cadastrada !`);
