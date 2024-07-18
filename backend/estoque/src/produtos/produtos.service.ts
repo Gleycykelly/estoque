@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { Produtos } from './entities/produto.entity';
@@ -15,10 +11,12 @@ import { MarcasService } from 'src/marcas/marcas.service';
 import { UnidadesMedidasService } from 'src/unidades_medidas/unidades_medidas.service';
 import { ObterParcialProdutoDto } from './dto/obter-parcial-produto.dto';
 import { PorcoesService } from 'src/porcoes/porcoes.service';
+import { ProdutosRepository } from './produtos.repository';
 
 @Injectable()
 export class ProdutosService {
   constructor(
+    private readonly repositorio: ProdutosRepository,
     private readonly authService: AuthService,
     private readonly usuarioService: UsuariosService,
     private readonly categoriaService: CategoriasService,
@@ -26,8 +24,6 @@ export class ProdutosService {
     private readonly unidadeMedidaService: UnidadesMedidasService,
     private readonly porcaoService: PorcoesService,
   ) {}
-  @InjectRepository(Produtos)
-  private readonly produtoRepository: Repository<Produtos>;
 
   async create(createProdutoDto: CreateProdutoDto, token: string) {
     await this.produtoJaCadastrado(createProdutoDto.codigoProduto);
@@ -55,11 +51,8 @@ export class ProdutosService {
       this.marcaService,
     );
 
-    const produto = this.produtoRepository.create({
-      ...createProdutoDto,
-    });
-
-    const produtoCadastrado = await this.produtoRepository.save(produto);
+    const produtoCadastrado =
+      await this.repositorio.createProduto(createProdutoDto);
 
     if (createProdutoDto.porcoes && createProdutoDto.porcoes.length > 0) {
       const porcoes = createProdutoDto.porcoes;
@@ -95,9 +88,9 @@ export class ProdutosService {
     );
 
     if (JaCadastrado) {
-      const produtoAtual = await this.produtoRepository.findOne({
-        where: { codigoProduto: updateProdutoDto.codigoProduto },
-      });
+      const produtoAtual = await this.repositorio.obterPeloCodigoProduto(
+        updateProdutoDto.codigoProduto,
+      );
 
       if (produtoAtual.id != id) {
         throw new ConflictException(
@@ -106,113 +99,26 @@ export class ProdutosService {
       }
     }
 
-    const produto = await this.produtoRepository.preload({
-      ...updateProdutoDto,
-      id,
-    });
-
-    if (!produto) {
-      throw new NotFoundException(`Nenhum produto encontrado para o id ${id}`);
-    }
-
-    return this.produtoRepository.save(produto);
+    return await this.repositorio.updateProduto(id, updateProdutoDto);
   }
 
   async findAll() {
-    return await this.produtoRepository.find({
-      relations: [
-        'categoria',
-        'usuario',
-        'marca',
-        'unidadeMedida',
-        'porcoes',
-        'porcoes.unidadeMedida',
-        'porcoes.valorNutricional',
-        'porcoes.informacaoNutricional',
-        'porcoes.produto',
-      ],
-      order: {
-        id: 'ASC',
-        porcoes: { id: 'ASC' },
-      },
-    });
+    return await this.repositorio.obterTodos();
   }
 
   async findOne(id: number): Promise<Produtos> {
-    return await this.produtoRepository.findOne({
-      relations: [
-        'categoria',
-        'usuario',
-        'marca',
-        'unidadeMedida',
-        'porcoes',
-        'porcoes.unidadeMedida',
-        'porcoes.valorNutricional',
-        'porcoes.informacaoNutricional',
-        'porcoes.produto',
-      ],
-      where: { id },
-    });
+    return await this.repositorio.obterPorId(id);
   }
 
   async obterParcial(
     obterParcialProdutoDto: ObterParcialProdutoDto,
   ): Promise<Produtos[]> {
-    if (!obterParcialProdutoDto) {
-      return this.findAll();
-    }
-    let query = await this.produtoRepository
-      .createQueryBuilder('produto')
-      .leftJoinAndSelect('produto.categoria', 'categoria')
-      .leftJoinAndSelect('produto.usuario', 'usuario')
-      .leftJoinAndSelect('produto.marca', 'marca')
-      .leftJoinAndSelect('produto.unidadeMedida', 'unidadeMedida');
-
-    if (obterParcialProdutoDto.termoDePesquisa) {
-      query = query
-        .where('LOWER(produto.codigoProduto) LIKE LOWER(:termo)', {
-          termo: `%${obterParcialProdutoDto.termoDePesquisa}%`,
-        })
-        .orWhere('LOWER(produto.nome) LIKE LOWER(:termo)', {
-          termo: `%${obterParcialProdutoDto.termoDePesquisa}%`,
-        });
-    }
-    if (
-      obterParcialProdutoDto.categorias &&
-      obterParcialProdutoDto.categorias.length > 0
-    ) {
-      query = query.andWhere('categoria.id IN (:...categorias)', {
-        categorias: obterParcialProdutoDto.categorias,
-      });
-    }
-
-    if (
-      obterParcialProdutoDto.marcas &&
-      obterParcialProdutoDto.marcas.length > 0
-    ) {
-      query = query.andWhere('marca.id IN (:...marcas)', {
-        marcas: obterParcialProdutoDto.marcas,
-      });
-    }
-
-    if (
-      obterParcialProdutoDto.operadores &&
-      obterParcialProdutoDto.operadores.length > 0
-    ) {
-      query = query.andWhere('usuario.id IN (:...operadores)', {
-        operadores: obterParcialProdutoDto.operadores,
-      });
-    }
-    query.orderBy('produto.id', 'ASC');
-    const result = await query.getMany();
-    return result;
+    return await this.repositorio.obterParcial(obterParcialProdutoDto);
   }
 
   async remove(id: number) {
     try {
-      const produto = await this.findOne(id);
-
-      return await this.produtoRepository.remove(produto);
+      return await this.repositorio.excluir(id);
     } catch (error) {
       throw new ConflictException(
         'Não foi possível excluir o produto porque há movimentações associadas a ele.',
@@ -221,9 +127,7 @@ export class ProdutosService {
   }
 
   async produtoJaCadastrado(codigoProduto: string, ehAtualizacao = false) {
-    const jaExiste = await this.produtoRepository.count({
-      where: { codigoProduto: codigoProduto },
-    });
+    const jaExiste = await this.repositorio.existeProduto(codigoProduto);
 
     if (jaExiste && !ehAtualizacao) {
       throw new ConflictException(

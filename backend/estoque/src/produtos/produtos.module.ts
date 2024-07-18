@@ -1,7 +1,6 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ProdutosService } from './produtos.service';
 import { ProdutosController } from './produtos.controller';
-import { Produtos } from './entities/produto.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Categorias } from 'src/categorias/entities/categoria.entity';
 import { UnidadesMedidas } from 'src/unidades_medidas/entities/unidades_medida.entity';
@@ -16,6 +15,7 @@ import { MarcasModule } from 'src/marcas/marcas.module';
 import { UnidadesMedidasModule } from 'src/unidades_medidas/unidades_medidas.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { PorcoesModule } from 'src/porcoes/porcoes.module';
+import { ProdutosRepository } from './produtos.repository';
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { PorcoesModule } from 'src/porcoes/porcoes.module';
       secret: process.env.ENCRYPT_JWT_SECRET,
     }),
     TypeOrmModule.forFeature([
-      Produtos,
+      ProdutosRepository,
       Categorias,
       UnidadesMedidas,
       Marcas,
@@ -36,10 +36,10 @@ import { PorcoesModule } from 'src/porcoes/porcoes.module';
     MarcasModule,
     UnidadesMedidasModule,
     AuthModule,
-    forwardRef(() => PorcoesModule),
+    PorcoesModule,
   ],
   controllers: [ProdutosController],
-  providers: [ProdutosService],
+  providers: [ProdutosService, ProdutosRepository],
   exports: [ProdutosService],
 })
 export class ProdutosModule {}

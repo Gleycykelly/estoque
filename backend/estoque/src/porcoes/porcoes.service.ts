@@ -1,12 +1,6 @@
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  forwardRef,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreatePorcoeDto } from './dto/create-porcoe.dto';
 import { UpdatePorcoeDto } from './dto/update-porcoe.dto';
-import { ProdutosService } from 'src/produtos/produtos.service';
 import { UnidadesMedidasService } from 'src/unidades_medidas/unidades_medidas.service';
 import { ValoresNutricionaisService } from 'src/valores-nutricionais/valores-nutricionais.service';
 import { InformacoesNutricionaisService } from 'src/informacoes-nutricionais/informacoes-nutricionais.service';
@@ -15,9 +9,7 @@ import { PorcoesRepository } from './porcoes.repository';
 @Injectable()
 export class PorcoesService {
   constructor(
-    @Inject(forwardRef(() => ProdutosService))
     private repositorio: PorcoesRepository,
-    private readonly produtoService: ProdutosService,
     private readonly unidadeMedidaService: UnidadesMedidasService,
     private readonly valorNutricionalService: ValoresNutricionaisService,
     private readonly informacaoNutricionalService: InformacoesNutricionaisService,
