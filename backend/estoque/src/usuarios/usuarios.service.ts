@@ -2,34 +2,31 @@ import {
   ConflictException,
   Inject,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
   forwardRef,
 } from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { Usuarios } from './entities/usuario.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from 'src/auth/auth.service';
 import { EnderecosService } from 'src/enderecos/enderecos.service';
 import { DepositosService } from 'src/depositos/depositos.service';
 import { UsuariosTelefonesService } from 'src/usuarios-telefones/usuarios-telefones.service';
 import { ObterParcialUsuarioDto } from './dto/obter-parcial-usuario.dto';
+import { UsuariosRepository } from './usuarios.repository';
 
 @Injectable()
 export class UsuariosService {
   constructor(
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
+
+    private readonly repositorio: UsuariosRepository,
     private readonly enderecoService: EnderecosService,
     private readonly depositoService: DepositosService,
     private readonly usuariosTelefonesService: UsuariosTelefonesService,
   ) {}
-
-  @InjectRepository(Usuarios)
-  private readonly usuarioRepository: Repository<Usuarios>;
 
   async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuarios> {
     createUsuarioDto.senha = createUsuarioDto.cpf.replace(/\D/g, '');
@@ -64,11 +61,8 @@ export class UsuariosService {
       }
     }
 
-    const usuario = this.usuarioRepository.create({
-      ...createUsuarioDto,
-    });
-
-    const usuarioRegistrado = await this.usuarioRepository.save(usuario);
+    const usuarioRegistrado =
+      await this.repositorio.createUsuario(createUsuarioDto);
     delete usuarioRegistrado.senha;
 
     if (createUsuarioDto.usuariosTelefones) {
@@ -91,12 +85,12 @@ export class UsuariosService {
       true,
     );
 
-    if (jaExiste) {
-      const usuAtual = await this.usuarioRepository.findOne({
-        where: { email: updateUsuarioDto.email },
-      });
+    const usuarioBD = await this.repositorio.obterUsuarioPorEmail(
+      updateUsuarioDto.email,
+    );
 
-      if (usuAtual.id != id) {
+    if (jaExiste) {
+      if (usuarioBD.id != id) {
         throw new ConflictException(
           `O e-mail ${updateUsuarioDto.email} já está cadastrado!`,
         );
@@ -104,10 +98,6 @@ export class UsuariosService {
     }
 
     if (updateUsuarioDto.senha) {
-      const usuarioBD = await this.usuarioRepository.findOne({
-        where: { email: updateUsuarioDto.email },
-      });
-
       const senhaValida = await bcrypt.compare(
         updateUsuarioDto.senha,
         usuarioBD.senha,
@@ -164,22 +154,14 @@ export class UsuariosService {
       }
     }
 
-    const usuario = await this.usuarioRepository.preload({
-      ...updateUsuarioDto,
+    const usuarioAlterado = await this.repositorio.updateUsuario(
       id,
-    });
-
-    if (!usuario) {
-      throw new NotFoundException(
-        `Nenhum usuário encontrado para o email ${updateUsuarioDto.email}`,
-      );
-    }
-
-    const usuarioAlterado = await this.usuarioRepository.save(usuario);
+      updateUsuarioDto,
+    );
     delete usuarioAlterado.senha;
 
     if (updateUsuarioDto.usuariosTelefones) {
-      updateUsuarioDto.usuariosTelefones.usuario = usuario;
+      updateUsuarioDto.usuariosTelefones.usuario = usuarioAlterado;
       updateUsuarioDto.usuariosTelefones = await this.obtemEntidadeEstrangeira(
         updateUsuarioDto.usuariosTelefones,
         this.usuariosTelefonesService,
@@ -190,18 +172,7 @@ export class UsuariosService {
   }
 
   async findAll() {
-    const usuarios = await this.usuarioRepository.find({
-      relations: [
-        'enderecos',
-        'enderecos.municipio',
-        'enderecos.municipio.uf',
-        'usuariosTelefones',
-        'depositos',
-        'depositos.endereco',
-        'depositos.endereco.municipio',
-        'depositos.endereco.municipio.uf',
-      ],
-    });
+    const usuarios = await this.repositorio.obterTodos();
     usuarios.forEach((usuario) => {
       delete usuario.senha;
     });
@@ -209,19 +180,7 @@ export class UsuariosService {
   }
 
   async findOne(id: number) {
-    const usuario = await this.usuarioRepository.findOne({
-      relations: [
-        'enderecos',
-        'enderecos.municipio',
-        'enderecos.municipio.uf',
-        'usuariosTelefones',
-        'depositos',
-        'depositos.endereco',
-        'depositos.endereco.municipio',
-        'depositos.endereco.municipio.uf',
-      ],
-      where: { id },
-    });
+    const usuario = await this.repositorio.obterPorId(id);
     if (usuario) {
       delete usuario.senha;
     }
@@ -231,83 +190,25 @@ export class UsuariosService {
   async obterParcial(
     obterParcialUsuarioDto: ObterParcialUsuarioDto,
   ): Promise<Usuarios[]> {
-    let query = await this.usuarioRepository.createQueryBuilder('usuario');
-
-    if (obterParcialUsuarioDto.termoDePesquisa) {
-      query = query
-        .where('LOWER(usuario.cpf) LIKE LOWER(:termo)', {
-          termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
-        })
-        .orWhere('LOWER(usuario.rg) LIKE LOWER(:termo)', {
-          termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
-        })
-        .orWhere('LOWER(usuario.nome) LIKE LOWER(:termo)', {
-          termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
-        })
-        .orWhere('LOWER(usuario.email) LIKE LOWER(:termo)', {
-          termo: `%${obterParcialUsuarioDto.termoDePesquisa}%`,
-        });
-    }
-
-    if (obterParcialUsuarioDto.generoUsuario) {
-      query = query.andWhere(' usuario.generoUsuario = :generoUsuario', {
-        generoUsuario: obterParcialUsuarioDto.generoUsuario,
-      });
-    }
-
-    if (obterParcialUsuarioDto.permissaoUsuario) {
-      query = query.andWhere(' usuario.permissao = :permissaoUsuario', {
-        permissaoUsuario: obterParcialUsuarioDto.permissaoUsuario,
-      });
-    }
-
-    query.orderBy('usuario.id', 'ASC');
-    const result = await query.getMany();
-    return result;
+    return await this.repositorio.obterParcial(obterParcialUsuarioDto);
   }
 
   async remove(id: number) {
     try {
-      const usuario = await this.findOne(id);
-
-      return await this.usuarioRepository.remove(usuario);
+      return await this.repositorio.excluir(id);
     } catch (error) {
       throw new ConflictException('Não foi possível excluir o usuário.');
     }
   }
 
-  async findUsuarioByEmail(email: string) {
-    return await this.usuarioRepository.findOne({
-      relations: [
-        'enderecos',
-        'enderecos.municipio',
-        'enderecos.municipio.uf',
-        'usuariosTelefones',
-        'depositos',
-        'depositos.endereco',
-        'depositos.endereco.municipio',
-        'depositos.endereco.municipio.uf',
-      ],
-      where: { email },
-    });
+  async obterUsuarioPorEmail(email: string) {
+    return await this.repositorio.obterUsuarioPorEmail(email);
   }
 
   async obterUsuarioLogado(token: string) {
     const decodedToken = await this.authService.checkToken(token);
 
-    const usuario = await this.usuarioRepository.findOne({
-      relations: [
-        'enderecos',
-        'enderecos.municipio',
-        'enderecos.municipio.uf',
-        'usuariosTelefones',
-        'depositos',
-        'depositos.endereco',
-        'depositos.endereco.municipio',
-        'depositos.endereco.municipio.uf',
-      ],
-      where: { id: decodedToken.id },
-    });
+    const usuario = await this.repositorio.obterUsuarioLogado(decodedToken.id);
     if (usuario) {
       delete usuario.senha;
     }
@@ -315,9 +216,7 @@ export class UsuariosService {
   }
 
   async usuarioJaCadastrado(email: string, ehAtualizacao = false) {
-    const jaExiste = await this.usuarioRepository.count({
-      where: { email: email },
-    });
+    const jaExiste = await this.repositorio.existeUsuario(email);
 
     if (jaExiste && !ehAtualizacao) {
       throw new ConflictException(`O e-mail ${email} já está cadastrado!`);

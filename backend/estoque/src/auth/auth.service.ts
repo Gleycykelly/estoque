@@ -31,7 +31,7 @@ export class AuthService {
   }
 
   async entrar(email: string, senha: string) {
-    const usuario = await this.usuariosService.findUsuarioByEmail(email);
+    const usuario = await this.usuariosService.obterUsuarioPorEmail(email);
 
     if (!usuario) {
       throw new UnauthorizedException('E-mail ou/e senha incorreta!');
@@ -53,7 +53,7 @@ export class AuthService {
   // }
 
   async esqueceuASenha(email: string) {
-    const usuario = await this.usuariosService.findUsuarioByEmail(email);
+    const usuario = await this.usuariosService.obterUsuarioPorEmail(email);
 
     if (!usuario) {
       throw new UnauthorizedException('E-mail não cadastrado!');
