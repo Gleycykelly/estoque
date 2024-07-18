@@ -9,7 +9,7 @@
 
 #nprogress .spinner {
   display: block;
-  position: fixed;
+  position: absolute;
   z-index: 1;
   top: 50%;
   left: 70%;
@@ -45,6 +45,14 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(128, 0, 128, 0.3); /* Light purple background */
-  z-index: 1030; /* Slightly lower than the spinner */
+  background: rgba(
+    0,
+    0,
+    0,
+    0.5
+  ); /* Semitransparente para esconder o conteúdo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* Certifique-se de que o overlay esteja acima de outros elementos */
 }
