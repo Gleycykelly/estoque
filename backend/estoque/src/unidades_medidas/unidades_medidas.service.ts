@@ -1,19 +1,13 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateUnidadesMedidaDto } from './dto/create-unidades_medida.dto';
 import { UpdateUnidadesMedidaDto } from './dto/update-unidades_medida.dto';
 import { UnidadesMedidas } from './entities/unidades_medida.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ObterParcialUnidadeMedidaDto } from './dto/obter-parcial-unidade-medida.dto';
+import { UnidadesMedidasRepository } from './unidades_medidas.repository';
 
 @Injectable()
 export class UnidadesMedidasService {
-  @InjectRepository(UnidadesMedidas)
-  private readonly unidadeMedidaRepository: Repository<UnidadesMedidas>;
+  constructor(private readonly respositorio: UnidadesMedidasRepository) {}
 
   async create(createUnidadesMedidaDto: CreateUnidadesMedidaDto) {
     await this.unidadeJacadastrada(
@@ -21,11 +15,7 @@ export class UnidadesMedidasService {
       createUnidadesMedidaDto.descricao,
     );
 
-    const unidadeMedida = this.unidadeMedidaRepository.create({
-      ...createUnidadesMedidaDto,
-    });
-
-    return this.unidadeMedidaRepository.save(unidadeMedida);
+    return await this.respositorio.createUnidadeMedida(createUnidadesMedidaDto);
   }
 
   async update(id: number, updateUnidadesMedidaDto: UpdateUnidadesMedidaDto) {
@@ -36,9 +26,9 @@ export class UnidadesMedidasService {
     );
 
     if (JaCadastrado) {
-      const unidadeAtualSigla = await this.unidadeMedidaRepository.findOne({
-        where: { sigla: updateUnidadesMedidaDto.sigla },
-      });
+      const unidadeAtualSigla = await this.respositorio.obterPelaSigla(
+        updateUnidadesMedidaDto.sigla,
+      );
 
       if (unidadeAtualSigla.id != id) {
         throw new ConflictException(
@@ -46,9 +36,9 @@ export class UnidadesMedidasService {
         );
       }
 
-      const unidadeAtualDescricao = await this.unidadeMedidaRepository.findOne({
-        where: { descricao: updateUnidadesMedidaDto.descricao },
-      });
+      const unidadeAtualDescricao = await this.respositorio.obterPelaDescricao(
+        updateUnidadesMedidaDto.descricao,
+      );
 
       if (unidadeAtualDescricao.id != id) {
         throw new ConflictException(
@@ -56,58 +46,29 @@ export class UnidadesMedidasService {
         );
       }
     }
-
-    const unidadeMedida = await this.unidadeMedidaRepository.preload({
-      ...updateUnidadesMedidaDto,
+    return await this.respositorio.updateUnidadeMedida(
       id,
-    });
-
-    if (!unidadeMedida) {
-      throw new NotFoundException(
-        `Nenhuma unidade de medida encontrada para o id ${id}`,
-      );
-    }
-
-    return this.unidadeMedidaRepository.save(unidadeMedida);
+      updateUnidadesMedidaDto,
+    );
   }
 
   async findAll() {
-    return await this.unidadeMedidaRepository.find({
-      order: {
-        id: 'ASC',
-        porcoes: { id: 'ASC' },
-      },
-    });
+    return await this.respositorio.obterTodos();
   }
 
   async findOne(id: number) {
-    return await this.unidadeMedidaRepository.findOne({
-      where: { id },
-    });
+    return await this.respositorio.obterPorId(id);
   }
 
   async obterParcial(
     obterParcialUnidadeMedidaDto: ObterParcialUnidadeMedidaDto,
   ): Promise<UnidadesMedidas[]> {
-    if (!obterParcialUnidadeMedidaDto.termoDePesquisa) {
-      return this.findAll();
-    }
-    return await this.unidadeMedidaRepository
-      .createQueryBuilder('unidadeMedida')
-      .where('LOWER(unidadeMedida.sigla) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialUnidadeMedidaDto.termoDePesquisa}%`,
-      })
-      .orWhere('LOWER(unidadeMedida.descricao) LIKE LOWER(:termo)', {
-        termo: `%${obterParcialUnidadeMedidaDto.termoDePesquisa}%`,
-      })
-      .getMany();
+    return await this.obterParcial(obterParcialUnidadeMedidaDto);
   }
 
   async remove(id: number) {
     try {
-      const unidadeMedida = await this.findOne(id);
-
-      return await this.unidadeMedidaRepository.remove(unidadeMedida);
+      return await this.respositorio.excluir(id);
     } catch (error) {
       throw new ConflictException(
         'Não foi possível excluir a unidade de medida porque há produtos associados a ela.',
@@ -120,9 +81,10 @@ export class UnidadesMedidasService {
     descricao: string,
     ehAtualizacao = false,
   ) {
-    const jaExiste = await this.unidadeMedidaRepository.count({
-      where: [{ sigla: sigla }, { descricao: descricao }],
-    });
+    const jaExiste = await this.respositorio.existeUnidadeMedida(
+      sigla,
+      descricao,
+    );
 
     if (jaExiste && !ehAtualizacao) {
       throw new ConflictException(
