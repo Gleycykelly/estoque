@@ -15,7 +15,7 @@
     </v-card>
     <div style="padding: 25px">
       <v-row class="container-valor-total">
-        <v-col cols="12" md="4" sm="12">
+        <v-col cols="12" md="3" sm="12">
           <v-card class="valor-total">
             <v-card-text>
               <div class="card-valor-total">
@@ -28,7 +28,7 @@
           </v-card>
         </v-col>
 
-        <v-col cols="12" md="4" sm="12">
+        <v-col cols="12" md="3" sm="12">
           <v-card class="valor-total">
             <v-card-text>
               <div class="card-valor-total">
@@ -41,7 +41,7 @@
           </v-card>
         </v-col>
 
-        <v-col cols="12" md="4" sm="12">
+        <v-col cols="12" md="3" sm="12">
           <v-card class="valor-total">
             <v-card-text>
               <div class="card-valor-total">
@@ -49,6 +49,19 @@
                   {{ modelo.totalProdutos }}
                 </div>
                 <div class="texto-valor-total">Total produtos</div>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <v-col cols="12" md="3" sm="12">
+          <v-card class="valor-total">
+            <v-card-text>
+              <div class="card-valor-total">
+                <div class="titulo-valor-total">
+                  {{ modelo.depositos }}
+                </div>
+                <div class="texto-valor-total">Total depósitos</div>
               </div>
             </v-card-text>
           </v-card>
@@ -112,7 +125,7 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement);
 import comunicacaoMovimentacoes from '@/services/movimentacoes/comunicacao-movimentacoes';
 
 export default {
-  name: 'HomeView',
+  name: 'home',
   components: {
     Pie,
   },
