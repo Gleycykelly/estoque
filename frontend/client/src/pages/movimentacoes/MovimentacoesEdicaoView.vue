@@ -8,10 +8,12 @@
 
         <v-btn icon color="green" @click="salvar()">
           <v-icon>mdi-check</v-icon>
+          <v-tooltip activator="parent" location="top">Salvar</v-tooltip>
         </v-btn>
 
         <v-btn icon color="red" @click="voltar()">
           <v-icon>mdi-close</v-icon>
+          <v-tooltip activator="parent" location="top">Voltar</v-tooltip>
         </v-btn>
       </v-toolbar>
 
