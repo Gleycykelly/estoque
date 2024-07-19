@@ -3,10 +3,12 @@
     <v-card>
       <v-toolbar class="titulos" color="#AA00FF" flat dark>
         <v-toolbar-title style="text-align: start">
-          <div class="titulo-pagina">Dashboard</div>
+          <div style="margin-left: 30px">
+            <div class="titulo-pagina">Dashboard</div>
 
-          <div class="subtitulo-pagina">
-            Olá, Fulano. Bem vindo(a) de volta!
+            <div class="subtitulo-pagina">
+              Olá, Fulano. Bem vindo(a) de volta!
+            </div>
           </div>
         </v-toolbar-title>
       </v-toolbar>
@@ -82,13 +84,16 @@
     <v-row>
       <v-col cols="12" md="6">
         <div class="produtos-proximo-vencimento">
+          <h2 style="color: #bdbdbd; font-size: 18px">
+            Produtos próximo do vencimento
+          </h2>
           <v-data-table-virtual
             v-if="produtosVencimento && produtosVencimento.length > 0"
             class="custom-header"
             :headers="colunas"
             :items="produtosVencimento"
             item-value="nome"
-            height="600"
+            height="500"
             @load="load"
             :loading="loading"
             fixed-header
@@ -97,14 +102,27 @@
             v-if="!produtosVencimento || produtosVencimento.length == 0"
             icon="mdi-magnify"
             title="Nenhum item encontrado!"
-            color="#a09f9f"
+            color="#E0E0E0"
+            style="color: #e0e0e0"
           ></v-empty-state>
         </div>
       </v-col>
 
       <v-col cols="12" md="6">
-        <div v-if="podeGerarGrafico" class="container-grafico-deposito">
-          <Pie :data="chartData" :options="options" />
+        <div class="container-grafico-deposito">
+          <h2 style="color: #bdbdbd; font-size: 18px">
+            Quantidade de produtos por estoque
+          </h2>
+          <div v-if="podeGerarGrafico">
+            <Pie :data="chartData" :options="options" />
+          </div>
+          <v-empty-state
+            v-if="!podeGerarGrafico"
+            icon="mdi-magnify"
+            title="Nenhum item encontrado!"
+            color="#E0E0E0"
+            style="color: #e0e0e0"
+          ></v-empty-state>
         </div>
       </v-col>
     </v-row>
@@ -178,7 +196,9 @@ export default {
             datasets,
           };
 
-          this.podeGerarGrafico = true;
+          if (labels != null && labels.length > 0) {
+            this.podeGerarGrafico = true;
+          }
         });
     },
 
@@ -202,9 +222,16 @@ export default {
     },
 
     gerarCores() {
-      const r = Math.floor(Math.random() * 256);
-      const g = Math.floor(Math.random() * 256);
-      const b = Math.floor(Math.random() * 256);
+      const rMin = 50;
+      const rMax = 200;
+      const gMin = 0;
+      const gMax = 50;
+      const bMin = 100;
+      const bMax = 255;
+
+      const r = Math.floor(Math.random() * (rMax - rMin + 1)) + rMin;
+      const g = Math.floor(Math.random() * (gMax - gMin + 1)) + gMin;
+      const b = Math.floor(Math.random() * (bMax - bMin + 1)) + bMin;
       const a = 1;
       return `rgba(${r}, ${g}, ${b}, ${a})`;
     },
@@ -224,13 +251,14 @@ export default {
 }
 .titulo-pagina {
   font-weight: 900;
+  font-size: 25px;
   font-family: 'Roboto', sans-serif;
 }
 
 .subtitulo-pagina {
-  font-weight: 900;
+  font-weight: 400;
   font-size: 17px;
-  color: rgb(197 193 198);
+  color: #e0e0e0;
   font-family: 'Roboto', sans-serif;
 }
 
@@ -251,7 +279,7 @@ export default {
   color: #aa00ff;
   font-weight: 900 !important;
   font-family: 'Roboto', sans-serif;
-  font-size: 25px;
+  font-size: 33px;
 }
 .texto-valor-total {
   color: rgb(197 193 198);
@@ -268,12 +296,16 @@ export default {
 }
 
 .produtos-proximo-vencimento {
+  padding: 15px;
+  background-color: white;
   border-radius: 15px;
   width: 600px;
+  height: 500px;
   margin-left: 5%;
 }
 
 .container-grafico-deposito {
+  padding: 15px;
   background-color: white;
   border-radius: 15px;
   width: 600px;

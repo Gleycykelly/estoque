@@ -317,7 +317,7 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
 
   async produtosProximosDoVencimento() {
     const dataVencimento = new Date();
-    dataVencimento.setDate(dataVencimento.getDate() + 12);
+    dataVencimento.setDate(dataVencimento.getDate() + 7);
 
     const query = `select
       p."nome" as nome, lp."lote" as lote,
