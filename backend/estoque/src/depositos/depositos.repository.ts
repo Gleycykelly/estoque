@@ -45,7 +45,9 @@ export class DepositosRepository extends Repository<Depositos> {
   }
 
   async obterParcial(obterParcialDepositoDto: ObterParcialDepositoDto) {
-    let query = await this.createQueryBuilder('deposito');
+    let query = await this.createQueryBuilder('deposito')
+      .leftJoinAndSelect('deposito.endereco', 'endereco')
+      .leftJoinAndSelect('endereco.municipio', 'municipio');
 
     if (obterParcialDepositoDto.termoDePesquisa) {
       query = query.where('LOWER(deposito.descricao) LIKE LOWER(:termo)', {

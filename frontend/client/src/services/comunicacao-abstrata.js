@@ -26,12 +26,14 @@ const comunicacaoAbstrata = (caminho) => {
         return config;
       } else {
         this.$router.push('/login');
+        NProgress.done();
         return Promise.reject(
           new Error('Token não disponível. Redirecionando para login.'),
         );
       }
     },
     (error) => {
+      NProgress.done();
       return Promise.reject(error);
     },
   );

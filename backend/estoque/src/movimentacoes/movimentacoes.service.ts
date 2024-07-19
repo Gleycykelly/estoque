@@ -40,6 +40,7 @@ export class MovimentacoesService {
         createMovimentacoeDto.lancamentoProduto,
         this.lancamentoProdutoService,
       );
+
     return this.repositorio.createMovimentacao(createMovimentacoeDto);
   }
 

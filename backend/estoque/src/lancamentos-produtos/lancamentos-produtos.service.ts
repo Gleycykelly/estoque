@@ -35,6 +35,7 @@ export class LancamentosProdutosService {
         createLancamentosProdutoDto.localizacaoDeposito,
         this.localizacaoDepositoService,
       );
+
     return await this.repositorio.createLancamentosProduto(
       createLancamentosProdutoDto,
     );
