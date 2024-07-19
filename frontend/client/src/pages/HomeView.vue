@@ -59,7 +59,7 @@
             <v-card-text>
               <div class="card-valor-total">
                 <div class="titulo-valor-total">
-                  {{ modelo.depositos }}
+                  {{ modelo.quantidadeDepositos }}
                 </div>
                 <div class="texto-valor-total">Total depósitos</div>
               </div>

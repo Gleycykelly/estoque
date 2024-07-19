@@ -304,12 +304,15 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
 
   async valorTotalEntradasSaidas() {
     const query = `
-       SELECT
+        select
           SUM(CASE WHEN m."tipo_movimentacao"  = 'Entrada' THEN lp."preco_custo" * m."quantidade" ELSE 0 END) AS total_entrada,
           SUM(CASE WHEN m."tipo_movimentacao" = 'Saída' THEN lp."preco_venda" * m."quantidade" ELSE 0 END) AS total_saida,
-          SUM(CASE WHEN m."tipo_movimentacao" = 'Entrada' THEN m."quantidade" ELSE 0 END) - SUM(CASE WHEN m."tipo_movimentacao" = 'Saída' THEN m."quantidade" ELSE 0 END) AS total_produtos
+          SUM(CASE WHEN m."tipo_movimentacao" = 'Entrada' THEN m."quantidade" ELSE 0 END) - SUM(CASE WHEN m."tipo_movimentacao" = 'Saída' THEN m."quantidade" ELSE 0 END) AS total_produtos,
+          COUNT(DISTINCT d."id") AS quantidade_depositos
       from movimentacoes m
-       inner join lancamentos_produtos lp on lp."id" = m."id_lancamento_produto";
+       inner join lancamentos_produtos lp on lp."id" = m."id_lancamento_produto"
+       inner join localizacoes_depositos ld on ld."id" = lp."id_localizacao_deposito"
+       inner join depositos d on d."id" = ld."id_deposito"
     `;
 
     return await this.query(query);
