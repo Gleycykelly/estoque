@@ -126,6 +126,9 @@ import comunicacaoUsuarios from '@/services/usuarios/comunicacao-usuarios';
 import { useAuthStore } from '@/store/index';
 export default {
   name: 'Menu',
+  props: {
+    ehDashboard: Boolean,
+  },
   data() {
     return {
       ehAdministrador: false,

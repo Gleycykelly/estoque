@@ -306,10 +306,40 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
     const query = `
        SELECT
           SUM(CASE WHEN m."tipo_movimentacao"  = 'Entrada' THEN lp."preco_custo" * m."quantidade" ELSE 0 END) AS total_entrada,
-          SUM(CASE WHEN m."tipo_movimentacao" = 'Saída' THEN lp."preco_venda" * m."quantidade" ELSE 0 END) AS total_saida
+          SUM(CASE WHEN m."tipo_movimentacao" = 'Saída' THEN lp."preco_venda" * m."quantidade" ELSE 0 END) AS total_saida,
+          SUM(CASE WHEN m."tipo_movimentacao" = 'Entrada' THEN m."quantidade" ELSE 0 END) - SUM(CASE WHEN m."tipo_movimentacao" = 'Saída' THEN m."quantidade" ELSE 0 END) AS total_produtos
       from movimentacoes m
        inner join lancamentos_produtos lp on lp."id" = m."id_lancamento_produto";
     `;
+
+    return await this.query(query);
+  }
+
+  async produtosProximosDoVencimento() {
+    const dataVencimento = new Date();
+    dataVencimento.setDate(dataVencimento.getDate() + 12);
+
+    const query = `select
+      p."nome" as nome, lp."lote" as lote,
+      SUM(CASE WHEN m."tipo_movimentacao" = 'Entrada' THEN m."quantidade" ELSE 0 END) - SUM(CASE WHEN m."tipo_movimentacao" = 'Saída' THEN m."quantidade" ELSE 0 END) AS total_produtos
+      from movimentacoes m
+      inner join lancamentos_produtos lp on lp."id" = m."id_lancamento_produto"
+      inner join produtos p on p."id" = lp."id_produto"
+      where lp.data_validade = '${dataVencimento.toISOString()}'
+      group by (lp."lote", p."nome");`;
+
+    return await this.query(query);
+  }
+
+  async quantidadeProdutosPorEstoque() {
+    const query = `select 
+     d."descricao" as deposito,
+      SUM(CASE WHEN m."tipo_movimentacao" = 'Entrada' THEN m."quantidade" ELSE 0 END) - SUM(CASE WHEN m."tipo_movimentacao" = 'Saída' THEN m."quantidade" ELSE 0 END) AS total_produtos
+      from movimentacoes m
+      inner join lancamentos_produtos lp on lp."id" = m."id_lancamento_produto"
+      inner join localizacoes_depositos ld on ld."id" = lp."id_localizacao_deposito"
+       inner join depositos d on d."id" = ld."id_deposito" 
+      group by (d."descricao")`;
 
     return await this.query(query);
   }

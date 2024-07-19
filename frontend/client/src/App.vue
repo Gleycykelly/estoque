@@ -1,6 +1,6 @@
 <template>
   <v-app style="height: 100vh; margin: 0 auto">
-    <Menu v-if="notIsLoginPage" />
+    <Menu v-if="notIsLoginPage" :ehDashboard="'ehTelaDeDashboard'" />
     <router-view />
     <Alertas />
   </v-app>
@@ -37,6 +37,9 @@ export default {
   computed: {
     notIsLoginPage() {
       return this.$route.name !== 'login';
+    },
+    ehTelaDeDashboard() {
+      return this.$route.name !== 'home';
     },
   },
 };

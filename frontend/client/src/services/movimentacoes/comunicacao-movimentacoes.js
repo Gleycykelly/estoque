@@ -15,6 +15,18 @@ const valorTotalEntradasESaidas = () => {
   );
 };
 
+const produtosProximosDoVencimento = () => {
+  return comunicacaoMovimentacoes.instancia.get(
+    `/movimentacoes/produtos-proximo-vencimento/`,
+  );
+};
+
+const quantidadeDeProdutosPorEstoque = () => {
+  return comunicacaoMovimentacoes.instancia.get(
+    `/movimentacoes/produtos-por-estoque/`,
+  );
+};
+
 const ultimasMovimentacoes = () => {
   return comunicacaoMovimentacoes.instancia.get(
     `/movimentacoes/ultimas-movimentacoes/`,
@@ -25,5 +37,7 @@ export default {
   ...comunicacaoMovimentacoes,
   obterMovimentacoesPorLote,
   valorTotalEntradasESaidas,
+  produtosProximosDoVencimento,
+  quantidadeDeProdutosPorEstoque,
   ultimasMovimentacoes,
 };

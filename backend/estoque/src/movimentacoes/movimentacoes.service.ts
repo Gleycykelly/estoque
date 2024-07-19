@@ -322,8 +322,22 @@ export class MovimentacoesService {
 
   async valorTotalEntradasSaidas() {
     const results = await this.repositorio.valorTotalEntradasSaidas();
-    const { total_entrada, total_saida } = results[0];
-    return { totalEntrada: total_entrada || 0, totalSaida: total_saida || 0 };
+    const { total_entrada, total_saida, total_produtos } = results[0];
+    return {
+      totalEntrada: total_entrada || 0,
+      totalSaida: total_saida || 0,
+      totalProdutos: total_produtos,
+    };
+  }
+
+  async produtosProximosDoVencimento() {
+    const dados = await this.repositorio.produtosProximosDoVencimento();
+    return dados;
+  }
+
+  async quantidadeProdutosPorEstoque() {
+    const dados = await this.repositorio.quantidadeProdutosPorEstoque();
+    return dados;
   }
 
   async ultimasMovimentacoes() {

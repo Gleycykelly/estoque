@@ -9,7 +9,6 @@ const origStart = NProgress.start;
 const origDone = NProgress.done;
 
 NProgress.start = function () {
-  console.log(document.body);
   document.body.classList.add('loading');
   origStart.call(this);
 };

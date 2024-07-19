@@ -1,49 +1,145 @@
 <template>
-  <v-main style="background-color: #f2f2f2; height: 100%">
+  <v-main class="fill-height" style="background-color: #f2f2f2; height: 100%">
+    <v-card>
+      <v-toolbar class="titulos" color="#AA00FF" flat dark>
+        <v-toolbar-title style="text-align: start">
+          <div class="titulo-pagina">Dashboard</div>
+
+          <div class="subtitulo-pagina">
+            Olá, Fulano. Bem vindo(a) de volta!
+          </div>
+        </v-toolbar-title>
+      </v-toolbar>
+    </v-card>
     <v-row class="container-valor-total">
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="4">
         <v-card class="valor-total">
           <v-card-text>
-            <div>
-              <div class="titulo-valor-total">
-                R$ {{ this.modelo.totalEntrada }}
+            <div style="display: flex; padding: 25px">
+              <div>
+                <v-icon
+                  style="font-size: 60px; margin-right: 15px; color: #ff8a65"
+                >
+                  mdi-basket-fill
+                </v-icon>
               </div>
-              <div class="texto-valor-total" style="color: #e57373">
-                Entradas
+              <div style="align-items: start">
+                <div class="titulo-valor-total">
+                  R$ {{ this.modelo.totalEntrada }}
+                </div>
+                <div class="texto-valor-total">Total de entradas</div>
               </div>
             </div>
           </v-card-text>
         </v-card>
       </v-col>
 
-      <v-col cols="12" md="2">
+      <v-col cols="12" md="4">
         <v-card class="valor-total">
           <v-card-text>
-            <div class="titulo-valor-total">
-              R$ {{ this.modelo.totalSaida }}
+            <div style="display: flex; padding: 25px">
+              <div>
+                <v-icon
+                  style="font-size: 60px; margin-right: 15px; color: #81c784"
+                >
+                  mdi-basket-unfill
+                </v-icon>
+              </div>
+              <div style="align-items: start">
+                <div class="titulo-valor-total">
+                  R$ {{ this.modelo.totalSaida }}
+                </div>
+                <div class="texto-valor-total">Total de saídas</div>
+              </div>
             </div>
-            <div class="texto-valor-total" style="color: #00c853">Saídas</div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col cols="12" md="4">
+        <v-card class="valor-total">
+          <v-card-text>
+            <div style="display: flex; padding: 25px">
+              <div>
+                <v-icon
+                  style="font-size: 60px; margin-right: 15px; color: #42a5f5"
+                >
+                  mdi-basket-outline
+                </v-icon>
+              </div>
+              <div style="align-items: start">
+                <div class="titulo-valor-total">
+                  {{ modelo.totalProdutos }}
+                </div>
+                <div class="texto-valor-total">Total produtos</div>
+              </div>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
-    <!-- <v-card class="container-ultimas-movimentacoes">
-      <v-card-text>
-        <v-card-title>Últimas movimentações</v-card-title>
-      </v-card-text>
-    </v-card> -->
+
+    <v-row>
+      <v-col cols="12" md="6">
+        <div class="produtos-proximo-vencimento">
+          <v-data-table-virtual
+            v-if="produtosVencimento && produtosVencimento.length > 0"
+            class="custom-header"
+            :headers="colunas"
+            :items="produtosVencimento"
+            item-value="nome"
+            height="600"
+            @load="load"
+            :loading="loading"
+            fixed-header
+          ></v-data-table-virtual>
+          <v-empty-state
+            v-if="!produtosVencimento || produtosVencimento.length == 0"
+            icon="mdi-magnify"
+            title="Nenhum item encontrado!"
+            color="#a09f9f"
+          ></v-empty-state>
+        </div>
+      </v-col>
+
+      <v-col cols="12" md="6">
+        <div v-if="podeGerarGrafico" class="container-grafico-deposito">
+          <Pie :data="chartData" :options="options" />
+        </div>
+      </v-col>
+    </v-row>
   </v-main>
 </template>
 
 <script>
+import { Pie } from 'vue-chartjs';
+import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js';
+
+ChartJS.register(Title, Tooltip, Legend, ArcElement);
 import comunicacaoMovimentacoes from '@/services/movimentacoes/comunicacao-movimentacoes';
 
 export default {
   name: 'HomeView',
+  components: {
+    Pie,
+  },
   data() {
     return {
+      produtosVencimento: [],
+      produtosPorEstoque: [],
+      colunas: [
+        { title: 'Lote', value: 'lote' },
+        { title: 'Nome', value: 'nome' },
+        { title: 'Total', value: 'total_produtos' },
+      ],
       modelo: {
         movimentacoes: [],
+      },
+      chartData: {},
+      podeGerarGrafico: false,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
       },
     };
   },
@@ -57,6 +153,42 @@ export default {
           this.modelo = response.data;
         });
     },
+
+    async obterProdutosPorEstoque() {
+      await comunicacaoMovimentacoes
+        .quantidadeDeProdutosPorEstoque()
+        .then((response) => {
+          const labels = [];
+          const dados = [];
+          const backgroundColor = [];
+          const datasets = [];
+          for (const dado of response.data) {
+            labels.push(dado.deposito);
+            dados.push(dado.total_produtos);
+            backgroundColor.push(this.gerarCores());
+          }
+
+          datasets.push({
+            backgroundColor,
+            data: dados,
+          });
+
+          this.chartData = {
+            labels,
+            datasets,
+          };
+
+          this.podeGerarGrafico = true;
+        });
+    },
+
+    async produtosProximosDoVencimento() {
+      await comunicacaoMovimentacoes
+        .produtosProximosDoVencimento()
+        .then((response) => {
+          this.produtosVencimento = response.data;
+        });
+    },
     async obterUltimasMovimentacoes() {
       await comunicacaoMovimentacoes.ultimasMovimentacoes().then((response) => {
         this.modelo.movimentacoes = [];
@@ -68,21 +200,48 @@ export default {
         }
       });
     },
+
+    gerarCores() {
+      const r = Math.floor(Math.random() * 256);
+      const g = Math.floor(Math.random() * 256);
+      const b = Math.floor(Math.random() * 256);
+      const a = 1;
+      return `rgba(${r}, ${g}, ${b}, ${a})`;
+    },
   },
   created() {
     this.obterValoresTotais();
+    this.produtosProximosDoVencimento();
+    this.obterProdutosPorEstoque();
   },
 };
 </script>
 
 <style scoped>
+.titulos {
+  justify-content: left;
+  align-items: start;
+}
+.titulo-pagina {
+  font-weight: 900;
+  font-family: 'Roboto', sans-serif;
+}
+
+.subtitulo-pagina {
+  font-weight: 900;
+  font-size: 17px;
+  color: rgb(197 193 198);
+  font-family: 'Roboto', sans-serif;
+}
+
 .valor-total {
-  height: 90px;
+  height: 150px;
   width: 350px;
   border-radius: 15px;
 }
 
 .container-valor-total {
+  margin-left: 2%;
   margin-top: 5px;
   display: flex;
   justify-content: center;
@@ -93,13 +252,12 @@ export default {
   font-weight: 900 !important;
   font-family: 'Roboto', sans-serif;
   font-size: 25px;
-  text-align: center;
 }
 .texto-valor-total {
-  font-weight: 900 !important;
+  color: rgb(197 193 198);
+  font-weight: 500 !important;
   font-family: 'Roboto', sans-serif;
-  font-size: 18px;
-  text-align: center;
+  font-size: 17px;
 }
 
 .container-ultimas-movimentacoes {
@@ -107,5 +265,17 @@ export default {
   width: 400px;
   height: 400px;
   margin-top: 15px;
+}
+
+.produtos-proximo-vencimento {
+  border-radius: 15px;
+  width: 600px;
+  margin-left: 5%;
+}
+
+.container-grafico-deposito {
+  background-color: white;
+  border-radius: 15px;
+  width: 600px;
 }
 </style>

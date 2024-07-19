@@ -38,6 +38,16 @@ export class MovimentacoesController {
     return this.movimentacoesService.valorTotalEntradasSaidas();
   }
 
+  @Get('produtos-proximo-vencimento')
+  produtosProximosDoVencimento() {
+    return this.movimentacoesService.produtosProximosDoVencimento();
+  }
+
+  @Get('produtos-por-estoque')
+  quantidadeProdutosPorEstoque() {
+    return this.movimentacoesService.quantidadeProdutosPorEstoque();
+  }
+
   @Get('ultimas-movimentacoes')
   ultimasMovimentacoes() {
     return this.movimentacoesService.ultimasMovimentacoes();
