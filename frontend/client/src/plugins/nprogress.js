@@ -5,25 +5,18 @@ import '@/assets/nprogress-custom.css'; // Importa o CSS customizado
 
 NProgress.configure({ showSpinner: true });
 
-// Adiciona a sobreposição quando NProgress começa
-NProgress.start = (function (origStart) {
-  return function () {
-    const overlay = document.createElement('div');
-    overlay.className = 'overlay';
-    document.body.appendChild(overlay);
-    origStart.call(this);
-  };
-})(NProgress.start);
+const origStart = NProgress.start;
+const origDone = NProgress.done;
 
-// Remove a sobreposição quando NProgress termina
-NProgress.done = (function (origDone) {
-  return function () {
-    const overlay = document.querySelector('.overlay');
-    if (overlay) {
-      document.body.removeChild(overlay);
-    }
-    origDone.call(this);
-  };
-})(NProgress.done);
+NProgress.start = function () {
+  console.log(document.body);
+  document.body.classList.add('loading');
+  origStart.call(this);
+};
+
+NProgress.done = function () {
+  document.body.classList.remove('loading');
+  origDone.call(this);
+};
 
 export default NProgress;
