@@ -1,114 +1,118 @@
 <template>
-  <div class="fill-height">
-    <v-card>
-      <v-toolbar class="titulos" color="#AA00FF" flat dark>
-        <v-toolbar-title style="text-align: start">
-          <div style="margin-left: 30px">
-            <div class="titulo-pagina">Dashboard</div>
+  <div>
+    <v-main class="fill-height">
+      <v-card>
+        <v-toolbar class="titulos" color="#AA00FF" flat dark>
+          <v-toolbar-title style="text-align: start">
+            <div style="margin-left: 30px">
+              <div class="titulo-pagina">Dashboard</div>
 
-            <div class="subtitulo-pagina">
-              Olá, {{ nomeUsuarioLogado }} . Bem vindo(a) de volta!
+              <div class="subtitulo-pagina">
+                Olá,
+                <b>{{ nomeUsuarioLogado }}</b>
+                . Bem vindo(a) de volta!
+              </div>
             </div>
+          </v-toolbar-title>
+        </v-toolbar>
+      </v-card>
+      <div style="background-color: #f2f2f2; min-height: 100vh">
+        <div class="grid-container">
+          <div class="grid-item">
+            <v-card class="valor-total">
+              <v-card-text class="card-valor-total">
+                <div class="titulo-valor-total">
+                  R$ {{ this.modelo.totalEntrada }}
+                </div>
+                <div class="texto-valor-total">Total de entradas</div>
+              </v-card-text>
+            </v-card>
           </div>
-        </v-toolbar-title>
-      </v-toolbar>
-    </v-card>
-    <div style="background-color: #f2f2f2; min-height: 100vh">
-      <div class="grid-container">
-        <div class="grid-item">
-          <v-card class="valor-total">
-            <v-card-text class="card-valor-total">
-              <div class="titulo-valor-total">
-                R$ {{ this.modelo.totalEntrada }}
-              </div>
-              <div class="texto-valor-total">Total de entradas</div>
-            </v-card-text>
-          </v-card>
+
+          <div class="grid-item">
+            <v-card class="valor-total">
+              <v-card-text class="card-valor-total">
+                <div class="titulo-valor-total">
+                  R$ {{ this.modelo.totalSaida }}
+                </div>
+                <div class="texto-valor-total">Total de saídas</div>
+              </v-card-text>
+            </v-card>
+          </div>
+
+          <div class="grid-item">
+            <v-card class="valor-total">
+              <v-card-text class="card-valor-total">
+                <div class="titulo-valor-total">
+                  {{ modelo.totalProdutos }}
+                </div>
+                <div class="texto-valor-total">Total produtos</div>
+              </v-card-text>
+            </v-card>
+          </div>
+
+          <div class="grid-item">
+            <v-card class="valor-total">
+              <v-card-text class="card-valor-total">
+                <div class="titulo-valor-total">
+                  {{ modelo.quantidadeDepositos }}
+                </div>
+                <div class="texto-valor-total">Total depósitos</div>
+              </v-card-text>
+            </v-card>
+          </div>
         </div>
 
-        <div class="grid-item">
-          <v-card class="valor-total">
-            <v-card-text class="card-valor-total">
-              <div class="titulo-valor-total">
-                R$ {{ this.modelo.totalSaida }}
-              </div>
-              <div class="texto-valor-total">Total de saídas</div>
-            </v-card-text>
-          </v-card>
-        </div>
+        <div class="grid-container-graficos">
+          <div class="grid-item">
+            <v-card class="produtos-proximo-vencimento">
+              <v-card-text>
+                <h2 style="color: #bdbdbd; font-size: 18px">
+                  Produtos próximo do vencimento
+                </h2>
 
-        <div class="grid-item">
-          <v-card class="valor-total">
-            <v-card-text class="card-valor-total">
-              <div class="titulo-valor-total">
-                {{ modelo.totalProdutos }}
-              </div>
-              <div class="texto-valor-total">Total produtos</div>
-            </v-card-text>
-          </v-card>
-        </div>
+                <v-data-table-virtual
+                  v-if="produtosVencimento && produtosVencimento.length > 0"
+                  class="custom-header"
+                  :headers="colunas"
+                  :items="produtosVencimento"
+                  item-value="nome"
+                  height="400"
+                  fixed-header
+                ></v-data-table-virtual>
+                <v-empty-state
+                  v-if="!produtosVencimento || produtosVencimento.length == 0"
+                  icon="mdi-magnify"
+                  title="Nenhum item encontrado!"
+                  color="#E0E0E0"
+                  style="color: #e0e0e0"
+                ></v-empty-state>
+              </v-card-text>
+            </v-card>
+          </div>
 
-        <div class="grid-item">
-          <v-card class="valor-total">
-            <v-card-text class="card-valor-total">
-              <div class="titulo-valor-total">
-                {{ modelo.quantidadeDepositos }}
-              </div>
-              <div class="texto-valor-total">Total depósitos</div>
-            </v-card-text>
-          </v-card>
-        </div>
-      </div>
-
-      <div class="grid-container-graficos">
-        <div class="grid-item">
-          <v-card class="produtos-proximo-vencimento">
-            <v-card-text>
-              <h2 style="color: #bdbdbd; font-size: 18px">
-                Produtos próximo do vencimento
-              </h2>
-
-              <v-data-table-virtual
-                v-if="produtosVencimento && produtosVencimento.length > 0"
-                class="custom-header"
-                :headers="colunas"
-                :items="produtosVencimento"
-                item-value="nome"
-                height="400"
-                fixed-header
-              ></v-data-table-virtual>
-              <v-empty-state
-                v-if="!produtosVencimento || produtosVencimento.length == 0"
-                icon="mdi-magnify"
-                title="Nenhum item encontrado!"
-                color="#E0E0E0"
-                style="color: #e0e0e0"
-              ></v-empty-state>
-            </v-card-text>
-          </v-card>
-        </div>
-
-        <div class="grid-item">
-          <v-card class="container-grafico-deposito">
-            <v-card-text>
-              <h2 style="color: #bdbdbd; font-size: 18px">
-                Quantidade de produtos por estoque
-              </h2>
-              <div class="pie-grafico" v-if="podeGerarGrafico">
-                <Pie :data="chartData" :options="options" />
-              </div>
-              <v-empty-state
-                v-if="!podeGerarGrafico"
-                icon="mdi-magnify"
-                title="Nenhum item encontrado!"
-                color="#E0E0E0"
-                style="color: #e0e0e0"
-              ></v-empty-state>
-            </v-card-text>
-          </v-card>
+          <div class="grid-item">
+            <v-card class="container-grafico-deposito">
+              <v-card-text>
+                <h2 style="color: #bdbdbd; font-size: 18px">
+                  Quantidade de produtos por estoque
+                </h2>
+                <div class="pie-grafico" v-if="podeGerarGrafico">
+                  <Pie :data="chartData" :options="options" />
+                </div>
+                <v-empty-state
+                  v-if="!podeGerarGrafico"
+                  icon="mdi-magnify"
+                  title="Nenhum item encontrado!"
+                  color="#E0E0E0"
+                  style="color: #e0e0e0"
+                ></v-empty-state>
+              </v-card-text>
+            </v-card>
+          </div>
         </div>
       </div>
-    </div>
+    </v-main>
   </div>
 </template>
 
