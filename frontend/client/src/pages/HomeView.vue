@@ -1,5 +1,5 @@
 <template>
-  <v-main class="fill-height" style="background-color: #f2f2f2; height: 100%">
+  <v-main class="fill-height">
     <v-card>
       <v-toolbar class="titulos" color="#AA00FF" flat dark>
         <v-toolbar-title style="text-align: start">
@@ -7,112 +7,109 @@
             <div class="titulo-pagina">Dashboard</div>
 
             <div class="subtitulo-pagina">
-              Olá, Fulano. Bem vindo(a) de volta!
+              Olá, {{ nomeUsuarioLogado }} . Bem vindo(a) de volta!
             </div>
           </div>
         </v-toolbar-title>
       </v-toolbar>
     </v-card>
-    <div style="padding: 25px">
-      <v-row class="container-valor-total">
-        <v-col cols="12" md="3" sm="12">
+    <div style="background-color: #f2f2f2; min-height: 100vh">
+      <div class="grid-container">
+        <div class="grid-item">
           <v-card class="valor-total">
-            <v-card-text>
-              <div class="card-valor-total">
-                <div class="titulo-valor-total">
-                  R$ {{ this.modelo.totalEntrada }}
-                </div>
-                <div class="texto-valor-total">Total de entradas</div>
+            <v-card-text class="card-valor-total">
+              <div class="titulo-valor-total">
+                R$ {{ this.modelo.totalEntrada }}
               </div>
+              <div class="texto-valor-total">Total de entradas</div>
             </v-card-text>
           </v-card>
-        </v-col>
+        </div>
 
-        <v-col cols="12" md="3" sm="12">
+        <div class="grid-item">
           <v-card class="valor-total">
-            <v-card-text>
-              <div class="card-valor-total">
-                <div class="titulo-valor-total">
-                  R$ {{ this.modelo.totalSaida }}
-                </div>
-                <div class="texto-valor-total">Total de saídas</div>
+            <v-card-text class="card-valor-total">
+              <div class="titulo-valor-total">
+                R$ {{ this.modelo.totalSaida }}
               </div>
+              <div class="texto-valor-total">Total de saídas</div>
             </v-card-text>
           </v-card>
-        </v-col>
+        </div>
 
-        <v-col cols="12" md="3" sm="12">
+        <div class="grid-item">
           <v-card class="valor-total">
-            <v-card-text>
-              <div class="card-valor-total">
-                <div class="titulo-valor-total">
-                  {{ modelo.totalProdutos }}
-                </div>
-                <div class="texto-valor-total">Total produtos</div>
+            <v-card-text class="card-valor-total">
+              <div class="titulo-valor-total">
+                {{ modelo.totalProdutos }}
               </div>
+              <div class="texto-valor-total">Total produtos</div>
             </v-card-text>
           </v-card>
-        </v-col>
+        </div>
 
-        <v-col cols="12" md="3" sm="12">
+        <div class="grid-item">
           <v-card class="valor-total">
-            <v-card-text>
-              <div class="card-valor-total">
-                <div class="titulo-valor-total">
-                  {{ modelo.quantidadeDepositos }}
-                </div>
-                <div class="texto-valor-total">Total depósitos</div>
+            <v-card-text class="card-valor-total">
+              <div class="titulo-valor-total">
+                {{ modelo.quantidadeDepositos }}
               </div>
+              <div class="texto-valor-total">Total depósitos</div>
             </v-card-text>
           </v-card>
-        </v-col>
-      </v-row>
+        </div>
+      </div>
 
-      <v-row>
-        <v-col cols="12" md="6" sm="12">
-          <div class="produtos-proximo-vencimento">
-            <h2 style="color: #bdbdbd; font-size: 18px">
-              Produtos próximo do vencimento
-            </h2>
-            <v-data-table-virtual
-              v-if="produtosVencimento && produtosVencimento.length > 0"
-              class="custom-header"
-              :headers="colunas"
-              :items="produtosVencimento"
-              item-value="nome"
-              height="400"
-              @load="load"
-              :loading="loading"
-              fixed-header
-            ></v-data-table-virtual>
-            <v-empty-state
-              v-if="!produtosVencimento || produtosVencimento.length == 0"
-              icon="mdi-magnify"
-              title="Nenhum item encontrado!"
-              color="#E0E0E0"
-              style="color: #e0e0e0"
-            ></v-empty-state>
-          </div>
-        </v-col>
+      <div class="grid-container-graficos">
+        <div class="grid-item">
+          <v-card class="produtos-proximo-vencimento">
+            <v-card-text>
+              <h2 style="color: #bdbdbd; font-size: 18px">
+                Produtos próximo do vencimento
+              </h2>
 
-        <v-col cols="12" md="6" sm="12">
-          <div class="container-grafico-deposito">
-            <h2 style="color: #bdbdbd; font-size: 18px">
-              Quantidade de produtos por estoque
-            </h2>
-            <div v-if="podeGerarGrafico">
-              <Pie :data="chartData" :options="options" />
-            </div>
-            <v-empty-state
-              v-if="!podeGerarGrafico"
-              icon="mdi-magnify"
-              title="Nenhum item encontrado!"
-              color="#E0E0E0"
-              style="color: #e0e0e0"
-            ></v-empty-state>
-          </div>
-        </v-col>
-      </v-row>
+              <v-data-table-virtual
+                v-if="produtosVencimento && produtosVencimento.length > 0"
+                class="custom-header"
+                :headers="colunas"
+                :items="produtosVencimento"
+                item-value="nome"
+                height="400"
+                @load="load"
+                :loading="loading"
+                fixed-header
+              ></v-data-table-virtual>
+              <v-empty-state
+                v-if="!produtosVencimento || produtosVencimento.length == 0"
+                icon="mdi-magnify"
+                title="Nenhum item encontrado!"
+                color="#E0E0E0"
+                style="color: #e0e0e0"
+              ></v-empty-state>
+            </v-card-text>
+          </v-card>
+        </div>
+
+        <div class="grid-item">
+          <v-card class="container-grafico-deposito">
+            <v-card-text>
+              <h2 style="color: #bdbdbd; font-size: 18px">
+                Quantidade de produtos por estoque
+              </h2>
+              <div class="pie-grafico" v-if="podeGerarGrafico">
+                <Pie :data="chartData" :options="options" />
+              </div>
+              <v-empty-state
+                v-if="!podeGerarGrafico"
+                icon="mdi-magnify"
+                title="Nenhum item encontrado!"
+                color="#E0E0E0"
+                style="color: #e0e0e0"
+              ></v-empty-state>
+            </v-card-text>
+          </v-card>
+        </div>
+      </div>
     </div>
   </v-main>
 </template>
@@ -123,6 +120,7 @@ import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 import comunicacaoMovimentacoes from '@/services/movimentacoes/comunicacao-movimentacoes';
+import comunicacaoUsuarios from '@/services/usuarios/comunicacao-usuarios';
 
 export default {
   name: 'home',
@@ -147,9 +145,15 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
       },
+      nomeUsuarioLogado: null,
     };
   },
   methods: {
+    async obterDadosUsuarioLogado() {
+      await comunicacaoUsuarios.obterUsuarioLogado().then((response) => {
+        this.nomeUsuarioLogado = response.data.nome;
+      });
+    },
     async obterValoresTotais() {
       await comunicacaoMovimentacoes
         .valorTotalEntradasESaidas()
@@ -225,6 +229,7 @@ export default {
     },
   },
   created() {
+    this.obterDadosUsuarioLogado();
     this.obterValoresTotais();
     this.produtosProximosDoVencimento();
     this.obterProdutosPorEstoque();
@@ -233,6 +238,45 @@ export default {
 </script>
 
 <style scoped>
+.grid-container {
+  max-width: 95%;
+  margin: 0 auto;
+  gap: 30px;
+  padding: 25px 0;
+
+  @media (min-width: 1300px) {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (max-width: 1300px) {
+    display: block;
+  }
+}
+
+.grid-item {
+  display: flex;
+  justify-content: center;
+  @media (max-width: 1300px) {
+    margin-bottom: 25px;
+  }
+}
+
+.grid-container-graficos {
+  max-width: 95%;
+  margin: 0 auto;
+  gap: 25px;
+  padding: 25px 0;
+  @media (min-width: 1300px) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 1300px) {
+    display: block;
+  }
+}
+
 .titulos {
   justify-content: left;
   align-items: center;
@@ -251,22 +295,16 @@ export default {
 }
 
 .valor-total {
-  @media (min-width: 850px) {
-    width: 350px;
-  }
-
-  @media (max-width: 849px) {
-    width: 100% important;
-  }
-
+  width: 100%;
   height: 150px;
   border-radius: 15px;
 }
 
-.container-valor-total {
-  padding: 5px;
-  margin-top: 5px;
+.card-valor-total {
+  height: 100%;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
 }
 
@@ -276,6 +314,7 @@ export default {
   font-family: 'Roboto', sans-serif;
   font-size: 40px;
 }
+
 .texto-valor-total {
   color: rgb(197 193 198);
   font-weight: 500 !important;
@@ -283,52 +322,21 @@ export default {
   font-size: 17px;
 }
 
-.container-ultimas-movimentacoes {
-  @media (min-width: 850px) {
-    width: 400px;
-  }
-
-  @media (max-width: 849px) {
-    width: 100% !important;
-  }
-  border-radius: 15px;
-  height: 400px;
-  margin-top: 15px;
-}
-
 .produtos-proximo-vencimento {
-  @media (min-width: 850px) {
-    width: 600px;
-  }
-
-  @media (max-width: 849px) {
-    width: 100% important;
-  }
+  width: 100%;
   padding: 15px;
-  background-color: white;
   border-radius: 15px;
   height: 500px;
-  margin-left: 5%;
 }
 
 .container-grafico-deposito {
-  @media (min-width: 850px) {
-    width: 600px;
-  }
-
-  @media (max-width: 849px) {
-    width: 100% important;
-  }
+  width: 100%;
   padding: 15px;
-  background-color: white;
   border-radius: 15px;
   height: 500px;
 }
 
-.card-valor-total {
-  display: block;
-  padding: 25px;
-  align-items: center;
-  justify-content: center;
+.pie-grafico {
+  padding: 70px;
 }
 </style>

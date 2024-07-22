@@ -1,6 +1,6 @@
 <template>
   <v-app style="height: 100vh; margin: 0 auto">
-    <Menu v-if="notIsLoginPage" :ehDashboard="'ehTelaDeDashboard'" />
+    <Menu v-if="notIsLoginPage" />
     <router-view />
     <Alertas />
   </v-app>
@@ -38,9 +38,6 @@ export default {
     notIsLoginPage() {
       return this.$route.name !== 'login';
     },
-    ehTelaDeDashboard() {
-      return this.$route.name !== 'home';
-    },
   },
 };
 </script>
@@ -55,7 +52,7 @@ export default {
 }
 
 nav {
-  padding: 30px;
+  padding: 5px;
 }
 
 nav a {

@@ -49,7 +49,9 @@
       </div>
     </v-col>
     <v-col md="7" class="d-none d-sm-none d-md-block rigth-login">
-      <div></div>
+      <div class="imagem-principal">
+        <img :src="imagemURL" alt="Logo" class="logo" />
+      </div>
     </v-col>
   </v-row>
 </template>
@@ -57,6 +59,7 @@
 <script>
 import { login } from '@/services/autenticacao/comunicacao-autenticacao';
 import { useAuthStore, useAlerta } from '@/store/index';
+import logo from '@/assets/imagemTelaLogin.jpeg';
 
 export default {
   name: 'login-view',
@@ -66,6 +69,7 @@ export default {
         email: '',
         senha: '',
       },
+      imagemURL: logo,
     };
   },
   methods: {
@@ -104,7 +108,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 *,
 *::after,
 *::before {
@@ -130,6 +134,7 @@ export default {
   height: 100vh;
   width: 100%;
 }
+
 .text-center {
   margin: auto;
   text-align: center;
@@ -175,5 +180,22 @@ export default {
 
 .link-cadastro {
   margin-left: 5px;
+}
+
+.logo {
+  max-width: 770px;
+  height: auto;
+  border: solid 25px transparent;
+  border-top-color: #aa00ff;
+  border-left-color: #aa00ff;
+  border-radius: 25%;
+}
+
+.imagem-principal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 </style>
