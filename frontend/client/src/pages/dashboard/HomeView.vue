@@ -1,5 +1,5 @@
 <template>
-  <v-main class="fill-height">
+  <div class="fill-height">
     <v-card>
       <v-toolbar class="titulos" color="#AA00FF" flat dark>
         <v-toolbar-title style="text-align: start">
@@ -75,8 +75,6 @@
                 :items="produtosVencimento"
                 item-value="nome"
                 height="400"
-                @load="load"
-                :loading="loading"
                 fixed-header
               ></v-data-table-virtual>
               <v-empty-state
@@ -111,7 +109,7 @@
         </div>
       </div>
     </div>
-  </v-main>
+  </div>
 </template>
 
 <script>
@@ -123,7 +121,7 @@ import comunicacaoMovimentacoes from '@/services/movimentacoes/comunicacao-movim
 import comunicacaoUsuarios from '@/services/usuarios/comunicacao-usuarios';
 
 export default {
-  name: 'home',
+  name: 'HomeView',
   components: {
     Pie,
   },

@@ -1,7 +1,7 @@
 <template>
   <v-app style="height: 100vh; margin: 0 auto">
     <Menu v-if="notIsLoginPage" />
-    <router-view />
+    <router-view></router-view>
     <Alertas />
   </v-app>
 </template>

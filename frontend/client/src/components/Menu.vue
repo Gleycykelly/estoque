@@ -23,11 +23,7 @@
 
       <v-list-group value="Cadastros" no-action>
         <template v-slot:activator="{ props }">
-          <v-list-item
-            v-bind="props"
-            prepend-icon="mdi-folder-plus"
-            :class="{ 'show-icon': menuFechado }"
-          >
+          <v-list-item v-bind="props" prepend-icon="mdi-folder-plus">
             <div class="titulo">Cadastros</div>
           </v-list-item>
         </template>
@@ -50,11 +46,7 @@
       </v-list-group>
       <v-list-group value="Movimentações" no-action>
         <template v-slot:activator="{ props }">
-          <v-list-item
-            v-bind="props"
-            prepend-icon="mdi-swap-horizontal-bold"
-            :class="{ 'show-icon': menuFechado }"
-          >
+          <v-list-item v-bind="props" prepend-icon="mdi-swap-horizontal-bold">
             <div class="titulo">Movimentações</div>
           </v-list-item>
         </template>
@@ -66,11 +58,7 @@
 
       <v-list-group value="Relatórios" no-action>
         <template v-slot:activator="{ props }">
-          <v-list-item
-            v-bind="props"
-            prepend-icon="mdi-file-document"
-            :class="{ 'show-icon': menuFechado }"
-          >
+          <v-list-item v-bind="props" prepend-icon="mdi-file-document">
             <div class="titulo">Relatórios</div>
           </v-list-item>
         </template>

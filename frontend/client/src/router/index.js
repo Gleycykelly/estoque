@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../pages/HomeView.vue';
-import LoginView from '../pages/LoginView.vue';
+import HomeView from '../pages/dashboard/HomeView.vue';
+import LoginView from '../pages/entrar/LoginView.vue';
 import ProdutosView from '../pages/produtos/ProdutosView.vue';
 import ProdutosEdicaoView from '../pages/produtos/ProdutosEdicaoView.vue';
 import MarcasView from '../pages/marcas/MarcasView.vue';
@@ -129,10 +129,15 @@ const routes = [
     name: 'emissao-movimentacoes',
     component: EmissaoMovimentacao,
   },
+  {
+    path: '/teste',
+    name: 'teste',
+    component: { template: '<div>Componente de Teste</div>' },
+  },
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory('/'),
   routes,
 });
 

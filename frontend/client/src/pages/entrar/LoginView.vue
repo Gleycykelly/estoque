@@ -94,7 +94,9 @@ export default {
           const authStore = useAuthStore();
           authStore.setToken(token);
 
-          this.$router.push('/home');
+          if (token && this.$router) {
+            this.$router.push('/home');
+          }
         })
         .catch((error) => {
           if (error.response && error.response.data) {
