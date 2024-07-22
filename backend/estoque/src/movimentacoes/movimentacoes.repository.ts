@@ -302,7 +302,8 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
     return await this.remove(movimentacao);
   }
 
-  async valorTotalEntradasSaidas() {
+  async valorTotalEntradasSaidas(depositosVisiveis?: number[]) {
+    console.log(depositosVisiveis);
     const query = `
         select
           SUM(CASE WHEN m."tipo_movimentacao"  = 'Entrada' THEN lp."preco_custo" * m."quantidade" ELSE 0 END) AS total_entrada,
@@ -313,12 +314,13 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
        inner join lancamentos_produtos lp on lp."id" = m."id_lancamento_produto"
        inner join localizacoes_depositos ld on ld."id" = lp."id_localizacao_deposito"
        inner join depositos d on d."id" = ld."id_deposito"
+       ${depositosVisiveis != null && depositosVisiveis.length > 0 ? `where d."id" in (${depositosVisiveis})` : ''}
     `;
 
     return await this.query(query);
   }
 
-  async produtosProximosDoVencimento() {
+  async produtosProximosDoVencimento(depositosVisiveis?: number[]) {
     const dataVencimento = new Date();
     dataVencimento.setDate(dataVencimento.getDate() + 7);
 
@@ -328,20 +330,24 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
       from movimentacoes m
       inner join lancamentos_produtos lp on lp."id" = m."id_lancamento_produto"
       inner join produtos p on p."id" = lp."id_produto"
+      inner join localizacoes_depositos ld on ld."id" = lp."id_localizacao_deposito"
+       inner join depositos d on d."id" = ld."id_deposito"
       where lp.data_validade = '${dataVencimento.toISOString()}'
+      ${depositosVisiveis != null && depositosVisiveis.length > 0 ? `and d."id" in (${depositosVisiveis})` : ''}
       group by (lp."lote", p."nome");`;
 
     return await this.query(query);
   }
 
-  async quantidadeProdutosPorEstoque() {
+  async quantidadeProdutosPorEstoque(depositosVisiveis?: number[]) {
     const query = `select 
      d."descricao" as deposito,
       SUM(CASE WHEN m."tipo_movimentacao" = 'Entrada' THEN m."quantidade" ELSE 0 END) - SUM(CASE WHEN m."tipo_movimentacao" = 'Saída' THEN m."quantidade" ELSE 0 END) AS total_produtos
       from movimentacoes m
       inner join lancamentos_produtos lp on lp."id" = m."id_lancamento_produto"
       inner join localizacoes_depositos ld on ld."id" = lp."id_localizacao_deposito"
-       inner join depositos d on d."id" = ld."id_deposito" 
+      inner join depositos d on d."id" = ld."id_deposito" 
+      ${depositosVisiveis != null && depositosVisiveis.length > 0 ? `where d."id" in (${depositosVisiveis})` : ''}
       group by (d."descricao")`;
 
     return await this.query(query);

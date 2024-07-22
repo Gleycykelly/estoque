@@ -321,8 +321,19 @@ export class MovimentacoesService {
     return service.create({ ...entidade });
   }
 
-  async valorTotalEntradasSaidas() {
-    const results = await this.repositorio.valorTotalEntradasSaidas();
+  async valorTotalEntradasSaidas(token: string) {
+    const dadosUsuarioLogado =
+      await this.usuarioService.obterUsuarioLogado(token);
+
+    const depositos = [];
+
+    if (dadosUsuarioLogado.permissaoUsuario != 'Administrador') {
+      for (const deposito of dadosUsuarioLogado.depositos) {
+        depositos.push(deposito.id);
+      }
+    }
+
+    const results = await this.repositorio.valorTotalEntradasSaidas(depositos);
     const { total_entrada, total_saida, total_produtos, quantidade_depositos } =
       results[0];
     return {
@@ -333,12 +344,34 @@ export class MovimentacoesService {
     };
   }
 
-  async produtosProximosDoVencimento() {
+  async produtosProximosDoVencimento(token: string) {
+    const dadosUsuarioLogado =
+      await this.usuarioService.obterUsuarioLogado(token);
+
+    const depositos = [];
+
+    if (dadosUsuarioLogado.permissaoUsuario != 'Administrador') {
+      for (const deposito of dadosUsuarioLogado.depositos) {
+        depositos.push(deposito.id);
+      }
+    }
+
     const dados = await this.repositorio.produtosProximosDoVencimento();
     return dados;
   }
 
-  async quantidadeProdutosPorEstoque() {
+  async quantidadeProdutosPorEstoque(token: string) {
+    const dadosUsuarioLogado =
+      await this.usuarioService.obterUsuarioLogado(token);
+
+    const depositos = [];
+
+    if (dadosUsuarioLogado.permissaoUsuario != 'Administrador') {
+      for (const deposito of dadosUsuarioLogado.depositos) {
+        depositos.push(deposito.id);
+      }
+    }
+
     const dados = await this.repositorio.quantidadeProdutosPorEstoque();
     return dados;
   }

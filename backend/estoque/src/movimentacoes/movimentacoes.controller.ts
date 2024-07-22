@@ -34,18 +34,18 @@ export class MovimentacoesController {
   }
 
   @Get('valor-total-entradas-saidas')
-  valorTotalEntradasSaidas() {
-    return this.movimentacoesService.valorTotalEntradasSaidas();
+  valorTotalEntradasSaidas(@Headers('Authorization') token: string) {
+    return this.movimentacoesService.valorTotalEntradasSaidas(token);
   }
 
   @Get('produtos-proximo-vencimento')
-  produtosProximosDoVencimento() {
-    return this.movimentacoesService.produtosProximosDoVencimento();
+  produtosProximosDoVencimento(@Headers('Authorization') token: string) {
+    return this.movimentacoesService.produtosProximosDoVencimento(token);
   }
 
   @Get('produtos-por-estoque')
-  quantidadeProdutosPorEstoque() {
-    return this.movimentacoesService.quantidadeProdutosPorEstoque();
+  quantidadeProdutosPorEstoque(@Headers('Authorization') token: string) {
+    return this.movimentacoesService.quantidadeProdutosPorEstoque(token);
   }
 
   @Get('ultimas-movimentacoes')
