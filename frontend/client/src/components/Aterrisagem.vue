@@ -154,7 +154,7 @@
         @click="abrirModalFiltro"
         style="top: -55px"
       >
-        <v-icon>mdi-filter</v-icon>
+        <v-icon class="cor-icones">mdi-filter</v-icon>
         <v-tooltip activator="parent" location="start">Filtrar itens</v-tooltip>
       </v-fab>
 
@@ -367,7 +367,7 @@
         color="var(--primary-color)"
         @click="irParaTelaDeCriacao"
       >
-        <v-icon>mdi-plus</v-icon>
+        <v-icon class="cor-icones">mdi-plus</v-icon>
         <v-tooltip activator="parent" location="start">
           Adicionar item
         </v-tooltip>
@@ -604,5 +604,9 @@ tr {
 
 .custom-header i {
   color: var(--primary-color);
+}
+
+.cor-icones {
+  color: white;
 }
 </style>

@@ -107,7 +107,13 @@
     </v-list>
   </v-navigation-drawer>
   <v-main>
-    <v-toolbar color="var(--primary-color)" dark extended flat>
+    <v-toolbar
+      color="var(--primary-color)"
+      light
+      extended
+      flat
+      class="white--text"
+    >
       <v-app-bar-nav-icon
         @click="menuAberto = !menuAberto"
       ></v-app-bar-nav-icon>
@@ -173,5 +179,9 @@ export default {
   margin-left: 17px;
   margin-top: 9px;
   font-size: 24px;
+}
+
+.white--text {
+  color: white !important;
 }
 </style>

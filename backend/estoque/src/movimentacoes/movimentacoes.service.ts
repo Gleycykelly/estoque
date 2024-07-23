@@ -339,8 +339,8 @@ export class MovimentacoesService {
     return {
       totalEntrada: total_entrada || 0,
       totalSaida: total_saida || 0,
-      totalProdutos: total_produtos,
-      quantidadeDepositos: quantidade_depositos,
+      totalProdutos: total_produtos || 0,
+      quantidadeDepositos: quantidade_depositos || 0,
     };
   }
 

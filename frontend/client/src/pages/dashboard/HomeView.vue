@@ -16,7 +16,7 @@
           </v-toolbar-title>
         </v-toolbar>
       </v-card>
-      <div style="background-color: #f2f2f2; min-height: 100vh">
+      <div style="background-color: var(--background-color); min-height: 100vh">
         <div class="grid-container">
           <div class="grid-item">
             <v-card class="valor-total">
@@ -84,8 +84,7 @@
                   v-if="!produtosVencimento || produtosVencimento.length == 0"
                   icon="mdi-magnify"
                   title="Nenhum item encontrado!"
-                  color="#E0E0E0"
-                  style="color: #e0e0e0"
+                  color="var(--text-color)"
                 ></v-empty-state>
               </v-card-text>
             </v-card>
@@ -104,8 +103,7 @@
                   v-if="!podeGerarGrafico"
                   icon="mdi-magnify"
                   title="Nenhum item encontrado!"
-                  color="#E0E0E0"
-                  style="color: #e0e0e0"
+                  color="var(--text-color)"
                 ></v-empty-state>
               </v-card-text>
             </v-card>
@@ -284,6 +282,7 @@ export default {
   align-items: center;
 }
 .titulo-pagina {
+  color: white;
   font-weight: 900;
   font-size: 25px;
   font-family: 'Roboto', sans-serif;
@@ -292,7 +291,7 @@ export default {
 .subtitulo-pagina {
   font-weight: 400;
   font-size: 17px;
-  color: #e0e0e0;
+  color: var(--text-color);
   font-family: 'Roboto', sans-serif;
 }
 
