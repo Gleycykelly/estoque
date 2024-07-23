@@ -85,7 +85,7 @@
           <v-tabs-window-item :key="2" :value="2" style="padding: 5px">
             <div class="text-start">
               <v-card-title>
-                <v-dialog v-model="dialog">
+                <v-dialog class="container-informacoes" v-model="dialog">
                   <template #activator="{ props }">
                     <v-btn
                       class="botao-informacao-nutricional"
@@ -96,231 +96,245 @@
                       Adicionar
                     </v-btn>
                   </template>
-                  <v-card
-                    class="text-center informacoes-nutricionais"
-                    title="Informaçao nutricional"
-                  >
-                    <v-card-text>
-                      <v-text-field
-                        label=" Porção"
-                        v-model="novaPorcao.porcao"
-                        variant="outlined"
-                      ></v-text-field>
+                  <div class="modal-nutricional">
+                    <v-card
+                      class="text-center informacoes-nutricionais"
+                      title="Informaçao nutricional"
+                    >
+                      <v-card-text>
+                        <v-text-field
+                          label=" Porção"
+                          v-model="novaPorcao.porcao"
+                          variant="outlined"
+                        ></v-text-field>
 
-                      <v-text-field
-                        label="Alergênicos"
-                        v-model="novaPorcao.informacaoNutricional.alergenicos"
-                        variant="outlined"
-                      ></v-text-field>
+                        <v-text-field
+                          label="Alergênicos"
+                          v-model="novaPorcao.informacaoNutricional.alergenicos"
+                          variant="outlined"
+                        ></v-text-field>
 
-                      <v-text-field
-                        label="Ingredientes"
-                        v-model="novaPorcao.informacaoNutricional.ingredientes"
-                        variant="outlined"
-                      ></v-text-field>
+                        <v-text-field
+                          label="Ingredientes"
+                          v-model="
+                            novaPorcao.informacaoNutricional.ingredientes
+                          "
+                          variant="outlined"
+                        ></v-text-field>
 
-                      <v-combobox
-                        label="Unidades de medida"
-                        :items="unidadesDeMedida"
-                        item-title="descricao"
-                        item-value="id"
-                        v-model="novaPorcao.unidadeMedida"
-                        variant="outlined"
-                      ></v-combobox>
+                        <v-combobox
+                          label="Unidades de medida"
+                          :items="unidadesDeMedida"
+                          item-title="descricao"
+                          item-value="id"
+                          v-model="novaPorcao.unidadeMedida"
+                          variant="outlined"
+                        ></v-combobox>
 
-                      <div class="valores-nutricionais">
-                        <div>
-                          <div class="titulo-valores-nutricionais">
-                            Valores nutricionais
-                          </div>
-
+                        <div class="valores-nutricionais">
                           <div>
-                            <div class="valores-nutricionais-campos">
-                              <v-text-field
-                                type="number"
-                                v-model="
-                                  novaPorcao.valorNutricional.valorEnergetico
-                                "
-                                label="Valor energético"
-                                @input="
-                                  !novaPorcao.valorNutricional.valorEnergetico
-                                    ? (novaPorcao.valorNutricional.valorEnergetico =
-                                        null)
-                                    : novaPorcao.valorNutricional
-                                        .valorEnergetico
-                                "
-                                variant="outlined"
-                              ></v-text-field>
-
-                              <v-text-field
-                                type="number"
-                                class="margin-para-valores-nutricionais"
-                                label="Carboidratos"
-                                v-model="
-                                  novaPorcao.valorNutricional.carboidratos
-                                "
-                                @input="
-                                  !novaPorcao.valorNutricional.carboidratos
-                                    ? (novaPorcao.valorNutricional.carboidratos =
-                                        null)
-                                    : novaPorcao.valorNutricional.carboidratos
-                                "
-                                variant="outlined"
-                              ></v-text-field>
-
-                              <v-text-field
-                                type="number"
-                                class="margin-para-valores-nutricionais"
-                                label="Açucares totais"
-                                v-model="
-                                  novaPorcao.valorNutricional.acucaresTotais
-                                "
-                                @input="
-                                  !novaPorcao.valorNutricional.acucaresTotais
-                                    ? (novaPorcao.valorNutricional.acucaresTotais =
-                                        null)
-                                    : novaPorcao.valorNutricional.acucaresTotais
-                                "
-                                variant="outlined"
-                              ></v-text-field>
-
-                              <v-text-field
-                                type="number"
-                                class="margin-para-valores-nutricionais"
-                                label="Açucares adicionados"
-                                v-model="
-                                  novaPorcao.valorNutricional
-                                    .acucaresAdicionados
-                                "
-                                @input="
-                                  !novaPorcao.valorNutricional
-                                    .acucaresAdicionados
-                                    ? (novaPorcao.valorNutricional.acucaresAdicionados =
-                                        null)
-                                    : novaPorcao.valorNutricional
-                                        .acucaresAdicionados
-                                "
-                                variant="outlined"
-                              ></v-text-field>
-
-                              <v-text-field
-                                type="number"
-                                class="margin-para-valores-nutricionais"
-                                label="Proteínas"
-                                v-model="novaPorcao.valorNutricional.proteinas"
-                                variant="outlined"
-                                @input="
-                                  !novaPorcao.valorNutricional.proteinas
-                                    ? (novaPorcao.valorNutricional.proteinas =
-                                        null)
-                                    : novaPorcao.valorNutricional.proteinas
-                                "
-                              ></v-text-field>
+                            <div class="titulo-valores-nutricionais">
+                              Valores nutricionais
                             </div>
 
-                            <div class="valores-nutricionais-campos">
-                              <v-text-field
-                                type="number"
-                                label="Gorduras totais"
-                                v-model="
-                                  novaPorcao.valorNutricional.gordurasTotais
-                                "
-                                @input="
-                                  !novaPorcao.valorNutricional.gordurasTotais
-                                    ? (novaPorcao.valorNutricional.gordurasTotais =
-                                        null)
-                                    : novaPorcao.valorNutricional.gordurasTotais
-                                "
-                                variant="outlined"
-                              ></v-text-field>
+                            <div>
+                              <div class="valores-nutricionais-campos">
+                                <v-text-field
+                                  type="number"
+                                  v-model="
+                                    novaPorcao.valorNutricional.valorEnergetico
+                                  "
+                                  label="Valor energético"
+                                  @input="
+                                    !novaPorcao.valorNutricional.valorEnergetico
+                                      ? (novaPorcao.valorNutricional.valorEnergetico =
+                                          null)
+                                      : novaPorcao.valorNutricional
+                                          .valorEnergetico
+                                  "
+                                  variant="outlined"
+                                ></v-text-field>
 
-                              <v-text-field
-                                type="number"
-                                class="margin-para-valores-nutricionais"
-                                label="Gorduras saturadas"
-                                v-model="
-                                  novaPorcao.valorNutricional.gordurasSaturadas
-                                "
-                                @input="
-                                  !novaPorcao.valorNutricional.gordurasSaturadas
-                                    ? (novaPorcao.valorNutricional.gordurasSaturadas =
-                                        null)
-                                    : novaPorcao.valorNutricional
-                                        .gordurasSaturadas
-                                "
-                                variant="outlined"
-                              ></v-text-field>
+                                <v-text-field
+                                  type="number"
+                                  class="margin-para-valores-nutricionais"
+                                  label="Carboidratos"
+                                  v-model="
+                                    novaPorcao.valorNutricional.carboidratos
+                                  "
+                                  @input="
+                                    !novaPorcao.valorNutricional.carboidratos
+                                      ? (novaPorcao.valorNutricional.carboidratos =
+                                          null)
+                                      : novaPorcao.valorNutricional.carboidratos
+                                  "
+                                  variant="outlined"
+                                ></v-text-field>
 
-                              <v-text-field
-                                type="number"
-                                class="margin-para-valores-nutricionais"
-                                label="Gorduras trans"
-                                v-model="
-                                  novaPorcao.valorNutricional.gordurasTrans
-                                "
-                                @input="
-                                  !novaPorcao.valorNutricional.gordurasTrans
-                                    ? (novaPorcao.valorNutricional.gordurasTrans =
-                                        null)
-                                    : novaPorcao.valorNutricional.gordurasTrans
-                                "
-                                variant="outlined"
-                              ></v-text-field>
+                                <v-text-field
+                                  type="number"
+                                  class="margin-para-valores-nutricionais"
+                                  label="Açucares totais"
+                                  v-model="
+                                    novaPorcao.valorNutricional.acucaresTotais
+                                  "
+                                  @input="
+                                    !novaPorcao.valorNutricional.acucaresTotais
+                                      ? (novaPorcao.valorNutricional.acucaresTotais =
+                                          null)
+                                      : novaPorcao.valorNutricional
+                                          .acucaresTotais
+                                  "
+                                  variant="outlined"
+                                ></v-text-field>
 
-                              <v-text-field
-                                type="number"
-                                class="margin-para-valores-nutricionais"
-                                label="Fibras alimentares"
-                                v-model="
-                                  novaPorcao.valorNutricional.fibrasAlimentares
-                                "
-                                @input="
-                                  !novaPorcao.valorNutricional.fibrasAlimentares
-                                    ? (novaPorcao.valorNutricional.fibrasAlimentares =
-                                        null)
-                                    : novaPorcao.valorNutricional
-                                        .fibrasAlimentares
-                                "
-                                variant="outlined"
-                              ></v-text-field>
+                                <v-text-field
+                                  type="number"
+                                  class="margin-para-valores-nutricionais"
+                                  label="Açucares adicionados"
+                                  v-model="
+                                    novaPorcao.valorNutricional
+                                      .acucaresAdicionados
+                                  "
+                                  @input="
+                                    !novaPorcao.valorNutricional
+                                      .acucaresAdicionados
+                                      ? (novaPorcao.valorNutricional.acucaresAdicionados =
+                                          null)
+                                      : novaPorcao.valorNutricional
+                                          .acucaresAdicionados
+                                  "
+                                  variant="outlined"
+                                ></v-text-field>
 
-                              <v-text-field
-                                type="number"
-                                class="margin-para-valores-nutricionais"
-                                label="Sódio"
-                                v-model="novaPorcao.valorNutricional.sodio"
-                                @input="
-                                  !novaPorcao.valorNutricional.sodio
-                                    ? (novaPorcao.valorNutricional.sodio = null)
-                                    : novaPorcao.valorNutricional.sodio
-                                "
-                                variant="outlined"
-                              ></v-text-field>
+                                <v-text-field
+                                  type="number"
+                                  class="margin-para-valores-nutricionais"
+                                  label="Proteínas"
+                                  v-model="
+                                    novaPorcao.valorNutricional.proteinas
+                                  "
+                                  variant="outlined"
+                                  @input="
+                                    !novaPorcao.valorNutricional.proteinas
+                                      ? (novaPorcao.valorNutricional.proteinas =
+                                          null)
+                                      : novaPorcao.valorNutricional.proteinas
+                                  "
+                                ></v-text-field>
+                              </div>
+
+                              <div class="valores-nutricionais-campos">
+                                <v-text-field
+                                  type="number"
+                                  label="Gorduras totais"
+                                  v-model="
+                                    novaPorcao.valorNutricional.gordurasTotais
+                                  "
+                                  @input="
+                                    !novaPorcao.valorNutricional.gordurasTotais
+                                      ? (novaPorcao.valorNutricional.gordurasTotais =
+                                          null)
+                                      : novaPorcao.valorNutricional
+                                          .gordurasTotais
+                                  "
+                                  variant="outlined"
+                                ></v-text-field>
+
+                                <v-text-field
+                                  type="number"
+                                  class="margin-para-valores-nutricionais"
+                                  label="Gorduras saturadas"
+                                  v-model="
+                                    novaPorcao.valorNutricional
+                                      .gordurasSaturadas
+                                  "
+                                  @input="
+                                    !novaPorcao.valorNutricional
+                                      .gordurasSaturadas
+                                      ? (novaPorcao.valorNutricional.gordurasSaturadas =
+                                          null)
+                                      : novaPorcao.valorNutricional
+                                          .gordurasSaturadas
+                                  "
+                                  variant="outlined"
+                                ></v-text-field>
+
+                                <v-text-field
+                                  type="number"
+                                  class="margin-para-valores-nutricionais"
+                                  label="Gorduras trans"
+                                  v-model="
+                                    novaPorcao.valorNutricional.gordurasTrans
+                                  "
+                                  @input="
+                                    !novaPorcao.valorNutricional.gordurasTrans
+                                      ? (novaPorcao.valorNutricional.gordurasTrans =
+                                          null)
+                                      : novaPorcao.valorNutricional
+                                          .gordurasTrans
+                                  "
+                                  variant="outlined"
+                                ></v-text-field>
+
+                                <v-text-field
+                                  type="number"
+                                  class="margin-para-valores-nutricionais"
+                                  label="Fibras alimentares"
+                                  v-model="
+                                    novaPorcao.valorNutricional
+                                      .fibrasAlimentares
+                                  "
+                                  @input="
+                                    !novaPorcao.valorNutricional
+                                      .fibrasAlimentares
+                                      ? (novaPorcao.valorNutricional.fibrasAlimentares =
+                                          null)
+                                      : novaPorcao.valorNutricional
+                                          .fibrasAlimentares
+                                  "
+                                  variant="outlined"
+                                ></v-text-field>
+
+                                <v-text-field
+                                  type="number"
+                                  class="margin-para-valores-nutricionais"
+                                  label="Sódio"
+                                  v-model="novaPorcao.valorNutricional.sodio"
+                                  @input="
+                                    !novaPorcao.valorNutricional.sodio
+                                      ? (novaPorcao.valorNutricional.sodio =
+                                          null)
+                                      : novaPorcao.valorNutricional.sodio
+                                  "
+                                  variant="outlined"
+                                ></v-text-field>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </v-card-text>
+                      </v-card-text>
 
-                    <v-divider></v-divider>
+                      <v-divider></v-divider>
 
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
 
-                      <v-btn
-                        text="voltar"
-                        variant="plain"
-                        @click="sairDoModalDeInformacoesNutricionais()"
-                      ></v-btn>
+                        <v-btn
+                          text="voltar"
+                          variant="plain"
+                          @click="sairDoModalDeInformacoesNutricionais()"
+                        ></v-btn>
 
-                      <v-btn
-                        color="var(--primary-color)"
-                        text="Adicionar"
-                        variant="tonal"
-                        @click="adicionarNovaInformacaoNutricional()"
-                      ></v-btn>
-                    </v-card-actions>
-                  </v-card>
+                        <v-btn
+                          color="var(--primary-color)"
+                          text="Adicionar"
+                          variant="tonal"
+                          @click="adicionarNovaInformacaoNutricional()"
+                        ></v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </div>
                 </v-dialog>
               </v-card-title>
             </div>
@@ -822,10 +836,10 @@ export default {
 }
 
 .valores-nutricionais {
-  border-radius: 25px;
+  border-radius: 15px;
   border-style: solid;
   border-width: 2px;
-  border-color: #e1bee7;
+  border-color: var(--primary-color);
   max-height: 250px;
   padding: 15px;
   overflow: auto;
@@ -833,7 +847,7 @@ export default {
 
 .titulo-valores-nutricionais {
   text-align: left;
-  color: #ce93d8;
+  color: var(--primary-color);
   font-size: large;
   margin-bottom: 15px;
 }
@@ -863,5 +877,11 @@ export default {
   border-width: 1px;
   border-style: dashed;
   margin-top: 15px;
+}
+
+.modal-nutricional {
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }
 </style>

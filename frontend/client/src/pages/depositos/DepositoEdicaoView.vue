@@ -25,7 +25,13 @@
         ></v-text-field>
         <div class="container-endereco">
           <div style="padding: 15px">
-            <div style="text-align: left; color: #ce93d8; font-size: large">
+            <div
+              style="
+                text-align: left;
+                color: var(--primary-color);
+                font-size: large;
+              "
+            >
               Endereço
             </div>
             <div style="padding: 15px">
@@ -308,10 +314,10 @@ export default {
 
 <style scoped>
 .container-endereco {
-  border-radius: 25px;
+  border-radius: 15px;
   border-style: solid;
   border-width: 2px;
-  border-color: #e1bee7;
+  border-color: var(--primary-color);
   max-height: 450px;
   overflow: auto;
 }

@@ -320,10 +320,10 @@ export default {
 }
 
 .container-endereco {
-  border-radius: 25px;
+  border-radius: 15px;
   border-style: solid;
   border-width: 2px;
-  border-color: #e1bee7;
+  border-color: var(--primary-color);
   max-height: 450px;
   margin-bottom: 15px;
   overflow: auto;
@@ -331,7 +331,7 @@ export default {
 
 .titulo-container-endereco {
   text-align: left;
-  color: #ce93d8;
+  color: var(--primary-color);
   font-size: large;
 }
 
