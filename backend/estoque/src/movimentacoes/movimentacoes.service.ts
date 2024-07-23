@@ -41,7 +41,7 @@ export class MovimentacoesService {
         this.lancamentoProdutoService,
       );
 
-    return this.repositorio.createMovimentacao(createMovimentacoeDto);
+    return await this.repositorio.createMovimentacao(createMovimentacoeDto);
   }
 
   async update(id: number, updateMovimentacoeDto: UpdateMovimentacoeDto) {

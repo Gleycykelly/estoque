@@ -185,6 +185,8 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
         'lancamentoProduto.fornecedor.endereco',
         'lancamentoProduto.localizacaoDeposito',
         'lancamentoProduto.localizacaoDeposito.deposito',
+        'lancamentoProduto.localizacaoDeposito.deposito.endereco',
+        'lancamentoProduto.localizacaoDeposito.deposito.endereco.municipio',
         'usuario',
       ],
     });
