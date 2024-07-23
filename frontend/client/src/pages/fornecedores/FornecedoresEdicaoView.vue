@@ -38,9 +38,10 @@
           variant="outlined"
         ></v-text-field>
 
-        <div class="container-endereco">
+        <div>
           <div style="padding: 15px">
             <div class="titulo-container-endereco">Endereço</div>
+            <v-divider class="divisao-endereco"></v-divider>
 
             <div style="padding: 15px">
               <div class="campos-endereco">
@@ -115,10 +116,10 @@
                 variant="outlined"
               ></v-text-field>
             </div>
+            <v-divider class="divisao-endereco"></v-divider>
           </div>
         </div>
       </v-card-text>
-      <v-divider></v-divider>
     </v-card>
   </v-main>
 </template>
@@ -291,7 +292,7 @@ export default {
 
           this.modelo.endereco.estado = this.modelo.endereco.municipio.uf;
 
-          this.obterCidadesPorEstado(this.modelo.endereco.estado);
+          this.obterCidades(this.modelo.endereco.estado);
         });
     },
   },
@@ -353,5 +354,11 @@ export default {
   @media (max-width: 849px) {
     margin-left: 0;
   }
+}
+
+.divisao-endereco {
+  border-color: var(--primary-color);
+  border-width: 1px;
+  border-style: solid;
 }
 </style>

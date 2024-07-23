@@ -29,8 +29,6 @@
           variant="outlined"
         ></v-text-field>
       </v-card-text>
-
-      <v-divider></v-divider>
     </v-card>
   </v-main>
 </template>

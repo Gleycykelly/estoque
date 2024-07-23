@@ -54,7 +54,6 @@
         </div>
         <div class="campos-dados-flex"></div>
       </v-card-text>
-      <v-divider></v-divider>
     </v-card>
     <v-sheet>
       <v-fab

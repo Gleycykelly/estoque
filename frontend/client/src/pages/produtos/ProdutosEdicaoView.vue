@@ -315,8 +315,6 @@
                         </div>
                       </v-card-text>
 
-                      <v-divider></v-divider>
-
                       <v-card-actions>
                         <v-spacer></v-spacer>
 
@@ -530,8 +528,6 @@
           </v-tabs-window-item>
         </v-tabs-window>
       </v-card-text>
-
-      <v-divider></v-divider>
     </v-card>
   </v-main>
 </template>
