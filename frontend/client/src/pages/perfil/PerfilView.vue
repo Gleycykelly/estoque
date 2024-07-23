@@ -52,22 +52,49 @@
             variant="outlined"
           ></v-combobox>
         </div>
-        <div class="campos-dados-flex">
-          <v-text-field
-            label="Senha atual"
-            v-model="modelo.senha"
-            variant="outlined"
-          ></v-text-field>
-          <v-text-field
-            class="campos-dados-margin"
-            label="Nova senha"
-            v-model="modelo.novaSenha"
-            variant="outlined"
-          ></v-text-field>
-        </div>
+        <div class="campos-dados-flex"></div>
       </v-card-text>
       <v-divider></v-divider>
     </v-card>
+    <v-sheet>
+      <v-fab
+        class="me-4"
+        icon="mdi-key-variant"
+        location="top end"
+        absolute
+        offset
+        color="var(--primary-color)"
+        @click="this.modalAberto = true"
+      >
+        <v-icon class="cor-icones">mdi-key-variant</v-icon>
+        <v-tooltip activator="parent" location="start">Alterar senha</v-tooltip>
+      </v-fab>
+      <v-dialog v-model="modalAberto" max-width="500px">
+        <v-card>
+          <v-card-title>Nova senha</v-card-title>
+          <v-card-text>
+            <div>
+              <v-text-field
+                label="Senha atual"
+                v-model="modelo.senha"
+                variant="outlined"
+              ></v-text-field>
+              <v-text-field
+                label="Nova senha"
+                v-model="modelo.novaSenha"
+                variant="outlined"
+              ></v-text-field>
+            </div>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn color="primary" @click="modalAberto = false">Fechar</v-btn>
+            <v-btn color="var(--primary-color)" @click="salvar" variant="tonal">
+              Confirmar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-sheet>
   </v-main>
 </template>
 
@@ -80,6 +107,7 @@ export default {
   data() {
     return {
       modelo: {},
+      modalAberto: false,
     };
   },
   methods: {
@@ -125,20 +153,36 @@ export default {
         return false;
       }
 
+      if (this.modelo.senha && !this.modelo.novaSenha) {
+        useAlerta().exibirSnackbar('Insira a nova senha!', 'orange');
+        return false;
+      }
+
+      if (this.modalAberto && !this.modelo.senha && !this.modelo.novaSenha) {
+        useAlerta().exibirSnackbar(
+          'Insira a senha atual e a nova senha!',
+          'orange',
+        );
+        return false;
+      }
+
       return true;
     },
     async salvar() {
       if (!this.podeGravar()) {
         return;
       }
+
       if (this.modelo) {
         await comunicacaoUsuarios
           .atualizar(this.modelo.id, this.modelo)
-          .then(() => {
+          .then((response) => {
             useAlerta().exibirSnackbar(
               'Usuário alterado com sucesso!',
               'green',
             );
+            this.modelo = response.data;
+            this.modalAberto = false;
           })
           .catch((error) => {
             if (error.response && error.response.data) {
