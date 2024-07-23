@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer v-model="menuAberto" clipped theme="dark" :width="325">
-    <v-list dense nav color="#AA00FF" class="menu-opcoes">
+    <v-list dense nav color="var(--primary-color)" class="menu-opcoes">
       <v-list-subheader>
         <div style="display: flex">
           <div><img :src="logoURL" alt="Logo" class="logo" /></div>
@@ -107,7 +107,7 @@
     </v-list>
   </v-navigation-drawer>
   <v-main>
-    <v-toolbar color="#AA00FF" dark extended flat>
+    <v-toolbar color="var(--primary-color)" dark extended flat>
       <v-app-bar-nav-icon
         @click="menuAberto = !menuAberto"
       ></v-app-bar-nav-icon>
@@ -167,7 +167,7 @@ export default {
 }
 
 .nome-logo {
-  color: #aa00ff;
+  color: var(--primary-color);
   font-family: 'Roboto', sans-serif;
   font-weight: 900 !important;
   margin-left: 17px;

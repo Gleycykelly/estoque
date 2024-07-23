@@ -6,7 +6,7 @@
       class="d-flex justify-content-center align-items-center left-login"
     >
       <div class="text-center">
-        <h2 class="title-login">Login</h2>
+        <h2 class="title-login">Bem vindo(a)</h2>
         <v-form class="no-border" @submit.prevent="entrar">
           <v-text-field
             flat
@@ -49,8 +49,16 @@
       </div>
     </v-col>
     <v-col md="7" class="d-none d-sm-none d-md-block rigth-login">
-      <div class="imagem-principal">
-        <img :src="imagemURL" alt="Logo" class="logo" />
+      <div>
+        <div class="imagem-principal">
+          <img :src="imagemURL" alt="Logo" class="logo" />
+        </div>
+        <div class="frase-principal">
+          <div style="max-width: 295px">
+            Seu estoque sob controle, seu negócio em alta.
+            <v-icon style="font-size: 27px">mdi-rocket-launch-outline</v-icon>
+          </div>
+        </div>
       </div>
     </v-col>
   </v-row>
@@ -59,7 +67,7 @@
 <script>
 import { login } from '@/services/autenticacao/comunicacao-autenticacao';
 import { useAuthStore, useAlerta } from '@/store/index';
-import logo from '@/assets/imagemTelaLogin.jpeg';
+import logo from '@/assets/esstoqueCompleto.jpeg';
 
 export default {
   name: 'login-view',
@@ -129,7 +137,7 @@ export default {
 }
 
 .rigth-login {
-  background-color: #aa00ff;
+  background-color: var(--primary-color);
 }
 
 .vh-100 {
@@ -145,15 +153,15 @@ export default {
 
 .title-login {
   margin-bottom: 25px;
-  color: #aa00ff;
+  color: var(--primary-color);
   font-weight: 900 !important;
   font-family: 'Roboto', sans-serif;
-  font-size: 45px;
+  font-size: 35px;
   text-align: center;
 }
 
 .botao-entrar {
-  background-color: #aa00ff !important;
+  background-color: var(--primary-color) !important;
   color: white !important;
   font-weight: 900 !important;
   font-family: 'Roboto', sans-serif;
@@ -185,12 +193,12 @@ export default {
 }
 
 .logo {
-  max-width: 770px;
+  max-width: 450px;
   height: auto;
   border: solid 25px transparent;
-  border-top-color: #aa00ff;
-  border-left-color: #aa00ff;
-  border-radius: 25%;
+  border-top-color: var(--primary-color);
+  border-left-color: var(--primary-color);
+  border-radius: 8%;
 }
 
 .imagem-principal {
@@ -199,5 +207,16 @@ export default {
   justify-content: center;
   width: 100%;
   height: 100%;
+}
+
+.frase-principal {
+  font-weight: 600 !important;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 27px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  color: white;
 }
 </style>

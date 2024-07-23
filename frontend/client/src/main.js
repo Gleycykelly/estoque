@@ -7,6 +7,7 @@ import { createPinia } from 'pinia';
 import { LoadingPlugin } from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 import VueTheMask from 'vue-the-mask';
+import './assets/css/variables.css';
 
 loadFonts();
 

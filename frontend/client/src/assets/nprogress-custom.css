@@ -43,8 +43,8 @@ body.loading::before {
   box-sizing: border-box;
 
   border: solid 5px transparent;
-  border-top-color: #aa00ff;
-  border-left-color: #aa00ff;
+  border-top-color: var(--primary-color);
+  border-left-color: var(--primary-color);
   border-radius: 50%;
 
   animation: nprogress-spinner 0.4s linear infinite;

@@ -21,7 +21,7 @@
         <v-tabs
           v-model="tab"
           align-tabs="center"
-          color="#AA00FF"
+          color="var(--primary-color)"
           style="margin-bottom: 25px"
         >
           <v-tab :value="1">Dados do produto</v-tab>

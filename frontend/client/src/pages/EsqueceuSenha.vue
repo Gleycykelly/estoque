@@ -81,7 +81,7 @@ export default {
 }
 
 .cadastro {
-  background-color: #aa00ff;
+  background-color: var(--primary-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -96,7 +96,7 @@ export default {
 }
 
 .titulo-cadastro {
-  color: #aa00ff;
+  color: var(--primary-color);
   font-weight: 900 !important;
   font-family: 'Roboto', sans-serif;
   font-size: 30px;
@@ -115,7 +115,7 @@ export default {
 }
 
 .botao-redefinir-senha {
-  background-color: #aa00ff;
+  background-color: var(--primary-color);
   color: white !important;
   font-weight: 900 !important;
   font-family: 'Roboto', sans-serif;

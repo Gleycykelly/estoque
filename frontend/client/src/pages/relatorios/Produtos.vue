@@ -6,7 +6,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon color="#AA00FF" @click="emitirEmExcel()">
+        <v-btn icon color="var(--primary-color)" @click="emitirEmExcel()">
           <v-icon>mdi-microsoft-excel</v-icon>
           <v-tooltip activator="parent" location="top">
             Emitir em Excel
@@ -22,7 +22,7 @@
           :items="depositos"
           label="Depósitos"
           multiple
-          color="#AA00FF"
+          color="var(--primary-color)"
           variant="outlined"
           persistent-hint
           clearable
@@ -35,7 +35,7 @@
           :items="fornecedores"
           label="Forncedores"
           multiple
-          color="#AA00FF"
+          color="var(--primary-color)"
           variant="outlined"
           persistent-hint
           clearable
@@ -72,7 +72,7 @@
         <v-switch
           v-model="modelo.produtosVencidos"
           label="Produtos vencidos"
-          color="#AA00FF"
+          color="var(--primary-color)"
           hide-details
           inset
           clearable

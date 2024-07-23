@@ -21,7 +21,7 @@
         <v-tabs
           v-model="tab"
           align-tabs="center"
-          color="#AA00FF"
+          color="var(--primary-color)"
           style="margin-bottom: 25px"
         >
           <v-tab :value="1">Dados do produto</v-tab>
@@ -314,7 +314,7 @@
                       ></v-btn>
 
                       <v-btn
-                        color="#aa00ff"
+                        color="var(--primary-color)"
                         text="Adicionar"
                         variant="tonal"
                         @click="adicionarNovaInformacaoNutricional()"
@@ -794,7 +794,7 @@ export default {
 
 <style>
 .botao-informacao-nutricional {
-  background-color: #aa00ff !important;
+  background-color: var(--primary-color) !important;
   color: white !important;
   font-weight: 900 !important;
   font-family: 'Roboto', sans-serif;
@@ -810,7 +810,7 @@ export default {
 }
 
 .container-titulo-porcao {
-  color: #aa00ff;
+  color: var(--primary-color);
   display: flex;
   margin-bottom: 15px;
   font-size: large;
@@ -859,7 +859,7 @@ export default {
 }
 
 .divisao-informacoes-nutricionais {
-  border-color: #aa00ff;
+  border-color: var(--primary-color);
   border-width: 1px;
   border-style: dashed;
   margin-top: 15px;

@@ -8,7 +8,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn icon color="#AA00FF" @click="emitirEmExcel()">
+        <v-btn icon color="var(--primary-color)" @click="emitirEmExcel()">
           <v-icon>mdi-microsoft-excel</v-icon>
           <v-tooltip activator="parent" location="top">
             Emitir em Excel
@@ -25,7 +25,7 @@
           v-model="modelo.tipoMovimentacao"
           variant="outlined"
           clearable
-          color="#AA00FF"
+          color="var(--primary-color)"
         ></v-combobox>
         <div class="periodo-datas">
           <v-text-field

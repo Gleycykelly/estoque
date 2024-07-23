@@ -10,7 +10,7 @@
 
         <div>
           <v-btn
-            style="color: #aa00ff"
+            style="color: var(--primary-color)"
             @click="irParaTelaDeEdicao"
             icon
             v-if="mostrarBotaoEdicao"
@@ -20,7 +20,7 @@
           </v-btn>
 
           <v-btn
-            style="color: #aa00ff"
+            style="color: var(--primary-color)"
             @click="modalConfirmarExclusao = true"
             icon
             v-if="mostrarBotaoEdicao"
@@ -58,7 +58,7 @@
               <v-btn @click="modalConfirmarExclusao = false">voltar</v-btn>
 
               <v-btn
-                color="#aa00ff"
+                color="var(--primary-color)"
                 variant="tonal"
                 @click="
                   deletarItem();
@@ -72,7 +72,7 @@
         </v-dialog>
 
         <v-btn
-          color="#AA00FF"
+          color="var(--primary-color)"
           @click="pesquisa = true"
           v-if="!pesquisa && !mostrarBotaoEdicao"
           icon
@@ -94,7 +94,7 @@
         ></v-text-field>
 
         <v-btn
-          color="#AA00FF"
+          color="var(--primary-color)"
           @click="pesquisa = false"
           icon
           v-if="pesquisa && !mostrarBotaoEdicao"
@@ -150,7 +150,7 @@
         location="top end"
         absolute
         offset
-        color="#AA00FF"
+        color="var(--primary-color)"
         @click="abrirModalFiltro"
         style="top: -55px"
       >
@@ -171,7 +171,7 @@
                 :items="categorias"
                 label="Categorias"
                 multiple
-                color="#AA00FF"
+                color="var(--primary-color)"
                 variant="outlined"
                 persistent-hint
                 clearable
@@ -185,7 +185,7 @@
                 :items="marcas"
                 label="Marcas"
                 multiple
-                color="#AA00FF"
+                color="var(--primary-color)"
                 variant="outlined"
                 persistent-hint
                 clearable
@@ -200,7 +200,7 @@
                 v-model="filtros.tipoMovimentacao"
                 variant="outlined"
                 clearable
-                color="#AA00FF"
+                color="var(--primary-color)"
                 @update:model-value="
                   filtros.quantidadeMaiorQue = null;
                   filtros.quantidadeMenorQue = null;
@@ -217,7 +217,7 @@
                 :items="produtos"
                 label="Produtos"
                 multiple
-                color="#AA00FF"
+                color="var(--primary-color)"
                 variant="outlined"
                 persistent-hint
                 clearable
@@ -234,7 +234,7 @@
                 :items="operadores"
                 label="Operadores"
                 multiple
-                color="#AA00FF"
+                color="var(--primary-color)"
                 variant="outlined"
                 persistent-hint
                 clearable
@@ -249,7 +249,7 @@
                 :items="depositos"
                 label="Depósitos"
                 multiple
-                color="#AA00FF"
+                color="var(--primary-color)"
                 variant="outlined"
                 persistent-hint
                 clearable
@@ -263,7 +263,7 @@
                 :items="fornecedores"
                 label="Forncedores"
                 multiple
-                color="#AA00FF"
+                color="var(--primary-color)"
                 variant="outlined"
                 persistent-hint
                 clearable
@@ -313,7 +313,7 @@
                 v-if="telaParaFiltrar == 'movimentacoes'"
                 v-model="filtros.produtosVencidos"
                 label="Produtos vencidos"
-                color="#AA00FF"
+                color="var(--primary-color)"
                 hide-details
                 inset
                 clearable
@@ -329,7 +329,7 @@
                 v-model="filtros.generoUsuario"
                 variant="outlined"
                 clearable
-                color="#AA00FF"
+                color="var(--primary-color)"
               ></v-combobox>
 
               <v-combobox
@@ -341,13 +341,17 @@
                 v-model="filtros.permissaoUsuario"
                 variant="outlined"
                 clearable
-                color="#AA00FF"
+                color="var(--primary-color)"
               ></v-combobox>
             </div>
           </v-card-text>
           <v-card-actions>
             <v-btn color="primary" @click="modalAberto = false">Fechar</v-btn>
-            <v-btn color="#aa00ff" @click="obterParcial" variant="tonal">
+            <v-btn
+              color="var(--primary-color)"
+              @click="obterParcial"
+              variant="tonal"
+            >
               Filtrar
             </v-btn>
           </v-card-actions>
@@ -360,7 +364,7 @@
         location="top end"
         absolute
         offset
-        color="#AA00FF"
+        color="var(--primary-color)"
         @click="irParaTelaDeCriacao"
       >
         <v-icon>mdi-plus</v-icon>
@@ -595,10 +599,10 @@ tr {
 }
 
 .busca-itens i {
-  color: #aa00ff;
+  color: var(--primary-color);
 }
 
 .custom-header i {
-  color: #aa00ff;
+  color: var(--primary-color);
 }
 </style>

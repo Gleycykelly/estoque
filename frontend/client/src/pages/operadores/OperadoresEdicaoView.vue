@@ -21,7 +21,7 @@
         <v-tabs
           v-model="tab"
           align-tabs="center"
-          color="#AA00FF"
+          color="var(--primary-color)"
           style="margin-bottom: 25px"
         >
           <v-tab :value="1">Geral</v-tab>
@@ -105,7 +105,7 @@
                 :items="depositos"
                 label="Depósitos visivéis"
                 multiple
-                color="#AA00FF"
+                color="var(--primary-color)"
                 variant="outlined"
                 persistent-hint
               ></v-select>
@@ -214,7 +214,7 @@
                       ></v-btn>
 
                       <v-btn
-                        color="#aa00ff"
+                        color="var(--primary-color)"
                         text="Adicionar"
                         variant="tonal"
                         @click="adicionarNovoEndereco()"
@@ -290,7 +290,7 @@
                 </div>
                 <v-divider
                   style="
-                    border-color: #aa00ff;
+                    border-color: var(--primary-color);
                     border-width: 1px;
                     border-style: dashed;
                     margin-bottom: 25px;
@@ -577,7 +577,7 @@ export default {
 }
 
 .botao-novo-endereco {
-  background-color: #aa00ff !important;
+  background-color: var(--primary-color) !important;
   color: white !important;
   font-weight: 900 !important;
   font-family: 'Roboto', sans-serif;
