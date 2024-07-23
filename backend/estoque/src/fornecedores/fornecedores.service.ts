@@ -78,7 +78,7 @@ export class FornecedoresService {
   }
 
   async fornecedorJaCadastrado(cnpj: string, ehAtualizacao = false) {
-    const jaExiste = this.repositorio.existeFornecedor(cnpj);
+    const jaExiste = await this.repositorio.existeFornecedor(cnpj);
 
     if (jaExiste && !ehAtualizacao) {
       throw new ConflictException(

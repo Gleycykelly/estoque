@@ -94,15 +94,9 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
       .leftJoinAndSelect('lancamento.fornecedor', 'fornecedor');
 
     if (obterParcialMovimentacaoDto.termoDePesquisa) {
-      query = query
-        .leftJoinAndSelect(
-          'movimentacao.lancamentoProduto',
-          'lancamentoProduto',
-        )
-        .leftJoinAndSelect('lancamentoProduto.produto', 'produto')
-        .where('LOWER(produto.nome) LIKE LOWER(:termo)', {
-          termo: `%${obterParcialMovimentacaoDto.termoDePesquisa}%`,
-        });
+      query = query.where('LOWER(produto.nome) LIKE LOWER(:termo)', {
+        termo: `%${obterParcialMovimentacaoDto.termoDePesquisa}%`,
+      });
     }
 
     if (
@@ -303,7 +297,6 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
   }
 
   async valorTotalEntradasSaidas(depositosVisiveis?: number[]) {
-    console.log(depositosVisiveis);
     const query = `
         select
           SUM(CASE WHEN m."tipo_movimentacao"  = 'Entrada' THEN lp."preco_custo" * m."quantidade" ELSE 0 END) AS total_entrada,

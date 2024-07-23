@@ -136,10 +136,6 @@ export class UsuariosRepository extends Repository<Usuarios> {
 
   async excluir(id: number) {
     const usuario = await this.obterPorId(id);
-    console.log(usuario);
-    const teste = await this.remove(usuario);
-    console.log(teste);
-
-    return teste;
+    return await this.remove(usuario);
   }
 }

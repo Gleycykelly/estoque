@@ -38,10 +38,16 @@ const comunicacaoAbstrata = (caminho) => {
     },
   );
 
-  instancia.interceptors.response.use((response) => {
-    NProgress.done();
-    return response;
-  });
+  instancia.interceptors.response.use(
+    (response) => {
+      NProgress.done();
+      return response;
+    },
+    (error) => {
+      NProgress.done();
+      return Promise.reject(error);
+    },
+  );
 
   return {
     instancia,

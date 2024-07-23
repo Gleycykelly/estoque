@@ -199,7 +199,6 @@ export class UsuariosService {
     try {
       return await this.repositorio.excluir(id);
     } catch (error) {
-      console.log(error);
       throw new ConflictException('Não foi possível excluir o usuário.');
     }
   }
