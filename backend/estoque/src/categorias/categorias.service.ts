@@ -16,7 +16,7 @@ export class CategoriasService {
   async create(createCategoriaDto: CreateCategoriaDto) {
     await this.categoriaJaExiste(createCategoriaDto.descricao);
 
-    return this.repositorio.createCategoria(createCategoriaDto);
+    return await this.repositorio.createCategoria(createCategoriaDto);
   }
 
   async update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
@@ -37,7 +37,7 @@ export class CategoriasService {
       }
     }
 
-    this.repositorio.updateCategoria(id, updateCategoriaDto);
+    return await this.repositorio.updateCategoria(id, updateCategoriaDto);
   }
 
   async findOne(id: number): Promise<Categorias> {

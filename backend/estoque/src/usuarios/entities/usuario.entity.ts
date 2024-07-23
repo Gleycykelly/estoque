@@ -60,15 +60,20 @@ export class Usuarios {
   @OneToMany(() => Produtos, (produtos) => produtos.usuario)
   produtos: Produtos[];
 
-  @ManyToMany(() => Depositos, (depositos) => depositos.usuarios)
+  @ManyToMany(() => Depositos, (depositos) => depositos.usuarios, {
+    cascade: true,
+  })
   depositos: Depositos[];
 
-  @ManyToMany(() => Enderecos, (enderecos) => enderecos.usuarios)
+  @ManyToMany(() => Enderecos, (enderecos) => enderecos.usuarios, {
+    cascade: true,
+  })
   enderecos: Enderecos[];
 
   @OneToOne(
     () => UsuariosTelefones,
     (usuariosTelefones) => usuariosTelefones.usuario,
+    { cascade: true },
   )
   usuariosTelefones: UsuariosTelefones;
 }
