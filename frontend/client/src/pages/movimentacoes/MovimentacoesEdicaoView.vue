@@ -57,7 +57,11 @@
               @click:append-inner="
                 obterDadosPorLote(modelo.lancamentoProduto.lote)
               "
-            ></v-text-field>
+            >
+              <v-tooltip activator="parent" location="top">
+                Buscar por lote
+              </v-tooltip>
+            </v-text-field>
 
             <div
               class="movimentacao-campos"
@@ -328,6 +332,14 @@ export default {
         return false;
       }
 
+      if (this.modelo.quantidade < 1) {
+        useAlerta().exibirSnackbar(
+          'Insira um valor válido para a quantidade!',
+          'orange',
+        );
+        return false;
+      }
+
       if (!this.modelo.lancamentoProduto.precoCusto) {
         useAlerta().exibirSnackbar('O preço de custo é obrigatório!', 'orange');
         return false;
@@ -527,6 +539,13 @@ export default {
     },
 
     async obterDadosPorLote(lote) {
+      if (!lote) {
+        useAlerta().exibirSnackbar(
+          'Insira o lote do produto para realizar a saída!',
+          'orange',
+        );
+        return;
+      }
       this.loading = true;
       await comunicacaoMovimentacoes
         .obterMovimentacoesPorLote(lote)
