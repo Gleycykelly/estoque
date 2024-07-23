@@ -545,6 +545,7 @@ export default {
   data() {
     return {
       dialog: false,
+      retornarParaTelaMovimentacao: false,
       modelo: {
         porcoes: [],
       },
@@ -576,6 +577,7 @@ export default {
 
         useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
         this.$router.push(this.dadosDeOutraTela.rotaOriginal);
+      } else if (this.retornarParaTelaMovimentacao) {
       } else {
         this.$router.push('/produtos');
       }
@@ -787,7 +789,10 @@ export default {
 
     if (this.dadosDeOutraTela && !this.dadosDeOutraTela.indoParaCriacao) {
       this.modelo = this.dadosDeOutraTela.dadosOriginais;
+      console.log(this.dadosDeOutraTela);
       useDadosDeOutraTela().salvarDadosDeOutraTela(null);
+    } else if (this.dadosDeOutraTela && this.dadosDeOutraTela.indoParaCriacao) {
+      this.retornarParaTelaMovimentacao = true;
     }
   },
   computed: {
