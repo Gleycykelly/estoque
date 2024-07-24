@@ -35,16 +35,27 @@ export const useDadosStore = defineStore('dados', {
 
 export const useDadosDeOutraTela = defineStore('dadosOutraTela', {
   state: () => ({
-    dadosDeOutraTela: null,
+    dadosDeOutraTela: [],
   }),
   actions: {
-    salvarDadosDeOutraTela(dadosOutraTela) {
-      this.dadosDeOutraTela = dadosOutraTela;
+    adicionarDadosDeOutraTela(dadosOutraTela) {
+      this.dadosDeOutraTela.push(dadosOutraTela);
+    },
+    retirarDadosDeOutraTela() {
+      this.dadosDeOutraTela.pop();
+    },
+    finalizar() {
+      this.dadosDeOutraTela = [];
     },
   },
   getters: {
     getDadosDeOutraTela() {
       return this.dadosDeOutraTela;
+    },
+    ultimoElemento() {
+      if (this.dadosDeOutraTela.length < 1) return null;
+      const ultimoIndice = this.dadosDeOutraTela.length - 1;
+      return this.dadosDeOutraTela[ultimoIndice];
     },
   },
 });

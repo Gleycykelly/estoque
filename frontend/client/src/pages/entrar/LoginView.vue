@@ -49,33 +49,22 @@
         </v-form>
       </div>
     </v-col>
-    <v-col cols="12" md="5" class="d-none d-sm-none d-md-block rigth-login">
-      <!-- <div> -->
-      <!-- <v-row class="vh-100"> -->
-      <v-col cols="12" md="5">
-        <div class="imagem-principal">
-          <p>
-            Seu estoque sob
-            <span class="underline">controle,</span>
-          </p>
-          <p>seu negócio em ALTA!</p>
-        </div>
-      </v-col>
-      <v-col cols="12">
-        <div class="container-imagem-login">
-          <img :src="imagemURL" alt="Logo" class="imagem-login" />
-        </div>
-      </v-col>
-      <!-- </v-row> -->
-      <!-- </div> -->
-
-      <!-- <div class="imagem-principal">
+    <v-col
+      cols="12"
+      md="7"
+      class="d-none d-sm-none d-md-block rigth-login"
+      style="position: relative"
+    >
+      <div class="imagem-principal">
         <p>
           Seu estoque sob
           <span class="underline">controle,</span>
         </p>
         <p>seu negócio em ALTA!</p>
-      </div> -->
+      </div>
+      <div class="container-imagem-login">
+        <img :src="imagemURL" alt="Logo" class="imagem-login" />
+      </div>
     </v-col>
   </v-row>
 </template>
@@ -156,6 +145,11 @@ export default {
 
 .rigth-login {
   background-color: var(--primary-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
 }
 
 .vh-100 {
@@ -219,24 +213,31 @@ export default {
 }
 
 .container-imagem-login {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: end;
   align-items: end;
-  max-height: 90%;
-}
-
-.imagem-login {
-  max-width: 100%;
   height: 100vh;
 }
 
+.imagem-login {
+  width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
 .imagem-principal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
   text-align: start;
   margin-left: 47px;
-  margin-top: 10px;
+  margin-top: 5%;
   font-weight: 600 !important;
   font-family: 'DM Sans', sans-serif;
-  font-size: 34px;
+  font-size: 2vw;
   color: white;
   font-family: Arial, sans-serif;
 }
@@ -245,11 +246,6 @@ export default {
   text-decoration: underline;
   text-decoration-color: var(--secondary-color);
   text-decoration-thickness: 2px;
-}
-
-.highlight {
-  font-weight: bold;
-  color: var(--secondary-color);
 }
 
 .logoBox {

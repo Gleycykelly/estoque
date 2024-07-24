@@ -40,20 +40,24 @@ export default {
   },
   methods: {
     voltar() {
-      if (this.dadosOutraTela && this.dadosOutraTela.indoParaCriacao) {
+      if (
+        useDadosDeOutraTela().ultimoElemento &&
+        useDadosDeOutraTela().ultimoElemento.rotaOriginal != 'marcas-edicao'
+      ) {
         if (this.modelo && this.modelo.id) {
-          this.dadosOutraTela.dadosOriginais.marca = this.modelo;
+          useDadosDeOutraTela().ultimoElemento.dadosOriginais.marca =
+            this.modelo;
         }
 
         const dadosOutraTela = {
-          dadosOriginais: this.dadosOutraTela.dadosOriginais,
-          rotaOriginal: this.dadosOutraTela.rotaOriginal,
-          rotaCriacao: this.dadosOutraTela.rotaCriacao,
-          indoParaCriacao: false,
+          dadosOriginais: useDadosDeOutraTela().ultimoElemento.dadosOriginais,
+          rotaOriginal: useDadosDeOutraTela().ultimoElemento.rotaOriginal,
+          rotaCriacao: useDadosDeOutraTela().ultimoElemento.rotaCriacao,
         };
 
-        useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
-        this.$router.push(this.dadosOutraTela.rotaOriginal);
+        useDadosDeOutraTela().retirarDadosDeOutraTela();
+        useDadosDeOutraTela().adicionarDadosDeOutraTela(dadosOutraTela);
+        this.$router.push(useDadosDeOutraTela().ultimoElemento.rotaOriginal);
       } else {
         this.$router.push('/marcas');
       }
@@ -120,10 +124,6 @@ export default {
   computed: {
     dados() {
       return useDadosStore().getDadosParaEdicao;
-    },
-
-    dadosOutraTela() {
-      return useDadosDeOutraTela().getDadosDeOutraTela;
     },
   },
 };

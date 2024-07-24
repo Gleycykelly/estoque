@@ -508,32 +508,31 @@ export default {
         dadosOriginais: this.modelo,
         rotaOriginal: 'movimentacoes-edicao',
         rotaCriacao: 'produtos-edicao',
-        indoParaCriacao: true,
       };
 
-      useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+      useDadosDeOutraTela().adicionarDadosDeOutraTela(dadosOutraTela);
 
       this.$router.push('produtos-edicao');
     },
+
     adicionarDeposito() {
       const dadosOutraTela = {
         dadosOriginais: this.modelo,
         rotaOriginal: 'movimentacoes-edicao',
         rotaCriacao: 'depositos-edicao',
-        indoParaCriacao: true,
       };
-      useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+      useDadosDeOutraTela().adicionarDadosDeOutraTela(dadosOutraTela);
 
       this.$router.push('depositos-edicao');
     },
+
     adicionarFornecedor() {
       const dadosOutraTela = {
         dadosOriginais: this.modelo,
         rotaOriginal: 'movimentacoes-edicao',
         rotaCriacao: 'fornecedores-edicao',
-        indoParaCriacao: true,
       };
-      useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+      useDadosDeOutraTela().adicionarDadosDeOutraTela(dadosOutraTela);
 
       this.$router.push('fornecedores-edicao');
     },
@@ -596,18 +595,18 @@ export default {
       this.obterMovimentacao();
     }
 
-    if (this.dadosDeOutraTela && !this.dadosDeOutraTela.indoParaCriacao) {
-      this.modelo = this.dadosDeOutraTela.dadosOriginais;
-      useDadosDeOutraTela().salvarDadosDeOutraTela(null);
+    if (
+      useDadosDeOutraTela().ultimoElemento &&
+      useDadosDeOutraTela().ultimoElemento.rotaOriginal ==
+        'movimentacoes-edicao'
+    ) {
+      this.modelo = useDadosDeOutraTela().ultimoElemento.dadosOriginais;
+      useDadosDeOutraTela().finalizar();
     }
   },
   computed: {
     dados() {
       return useDadosStore().getDadosParaEdicao;
-    },
-
-    dadosDeOutraTela() {
-      return useDadosDeOutraTela().getDadosDeOutraTela;
     },
   },
 };

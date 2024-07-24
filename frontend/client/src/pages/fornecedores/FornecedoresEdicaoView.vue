@@ -222,18 +222,25 @@ export default {
     },
 
     voltar() {
-      if (this.dadosOutraTela && this.dadosOutraTela.indoParaCriacao) {
-        this.dadosOutraTela.dadosOriginais.lancamentoProduto.fornecedor =
-          this.modelo;
+      if (
+        useDadosDeOutraTela().ultimoElemento &&
+        useDadosDeOutraTela().ultimoElemento.rotaOriginal !=
+          'fornecedores-edicao'
+      ) {
+        if (this.modelo && this.modelo.id) {
+          useDadosDeOutraTela().ultimoElemento.dadosOriginais.lancamentoProduto.fornecedor =
+            this.modelo;
+        }
+
         const dadosOutraTela = {
-          dadosOriginais: this.dadosOutraTela.dadosOriginais,
-          rotaOriginal: this.dadosOutraTela.rotaOriginal,
-          rotaCriacao: this.dadosOutraTela.rotaCriacao,
-          indoParaCriacao: false,
+          dadosOriginais: useDadosDeOutraTela().ultimoElemento.dadosOriginais,
+          rotaOriginal: useDadosDeOutraTela().ultimoElemento.rotaOriginal,
+          rotaCriacao: useDadosDeOutraTela().ultimoElemento.rotaCriacao,
         };
 
-        useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
-        this.$router.push(this.dadosOutraTela.rotaOriginal);
+        useDadosDeOutraTela().retirarDadosDeOutraTela();
+        useDadosDeOutraTela().adicionarDadosDeOutraTela(dadosOutraTela);
+        this.$router.push(useDadosDeOutraTela().ultimoElemento.rotaOriginal);
       } else {
         this.$router.push('/fornecedores');
       }
@@ -305,10 +312,6 @@ export default {
   computed: {
     dados() {
       return useDadosStore().getDadosParaEdicao;
-    },
-
-    dadosOutraTela() {
-      return useDadosDeOutraTela().getDadosDeOutraTela;
     },
   },
 };

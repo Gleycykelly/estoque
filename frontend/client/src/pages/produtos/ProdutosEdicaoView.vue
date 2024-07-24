@@ -562,21 +562,23 @@ export default {
   },
   methods: {
     voltar() {
-      if (this.dadosDeOutraTela && this.dadosDeOutraTela.indoParaCriacao) {
+      if (
+        useDadosDeOutraTela().ultimoElemento &&
+        useDadosDeOutraTela().ultimoElemento.rotaOriginal != 'produtos-edicao'
+      ) {
         if (this.modelo.codigoProduto) {
-          this.dadosDeOutraTela.dadosOriginais.lancamentoProduto.produto =
+          useDadosDeOutraTela().ultimoElemento.dadosOriginais.lancamentoProduto.produto =
             this.modelo;
         }
 
         const dadosOutraTela = {
-          dadosOriginais: this.dadosDeOutraTela.dadosOriginais,
-          rotaOriginal: this.dadosDeOutraTela.rotaOriginal,
-          rotaCriacao: this.dadosDeOutraTela.rotaCriacao,
-          indoParaCriacao: false,
+          dadosOriginais: useDadosDeOutraTela().ultimoElemento.dadosOriginais,
+          rotaOriginal: useDadosDeOutraTela().ultimoElemento.rotaOriginal,
+          rotaCriacao: useDadosDeOutraTela().ultimoElemento.rotaCriacao,
         };
 
-        useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
-        this.$router.push(this.dadosDeOutraTela.rotaOriginal);
+        useDadosDeOutraTela().adicionarDadosDeOutraTela(dadosOutraTela);
+        this.$router.push(useDadosDeOutraTela().ultimoElemento.rotaOriginal);
       } else {
         this.$router.push('/produtos');
       }
@@ -701,9 +703,8 @@ export default {
         dadosOriginais: this.modelo,
         rotaOriginal: 'produtos-edicao',
         rotaCriacao: 'categorias-edicao',
-        indoParaCriacao: true,
       };
-      useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+      useDadosDeOutraTela().adicionarDadosDeOutraTela(dadosOutraTela);
 
       this.$router.push('categorias-edicao');
     },
@@ -713,9 +714,8 @@ export default {
         dadosOriginais: this.modelo,
         rotaOriginal: 'produtos-edicao',
         rotaCriacao: 'unidades-medida-edicao',
-        indoParaCriacao: true,
       };
-      useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+      useDadosDeOutraTela().adicionarDadosDeOutraTela(dadosOutraTela);
 
       this.$router.push('unidades-medida-edicao');
     },
@@ -725,12 +725,12 @@ export default {
         dadosOriginais: this.modelo,
         rotaOriginal: 'produtos-edicao',
         rotaCriacao: 'marcas-edicao',
-        indoParaCriacao: true,
       };
-      useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
+      useDadosDeOutraTela().adicionarDadosDeOutraTela(dadosOutraTela);
 
       this.$router.push('marcas-edicao');
     },
+
     adicionarNovaInformacaoNutricional() {
       this.dialog = false;
       this.novaPorcao.produto = {
@@ -786,21 +786,17 @@ export default {
       this.obterProdutos();
     }
 
-    if (this.dadosDeOutraTela && !this.dadosDeOutraTela.indoParaCriacao) {
-      this.modelo = this.dadosDeOutraTela.dadosOriginais;
-      console.log(this.dadosDeOutraTela);
-      useDadosDeOutraTela().salvarDadosDeOutraTela(null);
-    } else if (this.dadosDeOutraTela && this.dadosDeOutraTela.indoParaCriacao) {
-      this.retornarParaTelaMovimentacao = true;
+    if (
+      useDadosDeOutraTela().ultimoElemento &&
+      useDadosDeOutraTela().ultimoElemento.rotaOriginal == 'produtos-edicao'
+    ) {
+      this.modelo = useDadosDeOutraTela().ultimoElemento.dadosOriginais;
+      useDadosDeOutraTela().retirarDadosDeOutraTela();
     }
   },
   computed: {
     dados() {
       return useDadosStore().getDadosParaEdicao;
-    },
-
-    dadosDeOutraTela() {
-      return useDadosDeOutraTela().getDadosDeOutraTela;
     },
   },
 };
