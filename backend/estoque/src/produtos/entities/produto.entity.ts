@@ -47,6 +47,7 @@ export class Produtos {
   @OneToMany(
     () => LancamentosProdutos,
     (lancamentosProdutos) => lancamentosProdutos.produto,
+    { cascade: true },
   )
   lancamentosProdutos: LancamentosProdutos[];
 

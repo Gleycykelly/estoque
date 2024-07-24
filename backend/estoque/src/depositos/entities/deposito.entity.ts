@@ -33,7 +33,7 @@ export class Depositos {
   )
   localizacoesDepositos: LocalizacoesDepositos[];
 
-  @ManyToMany(() => Usuarios, (usuarios) => usuarios.depositos)
+  @ManyToMany(() => Usuarios, (usuarios) => usuarios.depositos, {})
   @JoinTable({
     name: 'usuarios_depositos',
     joinColumns: [{ name: 'id_deposito', referencedColumnName: 'id' }],

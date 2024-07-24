@@ -23,6 +23,7 @@ export class Porcoes {
   @ManyToOne(
     () => InformacoesNutricionais,
     (informacoesNutricionais) => informacoesNutricionais.porcoes,
+    { cascade: true },
   )
   @JoinColumn([
     { name: 'id_informacao_nutricional', referencedColumnName: 'id' },
@@ -43,6 +44,7 @@ export class Porcoes {
   @ManyToOne(
     () => ValoresNutricionais,
     (valoresNutricionais) => valoresNutricionais.porcoes,
+    { cascade: true },
   )
   @JoinColumn([{ name: 'id_valor_nutricional', referencedColumnName: 'id' }])
   valorNutricional: ValoresNutricionais;
