@@ -13,7 +13,7 @@ export class UsuariosTelefonesRepository extends Repository<UsuariosTelefones> {
   async createUsuariosTelefones(
     createUsuariosTelefoneDto: CreateUsuariosTelefoneDto,
   ): Promise<UsuariosTelefones> {
-    const usuarioTelefones = this.create({
+    const usuarioTelefones = await this.create({
       ...createUsuariosTelefoneDto,
     });
 

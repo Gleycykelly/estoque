@@ -50,11 +50,13 @@
                 v-model="modelo.nome"
                 variant="outlined"
               ></v-text-field>
+
               <v-text-field
                 label="E-mail"
                 v-model="modelo.email"
                 variant="outlined"
               ></v-text-field>
+
               <div class="dados-gerais-campos">
                 <v-text-field
                   label="CPF"
@@ -62,6 +64,7 @@
                   v-model="modelo.cpf"
                   variant="outlined"
                 ></v-text-field>
+
                 <v-text-field
                   class="dados-gerais-margin"
                   label="RG"
@@ -78,6 +81,7 @@
                   v-model="modelo.dataNascimento"
                   clearable
                 ></v-text-field>
+
                 <v-combobox
                   class="dados-gerais-margin"
                   label="Genêros"
@@ -87,6 +91,7 @@
                   v-model="modelo.generoUsuario"
                   variant="outlined"
                 ></v-combobox>
+
                 <v-combobox
                   class="dados-gerais-margin"
                   label="Permissões"
@@ -95,9 +100,14 @@
                   item-value="id"
                   v-model="modelo.permissaoUsuario"
                   variant="outlined"
+                  @update:model-value="modelo.depositos = []"
                 ></v-combobox>
               </div>
               <v-select
+                :disabled="
+                  modelo.permissaoUsuario &&
+                  modelo.permissaoUsuario === 'Administrador'
+                "
                 return-object
                 v-model="modelo.depositos"
                 item-title="descricao"
@@ -116,6 +126,7 @@
                   v-model="modelo.usuariosTelefones.telefonePrincipal"
                   variant="outlined"
                 ></v-text-field>
+
                 <v-text-field
                   class="dados-gerais-margin"
                   label="Telefone secundário"
@@ -363,6 +374,15 @@ export default {
 
       if (!this.modelo.generoUsuario) {
         useAlerta().exibirSnackbar('O genêro obrigatório!', 'orange');
+        return false;
+      }
+
+      if (!this.modelo.permissaoUsuario) {
+        useAlerta().exibirSnackbar(
+          'Selecione qual o tipo de permissão do operador!',
+          'orange',
+        );
+        return false;
       }
 
       if (!this.modelo.usuariosTelefones.telefonePrincipal) {
@@ -403,7 +423,7 @@ export default {
           return false;
         }
 
-        if (!endereco.estado) {
+        if (!endereco.estado || !endereco.estado.id) {
           useAlerta().exibirSnackbar(
             'O estado é obrigatório, verifique se os endereços estão preenchidos corretamente!',
             'orange',
@@ -411,7 +431,7 @@ export default {
           return false;
         }
 
-        if (!endereco.municipio) {
+        if (!endereco.municipio || !endereco.municipio.id) {
           useAlerta().exibirSnackbar(
             'A cidade é obrigatória,  verifique se os endereços estão preenchidos corretamente!',
             'orange',

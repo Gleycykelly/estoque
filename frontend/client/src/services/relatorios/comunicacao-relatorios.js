@@ -26,20 +26,28 @@ instancia.interceptors.request.use(
       return config;
     } else {
       this.$router.push('/login');
+      NProgress.done();
       return Promise.reject(
         new Error('Token não disponível. Redirecionando para login.'),
       );
     }
   },
   (error) => {
+    NProgress.done();
     return Promise.reject(error);
   },
 );
 
-instancia.interceptors.response.use((response) => {
-  NProgress.done();
-  return response;
-});
+instancia.interceptors.response.use(
+  (response) => {
+    NProgress.done();
+    return response;
+  },
+  (error) => {
+    NProgress.done();
+    return Promise.reject(error);
+  },
+);
 
 export const emissaoProdutos = (modelo) => {
   return instancia.post(`/excel/produtos`, modelo);

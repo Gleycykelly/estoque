@@ -91,4 +91,15 @@ export class DepositosRepository extends Repository<Depositos> {
 
     return await this.remove(deposito);
   }
+
+  async obterQuantidadeDeDepositosVisiveis(depositosVisiveis?: number[]) {
+    const query = `
+        select
+        COUNT(DISTINCT d."id") AS quantidade_depositos
+      from depositos d
+       ${depositosVisiveis != null && depositosVisiveis.length > 0 ? `where d."id" in (${depositosVisiveis})` : ''}
+    `;
+
+    return await this.query(query);
+  }
 }

@@ -67,14 +67,6 @@ export class UsuariosService {
       await this.repositorio.createUsuario(createUsuarioDto);
     delete usuarioRegistrado.senha;
 
-    if (createUsuarioDto.usuariosTelefones) {
-      createUsuarioDto.usuariosTelefones.usuario = usuarioRegistrado;
-      createUsuarioDto.usuariosTelefones = await this.obtemEntidadeEstrangeira(
-        createUsuarioDto.usuariosTelefones,
-        this.usuariosTelefonesService,
-      );
-    }
-
     return usuarioRegistrado;
   }
 

@@ -55,7 +55,7 @@
             <v-card class="valor-total">
               <v-card-text class="card-valor-total">
                 <div class="titulo-valor-total">
-                  {{ modelo.quantidadeDepositos }}
+                  {{ quantidadeDepositos }}
                 </div>
                 <div class="texto-valor-total">Total depósitos</div>
               </v-card-text>
@@ -121,6 +121,7 @@ import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 import comunicacaoMovimentacoes from '@/services/movimentacoes/comunicacao-movimentacoes';
 import comunicacaoUsuarios from '@/services/usuarios/comunicacao-usuarios';
+import comunicacaoDeposito from '@/services/depositos/comunicacao-deposito';
 
 export default {
   name: 'HomeView',
@@ -139,6 +140,7 @@ export default {
       modelo: {
         movimentacoes: [],
       },
+      quantidadeDepositos: null,
       chartData: {},
       podeGerarGrafico: false,
       options: {
@@ -161,6 +163,14 @@ export default {
           this.modelo = null;
 
           this.modelo = response.data;
+        });
+    },
+
+    async obterQuantidadeDeEstoques() {
+      await comunicacaoDeposito
+        .obterQuantidadeDeDepositosVisiveis()
+        .then((response) => {
+          this.quantidadeDepositos = response.data.quantidadeDepositos;
         });
     },
 
@@ -229,6 +239,7 @@ export default {
     },
   },
   created() {
+    this.obterQuantidadeDeEstoques();
     this.obterDadosUsuarioLogado();
     this.obterValoresTotais();
     this.produtosProximosDoVencimento();

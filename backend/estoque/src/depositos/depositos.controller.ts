@@ -30,6 +30,11 @@ export class DepositosController {
     return this.depositosService.findAll();
   }
 
+  @Get('obter-quantidade-de-depositos-visiveis')
+  obterQuantidadeDeDepositosVisiveis(@Headers('Authorization') token: string) {
+    return this.depositosService.obterQuantidadeDeDepositosVisiveis(token);
+  }
+
   @Post('/obter-parcial')
   obterParcial(
     @Body() obterParcialDepositoDto: ObterParcialDepositoDto,

@@ -113,4 +113,33 @@ export class DepositosService {
 
     return service.create({ ...entidade });
   }
+
+  async obterQuantidadeDeDepositosVisiveis(token: string) {
+    const dadosUsuarioLogado =
+      await this.usuarioService.obterUsuarioLogado(token);
+
+    const depositos = [];
+
+    if (dadosUsuarioLogado.permissaoUsuario != 'Administrador') {
+      for (const deposito of dadosUsuarioLogado.depositos) {
+        depositos.push(deposito.id);
+      }
+    }
+
+    if (
+      dadosUsuarioLogado.permissaoUsuario === 'Usuario' &&
+      depositos.length < 1
+    ) {
+      return {
+        quantidadeDepositos: 0,
+      };
+    }
+
+    const results =
+      await this.repositorio.obterQuantidadeDeDepositosVisiveis(depositos);
+    const { quantidade_depositos } = results[0];
+    return {
+      quantidadeDepositos: quantidade_depositos || 0,
+    };
+  }
 }

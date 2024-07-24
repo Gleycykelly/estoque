@@ -3,4 +3,10 @@ import comunicacaoAbstrata from '../comunicacao-abstrata';
 const caminho = 'depositos';
 const comunicacaoDepositos = comunicacaoAbstrata(caminho);
 
-export default comunicacaoDepositos;
+const obterQuantidadeDeDepositosVisiveis = () => {
+  return comunicacaoDepositos.instancia.get(
+    `/depositos/obter-quantidade-de-depositos-visiveis/`,
+  );
+};
+
+export default { ...comunicacaoDepositos, obterQuantidadeDeDepositosVisiveis };

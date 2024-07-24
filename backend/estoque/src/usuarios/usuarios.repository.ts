@@ -12,7 +12,7 @@ export class UsuariosRepository extends Repository<Usuarios> {
   }
 
   async createUsuario(createUsuarioDto: CreateUsuarioDto): Promise<Usuarios> {
-    const usuario = this.create({
+    const usuario = await this.create({
       ...createUsuarioDto,
     });
 
