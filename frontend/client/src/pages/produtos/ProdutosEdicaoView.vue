@@ -616,11 +616,6 @@ export default {
         return false;
       }
 
-      if (!this.modelo.marca) {
-        useAlerta().exibirSnackbar('A marca é obrigatória!', 'orange');
-        return false;
-      }
-
       if (this.modelo.porcoes != null && this.modelo.porcoes.length > 0) {
         let indicePorcoes = 0;
         for (const porcao of this.modelo.porcoes) {

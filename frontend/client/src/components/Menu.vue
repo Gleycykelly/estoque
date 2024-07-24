@@ -52,7 +52,7 @@
         </template>
 
         <v-list-item class="sub-titulo" :to="{ name: 'movimentacoes' }">
-          Entrada/Saída
+          Entrada / Saída
         </v-list-item>
       </v-list-group>
 

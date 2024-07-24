@@ -334,6 +334,17 @@ export class MovimentacoesService {
       }
     }
 
+    if (
+      dadosUsuarioLogado.permissaoUsuario === 'Usuario' &&
+      depositos.length < 1
+    ) {
+      return {
+        totalEntrada: 0,
+        totalSaida: 0,
+        totalProdutos: 0,
+      };
+    }
+
     const results = await this.repositorio.valorTotalEntradasSaidas(depositos);
     const { total_entrada, total_saida, total_produtos } = results[0];
     return {
@@ -355,7 +366,15 @@ export class MovimentacoesService {
       }
     }
 
-    const dados = await this.repositorio.produtosProximosDoVencimento();
+    if (
+      dadosUsuarioLogado.permissaoUsuario === 'Usuario' &&
+      depositos.length < 1
+    ) {
+      return null;
+    }
+
+    const dados =
+      await this.repositorio.produtosProximosDoVencimento(depositos);
     return dados;
   }
 
@@ -371,7 +390,15 @@ export class MovimentacoesService {
       }
     }
 
-    const dados = await this.repositorio.quantidadeProdutosPorEstoque();
+    if (
+      dadosUsuarioLogado.permissaoUsuario === 'Usuario' &&
+      depositos.length < 1
+    ) {
+      return null;
+    }
+
+    const dados =
+      await this.repositorio.quantidadeProdutosPorEstoque(depositos);
     return dados;
   }
 

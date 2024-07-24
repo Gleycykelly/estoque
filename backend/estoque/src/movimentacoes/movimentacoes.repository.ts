@@ -314,6 +314,7 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
   }
 
   async produtosProximosDoVencimento(depositosVisiveis?: number[]) {
+    const dataAtual = new Date();
     const dataVencimento = new Date();
     dataVencimento.setDate(dataVencimento.getDate() + 7);
 
@@ -325,10 +326,10 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
       inner join produtos p on p."id" = lp."id_produto"
       inner join localizacoes_depositos ld on ld."id" = lp."id_localizacao_deposito"
        inner join depositos d on d."id" = ld."id_deposito"
-      where lp.data_validade = '${dataVencimento.toISOString()}'
+      where lp."data_validade" <= '${dataVencimento.toISOString()}' and lp."data_validade" >= '${dataAtual.toISOString()}'
       ${depositosVisiveis != null && depositosVisiveis.length > 0 ? `and d."id" in (${depositosVisiveis})` : ''}
       group by (lp."lote", p."nome");`;
-
+    console.log(query);
     return await this.query(query);
   }
 

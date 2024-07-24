@@ -76,7 +76,7 @@
                   class="custom-header"
                   :headers="colunas"
                   :items="produtosVencimento"
-                  item-value="nome"
+                  item-value="lote"
                   height="400"
                   fixed-header
                 ></v-data-table-virtual>
@@ -324,7 +324,7 @@ export default {
   color: var(--primary-color);
   font-weight: 900 !important;
   font-family: 'Roboto', sans-serif;
-  font-size: 40px;
+  font-size: 35px;
 }
 
 .texto-valor-total {

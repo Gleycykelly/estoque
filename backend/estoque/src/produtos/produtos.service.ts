@@ -49,10 +49,12 @@ export class ProdutosService {
       this.unidadeMedidaService,
     );
 
-    createProdutoDto.marca = await this.obtemEntidadeEstrangeira(
-      createProdutoDto.marca,
-      this.marcaService,
-    );
+    if (createProdutoDto.marca) {
+      createProdutoDto.marca = await this.obtemEntidadeEstrangeira(
+        createProdutoDto.marca,
+        this.marcaService,
+      );
+    }
 
     const produtoCadastrado =
       await this.repositorio.createProduto(createProdutoDto);
