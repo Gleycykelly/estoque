@@ -19,10 +19,5 @@
     "noFallthroughCasesInSwitch": false
   },
   "include": ["src"],
-  "exclude": [
-    "node_modules",
-    "build",
-    "dist",
-    ".docker"
-  ]
+  "exclude": ["node_modules", "build", "dist", ".docker"]
 }

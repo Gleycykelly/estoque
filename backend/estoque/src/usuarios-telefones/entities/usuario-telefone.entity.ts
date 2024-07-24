@@ -21,9 +21,7 @@ export class UsuariosTelefones {
   @Column('character varying', { name: 'telefone', nullable: true, length: 20 })
   telefone: string | null;
 
-  @OneToOne(() => Usuarios, (usuarios) => usuarios.usuariosTelefones, {
-    onDelete: 'CASCADE',
-  })
+  @OneToOne(() => Usuarios, (usuarios) => usuarios.usuariosTelefones)
   @JoinColumn([{ name: 'id_usuario', referencedColumnName: 'id' }])
   usuario: Usuarios;
 }

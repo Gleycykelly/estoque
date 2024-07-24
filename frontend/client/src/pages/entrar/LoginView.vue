@@ -50,24 +50,24 @@
       </div>
     </v-col>
     <v-col cols="12" md="5" class="d-none d-sm-none d-md-block rigth-login">
-      <div>
-        <v-row class="vh-100">
-          <v-col cols="12" md="5">
-            <div class="imagem-principal">
-              <p>
-                Seu estoque sob
-                <span class="underline">controle,</span>
-              </p>
-              <p>seu negócio em ALTA!</p>
-            </div>
-          </v-col>
-          <v-col cols="12">
-            <div class="container-imagem-login">
-              <img :src="imagemURL" alt="Logo" class="imagem-login" />
-            </div>
-          </v-col>
-        </v-row>
-      </div>
+      <!-- <div> -->
+      <!-- <v-row class="vh-100"> -->
+      <v-col cols="12" md="5">
+        <div class="imagem-principal">
+          <p>
+            Seu estoque sob
+            <span class="underline">controle,</span>
+          </p>
+          <p>seu negócio em ALTA!</p>
+        </div>
+      </v-col>
+      <v-col cols="12">
+        <div class="container-imagem-login">
+          <img :src="imagemURL" alt="Logo" class="imagem-login" />
+        </div>
+      </v-col>
+      <!-- </v-row> -->
+      <!-- </div> -->
 
       <!-- <div class="imagem-principal">
         <p>
