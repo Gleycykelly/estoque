@@ -99,31 +99,32 @@ export class MovimentacoesService {
       }
 
       if (movimentacao.tipoMovimentacao == 'Saída') {
-        await queryRunner.manager.remove(Movimentacoes, movimentacao);
-        queryRunner.commitTransaction();
-        return movimentacao;
+        await this.repositorio.excluir(movimentacao.id);
       }
 
-      queryRunner.manager.getRepository(Movimentacoes);
-      queryRunner.manager.getRepository(LancamentosProdutos);
+      if (movimentacao.tipoMovimentacao == 'Entrada') {
+        queryRunner.manager.getRepository(Movimentacoes);
+        queryRunner.manager.getRepository(LancamentosProdutos);
 
-      const lancamentoParaRemover = movimentacao.lancamentoProduto.id;
+        const lancamentoParaRemover = movimentacao.lancamentoProduto.id;
 
-      const movimetacoesSaida = await this.repositorio.find({
-        where: { lancamentoProduto: { id: lancamentoParaRemover } },
-      });
+        const movimetacoesSaida = await this.repositorio.find({
+          where: { lancamentoProduto: { id: lancamentoParaRemover } },
+        });
 
-      await queryRunner.manager.remove(Movimentacoes, movimentacao);
-
-      for (const movimentacao of movimetacoesSaida) {
         await queryRunner.manager.remove(Movimentacoes, movimentacao);
-      }
 
-      await this.lancamentoProdutoService.remove(
-        lancamentoParaRemover,
-        queryRunner,
-      );
-      await queryRunner.commitTransaction();
+        for (const movimentacao of movimetacoesSaida) {
+          await queryRunner.manager.remove(Movimentacoes, movimentacao);
+        }
+
+        await this.lancamentoProdutoService.remove(
+          lancamentoParaRemover,
+          queryRunner,
+        );
+
+        await queryRunner.commitTransaction();
+      }
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw new ConflictException('Não foi possível excluir a movimentação.');

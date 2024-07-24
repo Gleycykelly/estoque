@@ -106,6 +106,7 @@
                           label=" Porção"
                           v-model="novaPorcao.porcao"
                           variant="outlined"
+                          type="number"
                         ></v-text-field>
 
                         <v-text-field
@@ -357,6 +358,7 @@
                   label=" Porção"
                   v-model="porcao.porcao"
                   variant="outlined"
+                  type="number"
                 ></v-text-field>
 
                 <v-text-field
@@ -617,6 +619,44 @@ export default {
       if (!this.modelo.marca) {
         useAlerta().exibirSnackbar('A marca é obrigatória!', 'orange');
         return false;
+      }
+
+      if (this.modelo.porcoes != null && this.modelo.porcoes.length > 0) {
+        let indicePorcoes = 0;
+        for (const porcao of this.modelo.porcoes) {
+          indicePorcoes++;
+          if (!porcao.porcao) {
+            useAlerta().exibirSnackbar(
+              `É obrigatório informar a porção. Verifique a porção ${indicePorcoes} `,
+              'orange',
+            );
+            return false;
+          }
+
+          if (!porcao.unidadeMedida) {
+            useAlerta().exibirSnackbar(
+              `É obrigatório informar a unidade de medida. Verifique a porção ${indicePorcoes} `,
+              'orange',
+            );
+            return false;
+          }
+
+          if (!porcao.valorNutricional) {
+            useAlerta().exibirSnackbar(
+              `Informe pelo menos um valor para a tabela de valores nutricionais. Verifique a porção ${indicePorcoes} `,
+              'orange',
+            );
+            return false;
+          }
+
+          if (!porcao.informacaoNutricional) {
+            useAlerta().exibirSnackbar(
+              `Informe os dados de ingredientes e/ou alergênicos. Verifique a porção ${indicePorcoes} `,
+              'orange',
+            );
+            return false;
+          }
+        }
       }
 
       return true;

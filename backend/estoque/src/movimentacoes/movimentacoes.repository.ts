@@ -294,7 +294,6 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
 
   async excluir(id: number) {
     const movimentacao = await this.obterPorId(id);
-
     return await this.remove(movimentacao);
   }
 

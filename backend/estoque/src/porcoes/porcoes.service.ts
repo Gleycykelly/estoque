@@ -5,6 +5,7 @@ import { UnidadesMedidasService } from 'src/unidades_medidas/unidades_medidas.se
 import { ValoresNutricionaisService } from 'src/valores-nutricionais/valores-nutricionais.service';
 import { InformacoesNutricionaisService } from 'src/informacoes-nutricionais/informacoes-nutricionais.service';
 import { PorcoesRepository } from './porcoes.repository';
+import { QueryRunner } from 'typeorm';
 
 @Injectable()
 export class PorcoesService {
@@ -84,9 +85,9 @@ export class PorcoesService {
     return await this.repositorio.obterPorId(id);
   }
 
-  async remove(id: number) {
+  async remove(id: number, queryRunner?: QueryRunner) {
     try {
-      return await this.repositorio.excluir(id);
+      return await this.repositorio.excluir(id, queryRunner);
     } catch (error) {
       throw new ConflictException('Não foi possível excluir a porção.');
     }

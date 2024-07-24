@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, QueryRunner, Repository } from 'typeorm';
 import { Porcoes } from './entities/porcao.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePorcoeDto } from './dto/create-porcoe.dto';
@@ -75,9 +75,25 @@ export class PorcoesRepository extends Repository<Porcoes> {
     });
   }
 
-  async excluir(id: number) {
-    const porcao = await this.obterPorId(id);
+  async excluir(id: number, queryRunner?: QueryRunner) {
+    let porcao: Porcoes;
 
-    return await this.remove(porcao);
+    if (queryRunner) {
+      porcao = await queryRunner.manager.findOne(Porcoes, {
+        where: { id },
+      });
+    } else {
+      porcao = await this.obterPorId(id);
+    }
+
+    if (!porcao) {
+      throw new NotFoundException(`Nenhuma porção encontrada para o id ${id}`);
+    }
+
+    if (queryRunner) {
+      return await queryRunner.manager.remove(Porcoes, porcao);
+    } else {
+      return await this.remove(porcao);
+    }
   }
 }

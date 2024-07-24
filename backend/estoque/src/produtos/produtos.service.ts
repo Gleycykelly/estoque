@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { Produtos } from './entities/produto.entity';
@@ -10,6 +14,7 @@ import { UnidadesMedidasService } from 'src/unidades_medidas/unidades_medidas.se
 import { ObterParcialProdutoDto } from './dto/obter-parcial-produto.dto';
 import { PorcoesService } from 'src/porcoes/porcoes.service';
 import { ProdutosRepository } from './produtos.repository';
+import { Porcoes } from 'src/porcoes/entities/porcao.entity';
 
 @Injectable()
 export class ProdutosService {
@@ -115,12 +120,38 @@ export class ProdutosService {
   }
 
   async remove(id: number) {
+    const queryRunner = this.repositorio.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
-      return await this.repositorio.excluir(id);
-    } catch (error) {
-      throw new ConflictException(
-        'Não foi possível excluir o produto porque há movimentações associadas a ele.',
-      );
+      const produto = await this.repositorio.obterPorId(id);
+
+      if (!produto) {
+        throw new NotFoundException(
+          `Nenhuma produto encontrado para o id ${id}`,
+        );
+      }
+
+      if (produto.porcoes == null || produto.porcoes.length < 1) {
+        await this.repositorio.excluir(produto.id);
+      }
+
+      if (produto.porcoes.length >= 1) {
+        queryRunner.manager.getRepository(Produtos);
+        queryRunner.manager.getRepository(Porcoes);
+
+        for (const porcao of produto.porcoes) {
+          await this.porcaoService.remove(porcao.id, queryRunner);
+        }
+        await queryRunner.manager.remove(Produtos, produto);
+        await queryRunner.commitTransaction();
+      }
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new ConflictException('Não foi possível excluir o produto.');
+    } finally {
+      await queryRunner.release();
     }
   }
 
