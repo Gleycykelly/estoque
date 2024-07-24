@@ -49,28 +49,33 @@
         </v-form>
       </div>
     </v-col>
-    <v-col md="7" class="d-none d-sm-none d-md-block rigth-login">
-      <!-- <div class="text-center"> -->
-      <div class="imagem-principal">
-        <div>
-          <img :src="imagemURL" alt="Logo" class="logo" />
-          <p>
-            Seu
-            <span class="underline">estoque</span>
-            sob
-            <span class="underline">controle,</span>
-          </p>
-          <p>
-            seu negócio em
-            <span class="highlight">ALTA</span>
-            .
-            <span class="icon">🚀</span>
-          </p>
-        </div>
-
-        <!-- </div> -->
-        <!-- <div class="frase-principal"></div> -->
+    <v-col cols="12" md="5" class="d-none d-sm-none d-md-block rigth-login">
+      <div>
+        <v-row class="vh-100">
+          <v-col cols="12" md="5">
+            <div class="imagem-principal">
+              <p>
+                Seu estoque sob
+                <span class="underline">controle,</span>
+              </p>
+              <p>seu negócio em ALTA!</p>
+            </div>
+          </v-col>
+          <v-col cols="12">
+            <div class="container-imagem-login">
+              <img :src="imagemURL" alt="Logo" class="imagem-login" />
+            </div>
+          </v-col>
+        </v-row>
       </div>
+
+      <!-- <div class="imagem-principal">
+        <p>
+          Seu estoque sob
+          <span class="underline">controle,</span>
+        </p>
+        <p>seu negócio em ALTA!</p>
+      </div> -->
     </v-col>
   </v-row>
 </template>
@@ -78,7 +83,7 @@
 <script>
 import { login } from '@/services/autenticacao/comunicacao-autenticacao';
 import { useAuthStore, useAlerta } from '@/store/index';
-import logo from '@/assets/esstoqueCompleto.jpeg';
+import logo from '@/assets/imagem-principal.png';
 import logoBox from '@/assets/boxEstoque.png';
 
 export default {
@@ -213,29 +218,27 @@ export default {
   margin-left: 5px;
 }
 
-.logo {
-  padding: 15px 0;
-  max-width: 60%;
-  border: solid 25px transparent;
-  border-top-color: var(--primary-color);
-  border-left-color: var(--primary-color);
-  border-radius: 14%;
+.container-imagem-login {
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  max-height: 90%;
+}
+
+.imagem-login {
+  max-width: 100%;
+  height: 100vh;
 }
 
 .imagem-principal {
-  height: 100vh;
-  text-align: center;
-  width: 100%;
-  padding: 15px 0;
+  text-align: start;
+  margin-left: 47px;
+  margin-top: 10px;
   font-weight: 600 !important;
   font-family: 'DM Sans', sans-serif;
-  font-size: 27px;
+  font-size: 34px;
   color: white;
   font-family: Arial, sans-serif;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .underline {

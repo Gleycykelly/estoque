@@ -577,7 +577,6 @@ export default {
 
         useDadosDeOutraTela().salvarDadosDeOutraTela(dadosOutraTela);
         this.$router.push(this.dadosDeOutraTela.rotaOriginal);
-      } else if (this.retornarParaTelaMovimentacao) {
       } else {
         this.$router.push('/produtos');
       }
