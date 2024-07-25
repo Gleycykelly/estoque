@@ -84,7 +84,7 @@ export class UsuariosService {
     );
 
     if (jaExiste) {
-      if (usuarioBD.id != id) {
+      if (usuarioBD && usuarioBD.id != id) {
         throw new ConflictException(
           `O e-mail ${updateUsuarioDto.email} já está cadastrado!`,
         );

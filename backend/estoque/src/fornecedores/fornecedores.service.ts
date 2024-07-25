@@ -43,7 +43,7 @@ export class FornecedoresService {
         updateFornecedoreDto.cnpj,
       );
 
-      if (fornecedorAtual.id != id) {
+      if (fornecedorAtual && fornecedorAtual.id != id) {
         throw new ConflictException(
           `Já existe um fornecedor cadastrado para o CNPJ ${updateFornecedoreDto.cnpj}`,
         );

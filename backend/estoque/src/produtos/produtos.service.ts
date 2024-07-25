@@ -98,7 +98,7 @@ export class ProdutosService {
         updateProdutoDto.codigoProduto,
       );
 
-      if (produtoAtual.id != id) {
+      if (produtoAtual && produtoAtual.id != id) {
         throw new ConflictException(
           `Já existe um produto cadastrado para o código de produto ${updateProdutoDto.codigoProduto}`,
         );

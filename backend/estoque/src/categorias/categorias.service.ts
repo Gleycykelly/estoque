@@ -30,7 +30,7 @@ export class CategoriasService {
         updateCategoriaDto.descricao,
       );
 
-      if (categoriaAtual.id != id) {
+      if (categoriaAtual && categoriaAtual.id != id) {
         throw new ConflictException(
           `A categoria ${updateCategoriaDto.descricao} já existe!`,
         );

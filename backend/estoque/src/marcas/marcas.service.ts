@@ -26,7 +26,7 @@ export class MarcasService {
         updateMarcaDto.descricao,
       );
 
-      if (marcaAtual.id != id) {
+      if (marcaAtual && marcaAtual.id != id) {
         throw new ConflictException(
           `A marca ${updateMarcaDto.descricao} já está cadastrada!`,
         );

@@ -43,7 +43,7 @@ export class DepositosService {
         updateDepositoDto.descricao,
       );
 
-      if (depositoAtual.id != id) {
+      if (depositoAtual && depositoAtual.id != id) {
         throw new ConflictException(
           `O depósito ${updateDepositoDto.descricao} já está cadastrado!`,
         );

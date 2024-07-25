@@ -67,7 +67,7 @@ export class PorcoesService {
         updatePorcoeDto.porcao,
         updatePorcoeDto.produto.id,
       );
-      if (porcaoAtual.id != id) {
+      if (porcaoAtual && porcaoAtual.id != id) {
         throw new ConflictException(
           `Porção ${updatePorcoeDto.porcao} já cadastrada!`,
         );

@@ -55,7 +55,7 @@ export class LancamentosProdutosService {
         updateLancamentosProdutoDto.lote,
       );
 
-      if (loteAtual.id != id) {
+      if (loteAtual && loteAtual.id != id) {
         throw new ConflictException(
           `Lote ${updateLancamentosProdutoDto.lote} já cadastrado!`,
         );
