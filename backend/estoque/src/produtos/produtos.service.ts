@@ -61,17 +61,14 @@ export class ProdutosService {
 
     if (createProdutoDto.porcoes && createProdutoDto.porcoes.length > 0) {
       const porcoes = createProdutoDto.porcoes;
-
-      createProdutoDto.porcoes = [];
-
+      produtoCadastrado.porcoes = [];
       for (const porcao of porcoes) {
         porcao.produto = produtoCadastrado;
-        createProdutoDto.porcoes.push(
+        produtoCadastrado.porcoes.push(
           await this.obtemEntidadeEstrangeira(porcao, this.porcaoService),
         );
       }
     }
-    produtoCadastrado.porcoes = createProdutoDto.porcoes;
     return produtoCadastrado;
   }
 

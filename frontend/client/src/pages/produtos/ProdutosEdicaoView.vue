@@ -571,7 +571,6 @@ export default {
   },
   methods: {
     voltar() {
-      console.log(this.voltar());
       if (
         useDadosDeOutraTela().ultimoElemento &&
         useDadosDeOutraTela().ultimoElemento.rotaOriginal != 'produtos-edicao'
@@ -644,7 +643,7 @@ export default {
             return false;
           }
 
-          if (porcao.porcao && porcao.porcao < 1) {
+          if (porcao.porcao && porcao.porcao < 0) {
             useAlerta().exibirSnackbar(
               `O valor da porção deve ser maior que zero. Verifique a porção ${indicePorcoes} `,
               'orange',
@@ -719,15 +718,13 @@ export default {
         await comunicacaoProdutos
           .criar(this.modelo)
           .then((resultado) => {
-            if (resultado.data) {
-              useAlerta().exibirSnackbar(
-                'O produto foi criado com sucesso!',
-                'green',
-              );
-              this.modelo = resultado.data;
+            useAlerta().exibirSnackbar(
+              'O produto foi criado com sucesso!',
+              'green',
+            );
+            this.modelo = resultado.data;
 
-              this.voltar();
-            }
+            this.voltar();
           })
           .catch((error) => {
             if (error.response && error.response.data) {

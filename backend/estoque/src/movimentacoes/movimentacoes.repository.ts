@@ -181,6 +181,7 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
         'lancamentoProduto.produto.porcoes.unidadeMedida',
         'lancamentoProduto.produto.porcoes.valorNutricional',
         'lancamentoProduto.produto.porcoes.informacaoNutricional',
+        'lancamentoProduto.produto.porcoes.produto',
         'lancamentoProduto.fornecedor',
         'lancamentoProduto.fornecedor.endereco',
         'lancamentoProduto.localizacaoDeposito',

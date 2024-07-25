@@ -11,7 +11,7 @@ export class PorcoesRepository extends Repository<Porcoes> {
   }
 
   async createPorcao(createPorcoeDto: CreatePorcoeDto): Promise<Porcoes> {
-    const porcao = this.create({
+    const porcao = await this.create({
       ...createPorcoeDto,
     });
 

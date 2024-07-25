@@ -362,7 +362,6 @@ export default {
         return false;
       }
 
-      console.log(this.modelo.lancamentoProduto.precoCusto);
       if (this.modelo.lancamentoProduto.precoCusto < 0) {
         useAlerta().exibirSnackbar(
           'O preço de custo deve ser maior que zero!',
