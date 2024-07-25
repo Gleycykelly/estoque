@@ -30,7 +30,7 @@ export class UnidadesMedidasService {
         updateUnidadesMedidaDto.sigla,
       );
 
-      if (unidadeAtualSigla.id != id) {
+      if (unidadeAtualSigla && unidadeAtualSigla.id != id) {
         throw new ConflictException(
           `Já existe uma unidade de medida cadastrada com a sigla ${updateUnidadesMedidaDto.sigla}!`,
         );
@@ -40,12 +40,13 @@ export class UnidadesMedidasService {
         updateUnidadesMedidaDto.descricao,
       );
 
-      if (unidadeAtualDescricao.id != id) {
+      if (unidadeAtualDescricao && unidadeAtualDescricao.id != id) {
         throw new ConflictException(
           `Já existe uma unidade de medida cadastrada com a descrição ${updateUnidadesMedidaDto.descricao}!`,
         );
       }
     }
+
     return await this.respositorio.updateUnidadeMedida(
       id,
       updateUnidadesMedidaDto,
