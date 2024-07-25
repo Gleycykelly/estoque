@@ -46,39 +46,6 @@ export class AuthService {
     return this.createToken(usuario);
   }
 
-  // async sair(req: Request) {
-  //   localStorage.clear();
-
-  //   // return this.createToken(usuario);
-  // }
-
-  async esqueceuASenha(email: string) {
-    const usuario = await this.usuariosService.obterUsuarioPorEmail(email);
-
-    if (!usuario) {
-      throw new UnauthorizedException('E-mail não cadastrado!');
-    }
-
-    return true;
-  }
-
-  // async redefinirSenha(senha: string, token: string) {
-  //   const userIdToken = this.checkToken(token);
-  //   if (!userIdToken) {
-  //     throw new UnauthorizedException(
-  //       'Você não possui autorização para alterar a senha!',
-  //     );
-  //   }
-  //   const id = userIdToken.id;
-  //   const dados = {
-  //     id: id,
-  //     senha: senha,
-  //   };
-  //   const novoUsuario = this.usuariosService.update(dados);
-
-  //   return this.createToken(novoUsuario);
-  // }
-
   async registrar(createUsuarioDto: CreateUsuarioDto) {
     const novoUsuario = this.usuariosService.create(createUsuarioDto);
 

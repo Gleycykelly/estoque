@@ -112,7 +112,7 @@
       light
       extended
       flat
-      class="white--text"
+      class="white--text gradient-background"
     >
       <v-app-bar-nav-icon
         @click="menuAberto = !menuAberto"
@@ -183,5 +183,13 @@ export default {
 
 .white--text {
   color: white !important;
+}
+
+.gradient-background {
+  background: linear-gradient(
+    35deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
 }
 </style>

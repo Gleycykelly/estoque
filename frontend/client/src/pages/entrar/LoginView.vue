@@ -6,7 +6,6 @@
       class="d-flex justify-content-center align-items-center left-login"
     >
       <div class="text-center">
-        <div><img :src="logoURL" alt="Logo" class="logoBox" /></div>
         <h2 class="title-login">Bem vindo(a)</h2>
         <v-form class="no-border" @submit.prevent="entrar">
           <v-text-field
@@ -32,11 +31,6 @@
             rounded="lg"
             variant="outlined"
           ></v-text-field>
-          <div class="esqueceu-senha">
-            <span class="texto-esqueceu-senha" @click="esqueceuSenha">
-              Esqueceu a senha?
-            </span>
-          </div>
           <v-btn
             class="botao-entrar"
             variant="elevated"
@@ -52,7 +46,7 @@
     <v-col
       cols="12"
       md="7"
-      class="d-none d-sm-none d-md-block rigth-login"
+      class="d-none d-sm-none d-md-block rigth-login gradient-background"
       style="position: relative"
     >
       <div class="imagem-principal">
@@ -73,7 +67,6 @@
 import { login } from '@/services/autenticacao/comunicacao-autenticacao';
 import { useAuthStore, useAlerta } from '@/store/index';
 import logo from '@/assets/imagem-principal.png';
-import logoBox from '@/assets/boxEstoque.png';
 
 export default {
   name: 'login-view',
@@ -83,7 +76,6 @@ export default {
         email: '',
         senha: '',
       },
-      logoURL: logoBox,
       imagemURL: logo,
     };
   },
@@ -152,6 +144,14 @@ export default {
   height: 100%;
 }
 
+.gradient-background {
+  background: linear-gradient(
+    45deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+}
+
 .vh-100 {
   height: 100vh;
   width: 100%;
@@ -191,13 +191,6 @@ export default {
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-}
-
-.esqueceu-senha {
-  margin-bottom: 15px;
-  text-align: end;
-  color: #a09f9f;
-  cursor: pointer;
 }
 
 .novo-cadastro {
@@ -246,12 +239,5 @@ export default {
   text-decoration: underline;
   text-decoration-color: var(--secondary-color);
   text-decoration-thickness: 2px;
-}
-
-.logoBox {
-  @media (min-width: 970px) {
-    display: none;
-  }
-  max-width: 48px;
 }
 </style>

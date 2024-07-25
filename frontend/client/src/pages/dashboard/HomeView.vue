@@ -2,7 +2,12 @@
   <div>
     <v-main class="fill-height">
       <v-card>
-        <v-toolbar class="titulos" color="var(--primary-color)" flat dark>
+        <v-toolbar
+          class="titulos gradient-background"
+          color="var(--primary-color)"
+          flat
+          dark
+        >
           <v-toolbar-title style="text-align: start">
             <div style="margin-left: 30px">
               <div class="titulo-pagina">Dashboard</div>
@@ -325,6 +330,14 @@ export default {
   font-weight: 900 !important;
   font-family: 'Roboto', sans-serif;
   font-size: 35px;
+}
+
+.gradient-background {
+  background: linear-gradient(
+    35deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
 }
 
 .texto-valor-total {
