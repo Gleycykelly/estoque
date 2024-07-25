@@ -168,6 +168,11 @@ export default {
         return false;
       }
 
+      if (this.modelo.endereco.numero && this.modelo.endereco.numero < 1) {
+        useAlerta().exibirSnackbar('Número de endereço inválido!', 'orange');
+        return false;
+      }
+
       if (!this.modelo.endereco.cep) {
         useAlerta().exibirSnackbar('O CEP é obrigatório!', 'orange');
         return false;

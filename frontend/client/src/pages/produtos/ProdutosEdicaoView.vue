@@ -636,9 +636,37 @@ export default {
             return false;
           }
 
+          if (porcao.porcao && porcao.porcao < 1) {
+            useAlerta().exibirSnackbar(
+              `O valor da porção deve ser maior que zero. Verifique a porção ${indicePorcoes} `,
+              'orange',
+            );
+            return false;
+          }
+
           if (!porcao.valorNutricional) {
             useAlerta().exibirSnackbar(
               `Informe pelo menos um valor para a tabela de valores nutricionais. Verifique a porção ${indicePorcoes} `,
+              'orange',
+            );
+            return false;
+          }
+
+          if (
+            porcao.valorNutricional &&
+            (porcao.valorNutricional.valorEnergetico < 0 ||
+              porcao.valorNutricional.carboidratos < 0 ||
+              porcao.valorNutricional.acucaresTotais < 0 ||
+              porcao.valorNutricional.acucaresAdicionados < 0 ||
+              porcao.valorNutricional.proteinas < 0 ||
+              porcao.valorNutricional.gordurasTotais < 0 ||
+              porcao.valorNutricional.gordurasSaturadas < 0 ||
+              porcao.valorNutricional.gordurasTrans < 0 ||
+              porcao.valorNutricional.fibrasAlimentares < 0 ||
+              porcao.valorNutricional.sodio < 0)
+          ) {
+            useAlerta().exibirSnackbar(
+              `Valor nutricional preenchido incorretamente. Verifique a porção ${indicePorcoes} `,
               'orange',
             );
             return false;
