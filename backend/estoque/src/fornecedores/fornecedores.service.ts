@@ -94,10 +94,9 @@ export class FornecedoresService {
   private async obtemEntidadeEstrangeira(entidade: any, service: any) {
     if (entidade.id) {
       const entidadeBD = await service.findOne(entidade.id);
-      await service.update(entidadeBD.id, entidade);
-      return entidadeBD;
+      return await service.update(entidadeBD.id, entidade);
     }
 
-    return service.create({ ...entidade });
+    return await service.create({ ...entidade });
   }
 }
