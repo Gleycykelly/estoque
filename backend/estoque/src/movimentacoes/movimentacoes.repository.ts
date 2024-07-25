@@ -255,6 +255,8 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
       .leftJoinAndSelect('localiza.deposito', 'deposito')
       .leftJoinAndSelect('lancamento.fornecedor', 'fornecedor');
 
+    console.log(dadosEmissaoExcelDto);
+
     if (dadosEmissaoExcelDto.dataInicial) {
       query = query.andWhere(
         ' movimentacao.dataMovimentacao >= (:dataInicial)',
@@ -287,7 +289,6 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
         depositos: dadosEmissaoExcelDto.depositos,
       });
     }
-
     query.orderBy('movimentacao.dataMovimentacao', 'ASC');
     return await query.getMany();
   }

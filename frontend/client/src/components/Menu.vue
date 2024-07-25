@@ -173,6 +173,7 @@ export default {
   font-weight: 900 !important;
   font-size: 30px;
   margin-bottom: 15px;
+  padding: 5px;
 }
 
 .white--text {

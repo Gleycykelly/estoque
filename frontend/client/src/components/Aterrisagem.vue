@@ -202,8 +202,6 @@
                 clearable
                 color="var(--primary-color)"
                 @update:model-value="
-                  filtros.quantidadeMaiorQue = null;
-                  filtros.quantidadeMenorQue = null;
                   filtros.diasParaVencer = null;
                   filtros.produtosVencidos = false;
                 "
@@ -268,34 +266,6 @@
                 persistent-hint
                 clearable
               ></v-select>
-
-              <v-text-field
-                :disabled="filtros.tipoMovimentacao == 'Saída'"
-                v-if="telaParaFiltrar == 'movimentacoes'"
-                label="Quantidade maior que"
-                v-model="filtros.quantidadeMaiorQue"
-                variant="outlined"
-                type="number"
-                clearable
-                @update:model-value="
-                  filtros.quantidadeMenorQue = null;
-                  filtros.tipoMovimentacao = 'Entrada';
-                "
-              ></v-text-field>
-
-              <v-text-field
-                :disabled="filtros.tipoMovimentacao == 'Saída'"
-                v-if="telaParaFiltrar == 'movimentacoes'"
-                label="Quantidade menor que"
-                v-model="filtros.quantidadeMenorQue"
-                variant="outlined"
-                type="number"
-                clearable
-                @update:model-value="
-                  filtros.quantidadeMaiorQue = null;
-                  filtros.tipoMovimentacao = 'Entrada';
-                "
-              ></v-text-field>
 
               <v-text-field
                 :disabled="filtros.tipoMovimentacao == 'Saída'"

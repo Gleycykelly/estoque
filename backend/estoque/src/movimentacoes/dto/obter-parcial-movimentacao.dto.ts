@@ -24,12 +24,6 @@ export class ObterParcialMovimentacaoDto {
   fornecedores: number[];
 
   @IsOptional()
-  quantidadeMaiorQue: number;
-
-  @IsOptional()
-  quantidadeMenorQue: number;
-
-  @IsOptional()
   diasParaVencer: number;
 
   @IsOptional()
