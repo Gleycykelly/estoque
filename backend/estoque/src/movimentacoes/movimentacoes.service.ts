@@ -74,11 +74,19 @@ export class MovimentacoesService {
     const dadosUsuarioLogado =
       await this.usuarioService.obterUsuarioLogado(token);
 
+    const depositos = [];
+
     if (dadosUsuarioLogado.permissaoUsuario != 'Administrador') {
-      obterParcialMovimentacaoDto.depositos = [];
       for (const deposito of dadosUsuarioLogado.depositos) {
-        obterParcialMovimentacaoDto.depositos.push(deposito.id);
+        depositos.push(deposito.id);
       }
+    }
+
+    if (
+      dadosUsuarioLogado.permissaoUsuario === 'Usuario' &&
+      depositos.length < 1
+    ) {
+      return null;
     }
 
     return await this.repositorio.obterParcial(obterParcialMovimentacaoDto);
@@ -174,11 +182,19 @@ export class MovimentacoesService {
     const dadosUsuarioLogado =
       await this.usuarioService.obterUsuarioLogado(token);
 
+    const depositos = [];
+
     if (dadosUsuarioLogado.permissaoUsuario != 'Administrador') {
-      dadosEmissaoExcelDto.depositos = [];
       for (const deposito of dadosUsuarioLogado.depositos) {
-        dadosEmissaoExcelDto.depositos.push(deposito.id);
+        depositos.push(deposito.id);
       }
+    }
+
+    if (
+      dadosUsuarioLogado.permissaoUsuario === 'Usuario' &&
+      depositos.length < 1
+    ) {
+      throw new NotFoundException('Nenhum item encontrado para emissão!');
     }
 
     const movimentacoes =
@@ -276,11 +292,19 @@ export class MovimentacoesService {
     const dadosUsuarioLogado =
       await this.usuarioService.obterUsuarioLogado(token);
 
+    const depositos = [];
+
     if (dadosUsuarioLogado.permissaoUsuario != 'Administrador') {
-      dadosEmissaoExcelDto.depositos = [];
       for (const deposito of dadosUsuarioLogado.depositos) {
-        dadosEmissaoExcelDto.depositos.push(deposito.id);
+        depositos.push(deposito.id);
       }
+    }
+
+    if (
+      dadosUsuarioLogado.permissaoUsuario === 'Usuario' &&
+      depositos.length < 1
+    ) {
+      throw new NotFoundException('Nenhum item encontrado para emissão!');
     }
 
     const movimentacoes =

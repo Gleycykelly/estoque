@@ -2,11 +2,7 @@
   <v-navigation-drawer v-model="menuAberto" clipped theme="dark" :width="325">
     <v-list dense nav color="var(--primary-color)" class="menu-opcoes">
       <v-list-subheader>
-        <div style="display: flex">
-          <div><img :src="logoURL" alt="Logo" class="logo" /></div>
-
-          <div class="nome-logo">Estoque</div>
-        </div>
+        <div class="nome-logo">Estoque</div>
       </v-list-subheader>
 
       <v-divider></v-divider>
@@ -124,14 +120,12 @@
 <script>
 import comunicacaoUsuarios from '@/services/usuarios/comunicacao-usuarios';
 import { useAuthStore } from '@/store/index';
-import logo from '@/assets/boxEstoque.png';
 export default {
   name: 'Menu',
   data() {
     return {
       ehAdministrador: false,
       menuAberto: true,
-      logoURL: logo,
     };
   },
   methods: {
@@ -173,12 +167,12 @@ export default {
 }
 
 .nome-logo {
+  margin: auto;
   color: var(--primary-color);
   font-family: 'Roboto', sans-serif;
   font-weight: 900 !important;
-  margin-left: 17px;
-  margin-top: 9px;
-  font-size: 24px;
+  font-size: 30px;
+  margin-bottom: 15px;
 }
 
 .white--text {

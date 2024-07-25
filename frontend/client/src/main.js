@@ -8,6 +8,7 @@ import { LoadingPlugin } from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 import VueTheMask from 'vue-the-mask';
 import './assets/css/variables.css';
+import money from 'vuejs-money';
 
 loadFonts();
 
@@ -17,4 +18,5 @@ createApp(App)
   .use(vuetify)
   .use(VueTheMask)
   .use(LoadingPlugin)
+  .use(money)
   .mount('#app');

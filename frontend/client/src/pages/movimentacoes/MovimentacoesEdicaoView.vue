@@ -332,6 +332,14 @@ export default {
         return false;
       }
 
+      if (this.modelo.quantidade && this.modelo.quantidade < 1) {
+        useAlerta().exibirSnackbar(
+          'A quantidade deve ser maior que zero!',
+          'orange',
+        );
+        return false;
+      }
+
       if (this.modelo.quantidade < 1) {
         useAlerta().exibirSnackbar(
           'Insira um valor válido para a quantidade!',
@@ -345,8 +353,25 @@ export default {
         return false;
       }
 
+      console.log(this.modelo.lancamentoProduto.precoCusto);
+      if (this.modelo.lancamentoProduto.precoCusto < 0) {
+        useAlerta().exibirSnackbar(
+          'O preço de custo deve ser maior que zero!',
+          'orange',
+        );
+        return false;
+      }
+
       if (!this.modelo.lancamentoProduto.precoVenda) {
         useAlerta().exibirSnackbar('O preço de venda é obrigatório!', 'orange');
+        return false;
+      }
+
+      if (this.modelo.lancamentoProduto.precoVenda < 0) {
+        useAlerta().exibirSnackbar(
+          'O preço de venda deve ser maior que zero!',
+          'orange',
+        );
         return false;
       }
 

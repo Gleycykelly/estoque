@@ -73,12 +73,21 @@ export class DepositosService {
     const dadosUsuarioLogado =
       await this.usuarioService.obterUsuarioLogado(token);
 
+    const depositos = [];
+
     if (dadosUsuarioLogado.permissaoUsuario != 'Administrador') {
-      obterParcialDepositoDto.depositos = [];
       for (const deposito of dadosUsuarioLogado.depositos) {
-        obterParcialDepositoDto.depositos.push(deposito.id);
+        depositos.push(deposito.id);
       }
     }
+
+    if (
+      dadosUsuarioLogado.permissaoUsuario === 'Usuario' &&
+      depositos.length < 1
+    ) {
+      return null;
+    }
+
     return await this.repositorio.obterParcial(obterParcialDepositoDto);
   }
 
