@@ -256,16 +256,13 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
       .leftJoinAndSelect('lancamento.fornecedor', 'fornecedor');
 
     if (dadosEmissaoExcelDto.dataInicial) {
-      query = query.andWhere(
-        ' movimentacao.dataMovimentacao >= (:dataInicial)',
-        {
-          dataInicial: dadosEmissaoExcelDto.dataInicial,
-        },
-      );
+      query = query.andWhere(' movimentacao.dataMovimentacao >= :dataInicial', {
+        dataInicial: dadosEmissaoExcelDto.dataInicial,
+      });
     }
 
     if (dadosEmissaoExcelDto.dataFinal) {
-      query = query.andWhere(' movimentacao.dataMovimentacao <= (:dataFinal)', {
+      query = query.andWhere(' movimentacao.dataMovimentacao < :dataFinal', {
         dataFinal: dadosEmissaoExcelDto.dataFinal,
       });
     }

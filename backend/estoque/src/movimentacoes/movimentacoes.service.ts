@@ -271,31 +271,31 @@ export class MovimentacoesService {
           });
         }
       }
-
-      if (dadosEmissaoExcelDto.quantidadeMenorQue) {
-        dados = dados.filter(
-          (m) =>
-            Number(m.quantidadeEmEstoque) <
-            Number(dadosEmissaoExcelDto.quantidadeMenorQue),
-        );
-      }
-
-      if (dadosEmissaoExcelDto.quantidadeMaiorQue) {
-        dados = dados.filter(
-          (m) =>
-            Number(m.quantidadeEmEstoque) >
-            Number(dadosEmissaoExcelDto.quantidadeMaiorQue),
-        );
-      }
-
-      if (
-        dadosEmissaoExcelDto.diasParaVencer ||
-        dadosEmissaoExcelDto.produtosVencidos
-      ) {
-        dados = dados.filter((m) => m.quantidadeEmEstoque > 0);
-      }
     }
 
+    if (dadosEmissaoExcelDto.quantidadeMenorQue) {
+      dados = dados.filter((m) => {
+        const quantidadeEmEstoque = Number(m.quantidadeEmEstoque);
+        return quantidadeEmEstoque < dadosEmissaoExcelDto.quantidadeMenorQue;
+      });
+    }
+
+    if (dadosEmissaoExcelDto.quantidadeMaiorQue) {
+      dados = dados.filter((m) => {
+        const quantidadeEmEstoque = Number(m.quantidadeEmEstoque);
+        return quantidadeEmEstoque > dadosEmissaoExcelDto.quantidadeMaiorQue;
+      });
+    }
+
+    if (
+      dadosEmissaoExcelDto.diasParaVencer ||
+      dadosEmissaoExcelDto.produtosVencidos
+    ) {
+      dados = dados.filter((m) => m.quantidadeEmEstoque > 0);
+    }
+    if (dados == null || dados.length <= 0) {
+      throw new NotFoundException('Nenhum item encontrado para emissão!');
+    }
     return dados;
   }
 
