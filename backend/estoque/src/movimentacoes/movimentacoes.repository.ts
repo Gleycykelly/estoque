@@ -255,8 +255,6 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
       .leftJoinAndSelect('localiza.deposito', 'deposito')
       .leftJoinAndSelect('lancamento.fornecedor', 'fornecedor');
 
-    console.log(dadosEmissaoExcelDto);
-
     if (dadosEmissaoExcelDto.dataInicial) {
       query = query.andWhere(
         ' movimentacao.dataMovimentacao >= (:dataInicial)',

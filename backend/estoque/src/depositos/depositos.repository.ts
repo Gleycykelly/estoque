@@ -59,13 +59,11 @@ export class DepositosRepository extends Repository<Depositos> {
       obterParcialDepositoDto.depositos != null &&
       obterParcialDepositoDto.depositos.length > 0
     ) {
-      console.log('dentro');
-      console.log(obterParcialDepositoDto.depositos);
       query = query.where('deposito.id in (:...depositos)', {
         depositos: obterParcialDepositoDto.depositos,
       });
     }
-    console.log(query);
+
     query.orderBy('deposito.id', 'ASC');
     const result = await query.getMany();
     return result;
