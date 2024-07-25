@@ -283,6 +283,7 @@ export default {
   name: 'MovimentacoesEdicao',
   data() {
     return {
+      obteveDadosDoLote: false,
       loaded: false,
       loading: false,
       totalEntrada: null,
@@ -306,22 +307,14 @@ export default {
     },
 
     podeGravar() {
-      if (!this.modelo.tipoMovimentacao) {
-        useAlerta().exibirSnackbar(
-          'Selecione o tipo de movimentação!',
-          'orange',
-        );
-        return false;
-      }
-
       if (!this.modelo.lancamentoProduto.lote) {
         useAlerta().exibirSnackbar('O lote é obrigatório!', 'orange');
         return false;
       }
 
-      if (!this.modelo.lancamentoProduto.dataValidade) {
+      if (this.modelo.tipoMovimentacao == 'Saída' && !this.obteveDadosDoLote) {
         useAlerta().exibirSnackbar(
-          'A data de validade é obrigatória!',
+          'Clique na lupa para buscar pelos dados referentes ao lote !',
           'orange',
         );
         return false;
@@ -335,6 +328,22 @@ export default {
       if (this.modelo.quantidade && this.modelo.quantidade < 1) {
         useAlerta().exibirSnackbar(
           'A quantidade deve ser maior que zero!',
+          'orange',
+        );
+        return false;
+      }
+
+      if (!this.modelo.tipoMovimentacao) {
+        useAlerta().exibirSnackbar(
+          'Selecione o tipo de movimentação!',
+          'orange',
+        );
+        return false;
+      }
+
+      if (!this.modelo.lancamentoProduto.dataValidade) {
+        useAlerta().exibirSnackbar(
+          'A data de validade é obrigatória!',
           'orange',
         );
         return false;
@@ -375,25 +384,26 @@ export default {
         return false;
       }
 
-      if (!this.modelo.lancamentoProduto.produto) {
+      if (
+        !this.modelo.lancamentoProduto.produto ||
+        !this.modelo.lancamentoProduto.produto.id
+      ) {
         useAlerta().exibirSnackbar('Selecione o produto!', 'orange');
         return false;
       }
 
-      if (!this.modelo.lancamentoProduto.fornecedor) {
+      if (
+        !this.modelo.lancamentoProduto.fornecedor ||
+        !this.modelo.lancamentoProduto.fornecedor.id
+      ) {
         useAlerta().exibirSnackbar('Selecione o fornecedor!', 'orange');
         return false;
       }
 
-      if (!this.modelo.lancamentoProduto.localizacaoDeposito.deposito) {
-        useAlerta().exibirSnackbar(
-          'Selecione o depósito onde o produto será armazenado!',
-          'orange',
-        );
-        return false;
-      }
-
-      if (!this.modelo.lancamentoProduto.localizacaoDeposito.deposito) {
+      if (
+        !this.modelo.lancamentoProduto.localizacaoDeposito.deposito ||
+        !this.modelo.lancamentoProduto.localizacaoDeposito.deposito.id
+      ) {
         useAlerta().exibirSnackbar(
           'Selecione o depósito onde o produto será armazenado!',
           'orange',
@@ -528,6 +538,7 @@ export default {
         }
       });
     },
+
     adicionarProduto() {
       const dadosOutraTela = {
         dadosOriginais: this.modelo,
@@ -575,6 +586,7 @@ export default {
         .obterMovimentacoesPorLote(lote)
         .then((response) => {
           this.modelo = null;
+          this.obteveDadosDoLote = true;
 
           this.totalEntrada = response.data.totalEntrada;
           this.totalSaida = response.data.totalSaida;

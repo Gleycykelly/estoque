@@ -88,6 +88,13 @@ export class DepositosService {
       return null;
     }
 
+    if (
+      obterParcialDepositoDto.depositos == null ||
+      obterParcialDepositoDto.depositos.length < 1
+    ) {
+      obterParcialDepositoDto.depositos = depositos;
+    }
+
     return await this.repositorio.obterParcial(obterParcialDepositoDto);
   }
 

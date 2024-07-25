@@ -89,6 +89,13 @@ export class MovimentacoesService {
       return null;
     }
 
+    if (
+      obterParcialMovimentacaoDto.depositos == null ||
+      obterParcialMovimentacaoDto.depositos.length < 1
+    ) {
+      obterParcialMovimentacaoDto.depositos = depositos;
+    }
+
     return await this.repositorio.obterParcial(obterParcialMovimentacaoDto);
   }
 
@@ -195,6 +202,13 @@ export class MovimentacoesService {
       depositos.length < 1
     ) {
       throw new NotFoundException('Nenhum item encontrado para emissão!');
+    }
+
+    if (
+      dadosEmissaoExcelDto.depositos == null ||
+      dadosEmissaoExcelDto.depositos.length < 1
+    ) {
+      dadosEmissaoExcelDto.depositos = depositos;
     }
 
     const movimentacoes =
@@ -305,6 +319,13 @@ export class MovimentacoesService {
       depositos.length < 1
     ) {
       throw new NotFoundException('Nenhum item encontrado para emissão!');
+    }
+
+    if (
+      dadosEmissaoExcelDto.depositos == null ||
+      dadosEmissaoExcelDto.depositos.length < 1
+    ) {
+      dadosEmissaoExcelDto.depositos = depositos;
     }
 
     const movimentacoes =
