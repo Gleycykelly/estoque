@@ -137,6 +137,7 @@ export default {
   name: 'FornecedoresEdicao',
   data() {
     return {
+      carregouCidades: false,
       modelo: {
         endereco: {},
       },
@@ -200,7 +201,6 @@ export default {
         })
         .then((response) => {
           this.estados = [];
-
           this.carregouCidades = false;
 
           setTimeout(() => {

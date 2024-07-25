@@ -123,6 +123,7 @@ export default {
   name: 'DepositosEdicao',
   data() {
     return {
+      carregouCidades: false,
       modelo: {
         descricao: '',
         endereco: {

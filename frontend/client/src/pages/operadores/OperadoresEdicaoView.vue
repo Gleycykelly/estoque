@@ -329,6 +329,7 @@ export default {
   name: 'OperadoresEdicao',
   data() {
     return {
+      carregouCidades: false,
       ehAtualizacao: false,
       modelo: {
         depositos: [],
