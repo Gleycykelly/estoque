@@ -939,6 +939,7 @@ export default {
 }
 
 .modal-nutricional {
+  overflow: auto !important;
   align-items: center;
   display: flex;
   justify-content: center;

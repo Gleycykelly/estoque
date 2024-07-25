@@ -237,7 +237,7 @@ export default {
 
 .underline {
   text-decoration: underline;
-  text-decoration-color: var(--secondary-color);
+  text-decoration-color: #03fad1;
   text-decoration-thickness: 2px;
 }
 </style>
