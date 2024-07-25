@@ -1,7 +1,6 @@
-// src/plugins/nprogress.js
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
-import '@/assets/nprogress-custom.css'; // Importa o CSS customizado
+import '@/assets/nprogress-custom.css';
 
 NProgress.configure({ showSpinner: true });
 

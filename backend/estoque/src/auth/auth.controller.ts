@@ -22,11 +22,6 @@ export class AuthController {
     return this.authsService.entrar(email, senha);
   }
 
-  // @Post('sair')
-  // async sair(@Req() req: Request) {
-  //   return this.authsService.sair(req);
-  // }
-
   @AllowUnauthorizedRequest()
   @Post('registrar')
   async registrar(@Body() body: CreateUsuarioDto) {
