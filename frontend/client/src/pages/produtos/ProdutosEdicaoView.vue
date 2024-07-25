@@ -32,12 +32,14 @@
           <v-tabs-window-item :key="1" :value="1" style="padding: 5px">
             <v-text-field
               label="Código do produto"
+              maxlength="60"
               v-model="modelo.codigoProduto"
               variant="outlined"
             ></v-text-field>
 
             <v-text-field
               label="Nome"
+              maxlength="100"
               v-model="modelo.nome"
               variant="outlined"
             ></v-text-field>
@@ -45,6 +47,7 @@
             <v-text-field
               label="Descrição"
               v-model="modelo.descricao"
+              maxlength="250"
               variant="outlined"
             ></v-text-field>
 
@@ -111,12 +114,14 @@
 
                         <v-text-field
                           label="Alergênicos"
+                          maxlength="250"
                           v-model="novaPorcao.informacaoNutricional.alergenicos"
                           variant="outlined"
                         ></v-text-field>
 
                         <v-text-field
                           label="Ingredientes"
+                          maxlength="250"
                           v-model="
                             novaPorcao.informacaoNutricional.ingredientes
                           "
@@ -364,12 +369,14 @@
                 <v-text-field
                   label="Alergênicos"
                   v-model="porcao.informacaoNutricional.alergenicos"
+                  maxlength="250"
                   variant="outlined"
                 ></v-text-field>
 
                 <v-text-field
                   label="Ingredientes"
                   v-model="porcao.informacaoNutricional.ingredientes"
+                  maxlength="250"
                   variant="outlined"
                 ></v-text-field>
 
@@ -564,6 +571,7 @@ export default {
   },
   methods: {
     voltar() {
+      console.log(this.voltar());
       if (
         useDadosDeOutraTela().ultimoElemento &&
         useDadosDeOutraTela().ultimoElemento.rotaOriginal != 'produtos-edicao'
@@ -711,13 +719,15 @@ export default {
         await comunicacaoProdutos
           .criar(this.modelo)
           .then((resultado) => {
-            useAlerta().exibirSnackbar(
-              'O produto foi criado com sucesso!',
-              'green',
-            );
-            this.modelo = resultado.data;
+            if (resultado.data) {
+              useAlerta().exibirSnackbar(
+                'O produto foi criado com sucesso!',
+                'green',
+              );
+              this.modelo = resultado.data;
 
-            this.voltar();
+              this.voltar();
+            }
           })
           .catch((error) => {
             if (error.response && error.response.data) {
@@ -874,6 +884,7 @@ export default {
 }
 
 .informacoes-nutricionais {
+  overflow: auto;
   @media (min-width: 850px) {
     width: 800px !important;
   }

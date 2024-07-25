@@ -48,12 +48,14 @@
               <v-text-field
                 label="Nome"
                 v-model="modelo.nome"
+                maxlength="150"
                 variant="outlined"
               ></v-text-field>
 
               <v-text-field
                 label="E-mail"
                 v-model="modelo.email"
+                maxlength="100"
                 variant="outlined"
               ></v-text-field>
 
@@ -158,11 +160,13 @@
                         <v-text-field
                           label="Logradouro"
                           v-model="novoEndereco.logradouro"
+                          maxlength="100"
                           variant="outlined"
                         ></v-text-field>
                         <v-text-field
                           label="Bairro"
                           v-model="novoEndereco.bairro"
+                          maxlength="100"
                           variant="outlined"
                         ></v-text-field>
                       </div>

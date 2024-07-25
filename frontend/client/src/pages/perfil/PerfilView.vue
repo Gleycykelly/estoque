@@ -13,6 +13,7 @@
         <v-text-field
           label="Nome"
           v-model="modelo.nome"
+          maxlength="150"
           variant="outlined"
         ></v-text-field>
         <v-text-field
@@ -31,6 +32,7 @@
           label="E-mail"
           v-model="modelo.email"
           variant="outlined"
+          maxlength="100"
         ></v-text-field>
 
         <div class="campos-dados-flex">
@@ -76,10 +78,12 @@
               <v-text-field
                 label="Senha atual"
                 v-model="modelo.senha"
+                maxlength="180"
                 variant="outlined"
               ></v-text-field>
               <v-text-field
                 label="Nova senha"
+                maxlength="180"
                 v-model="modelo.novaSenha"
                 variant="outlined"
               ></v-text-field>

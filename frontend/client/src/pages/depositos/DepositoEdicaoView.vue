@@ -40,12 +40,14 @@
                 <v-text-field
                   label="Logradouro"
                   v-model="modelo.endereco.logradouro"
+                  maxlength="100"
                   variant="outlined"
                 ></v-text-field>
                 <v-text-field
                   class="margin-enderecos"
                   label="Bairro"
                   v-model="modelo.endereco.bairro"
+                  maxlength="100"
                   variant="outlined"
                 ></v-text-field>
               </div>

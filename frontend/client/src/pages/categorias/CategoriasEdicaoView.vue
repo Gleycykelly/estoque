@@ -21,6 +21,7 @@
         <v-text-field
           label="Descrição"
           v-model="modelo.descricao"
+          maxlength="100"
           variant="outlined"
         ></v-text-field>
       </v-card-text>

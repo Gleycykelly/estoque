@@ -28,6 +28,7 @@
         <v-text-field
           label="Razão social"
           v-model="modelo.razaoSocial"
+          maxlength="150"
           variant="outlined"
         ></v-text-field>
 
@@ -48,6 +49,7 @@
                 <v-text-field
                   label="Logradouro"
                   v-model="modelo.endereco.logradouro"
+                  maxlength="100"
                   variant="outlined"
                 ></v-text-field>
 
@@ -55,6 +57,7 @@
                   class="campos-endereco-margin"
                   label="Bairro"
                   v-model="modelo.endereco.bairro"
+                  maxlength="100"
                   variant="outlined"
                 ></v-text-field>
               </div>

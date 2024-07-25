@@ -21,6 +21,7 @@
         <v-text-field
           label="Sigla"
           v-model="modelo.sigla"
+          maxlength="4"
           variant="outlined"
         ></v-text-field>
         <v-text-field
