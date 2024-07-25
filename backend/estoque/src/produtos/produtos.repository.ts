@@ -91,7 +91,8 @@ export class ProdutosRepository extends Repository<Produtos> {
       .leftJoinAndSelect('produto.categoria', 'categoria')
       .leftJoinAndSelect('produto.usuario', 'usuario')
       .leftJoinAndSelect('produto.marca', 'marca')
-      .leftJoinAndSelect('produto.unidadeMedida', 'unidadeMedida');
+      .leftJoinAndSelect('produto.unidadeMedida', 'unidadeMedida')
+      .leftJoinAndSelect('produto.porcoes', 'porcoes');
 
     if (obterParcialProdutoDto.termoDePesquisa) {
       query = query

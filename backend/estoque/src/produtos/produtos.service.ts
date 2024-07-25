@@ -71,6 +71,7 @@ export class ProdutosService {
         );
       }
     }
+    produtoCadastrado.porcoes = createProdutoDto.porcoes;
     return produtoCadastrado;
   }
 

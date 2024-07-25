@@ -329,7 +329,6 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
       where lp."data_validade" <= '${dataVencimento.toISOString()}' and lp."data_validade" >= '${dataAtual.toISOString()}'
       ${depositosVisiveis != null && depositosVisiveis.length > 0 ? `and d."id" in (${depositosVisiveis})` : ''}
       group by (lp."lote", p."nome");`;
-    console.log(query);
     return await this.query(query);
   }
 
