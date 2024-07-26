@@ -12,7 +12,7 @@ export class ProdutosRepository extends Repository<Produtos> {
   }
 
   async createProduto(createProdutoDto: CreateProdutoDto): Promise<Produtos> {
-    const produto = this.create({
+    const produto = await this.create({
       ...createProdutoDto,
     });
 

@@ -14,7 +14,7 @@ export class FornecedoresRepository extends Repository<Fornecedores> {
   async createFornecedor(
     createFornecedoreDto: CreateFornecedoreDto,
   ): Promise<Fornecedores> {
-    const fornecedor = this.create({
+    const fornecedor = await this.create({
       ...createFornecedoreDto,
     });
 

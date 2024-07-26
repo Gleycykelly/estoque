@@ -12,7 +12,7 @@ export class MarcasRepository extends Repository<Marcas> {
   }
 
   async createMarcas(createMarcaDto: CreateMarcaDto): Promise<Marcas> {
-    const marca = this.create({
+    const marca = await this.create({
       ...createMarcaDto,
     });
 

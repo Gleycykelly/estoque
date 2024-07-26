@@ -106,8 +106,6 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
       query = query.andWhere('deposito.id IN (:...depositos)', {
         depositos: obterParcialMovimentacaoDto.depositos,
       });
-    } else if (obterParcialMovimentacaoDto.naoEhAdministrador) {
-      return;
     }
 
     if (
@@ -172,7 +170,7 @@ export class MovimentacoesRepository extends Repository<Movimentacoes> {
   }
 
   async obterPorLote(lote: string): Promise<Movimentacoes[]> {
-    return await await this.find({
+    return await this.find({
       where: { lancamentoProduto: { lote: lote } },
       relations: [
         'lancamentoProduto',

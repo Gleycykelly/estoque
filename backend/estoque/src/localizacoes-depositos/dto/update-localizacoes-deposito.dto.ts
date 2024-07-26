@@ -3,6 +3,4 @@ import { CreateLocalizacoesDepositoDto } from './create-localizacoes-deposito.dt
 
 export class UpdateLocalizacoesDepositoDto extends PartialType(
   CreateLocalizacoesDepositoDto,
-) {
-  id: number;
-}
+) {}

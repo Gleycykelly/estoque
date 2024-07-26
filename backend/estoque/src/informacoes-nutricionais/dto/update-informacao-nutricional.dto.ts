@@ -3,6 +3,4 @@ import { CreateInformacaoNutricionalDto } from './create-informacao-nutricional.
 
 export class UpdateInformacaoNutricionalDto extends PartialType(
   CreateInformacaoNutricionalDto,
-) {
-  id: number;
-}
+) {}

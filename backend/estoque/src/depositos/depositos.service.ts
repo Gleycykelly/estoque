@@ -29,7 +29,7 @@ export class DepositosService {
       this.enderecoService,
     );
 
-    this.repositorio.createDeposito(createDepositoDto);
+    return await this.repositorio.createDeposito(createDepositoDto);
   }
 
   async update(id: number, updateDepositoDto: UpdateDepositoDto) {

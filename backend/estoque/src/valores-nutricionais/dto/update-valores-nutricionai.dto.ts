@@ -3,6 +3,4 @@ import { CreateValoresNutricionaiDto } from './create-valores-nutricionai.dto';
 
 export class UpdateValoresNutricionaiDto extends PartialType(
   CreateValoresNutricionaiDto,
-) {
-  id: number;
-}
+) {}

@@ -13,7 +13,7 @@ export class LocalizacoesDepositosRepository extends Repository<LocalizacoesDepo
   async createLocalizacaoDeposito(
     createLocalizacoesDepositoDto: CreateLocalizacoesDepositoDto,
   ): Promise<LocalizacoesDepositos> {
-    const localizacao = this.create({
+    const localizacao = await this.create({
       ...createLocalizacoesDepositoDto,
     });
     return await this.save(localizacao);

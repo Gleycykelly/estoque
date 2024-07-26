@@ -18,7 +18,7 @@ export class DepositosRepository extends Repository<Depositos> {
       ...createDepositoDto,
     });
 
-    return this.save(deposito);
+    return await this.save(deposito);
   }
 
   async updateDeposito(

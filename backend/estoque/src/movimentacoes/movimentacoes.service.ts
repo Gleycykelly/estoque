@@ -60,7 +60,7 @@ export class MovimentacoesService {
   }
 
   async findAll() {
-    return this.repositorio.obterTodos();
+    return await this.repositorio.obterTodos();
   }
 
   async findOne(id: number) {
@@ -364,7 +364,7 @@ export class MovimentacoesService {
       const entidadeBD = await service.findOne(entidade.id);
       return await service.update(entidadeBD.id, entidade);
     }
-    return service.create({ ...entidade });
+    return await service.create({ ...entidade });
   }
 
   async valorTotalEntradasSaidas(token: string) {

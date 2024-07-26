@@ -13,7 +13,7 @@ export class LancamentosProdutosRepository extends Repository<LancamentosProduto
   async createLancamentosProduto(
     createLancamentosProdutoDto: CreateLancamentosProdutoDto,
   ): Promise<LancamentosProdutos> {
-    const lancamento = this.create({
+    const lancamento = await this.create({
       ...createLancamentosProdutoDto,
     });
     return await this.save(lancamento);

@@ -14,7 +14,7 @@ export class UnidadesMedidasRepository extends Repository<UnidadesMedidas> {
   async createUnidadeMedida(
     createUnidadesMedidaDto: CreateUnidadesMedidaDto,
   ): Promise<UnidadesMedidas> {
-    const unidadeMedida = this.create({
+    const unidadeMedida = await this.create({
       ...createUnidadesMedidaDto,
     });
 

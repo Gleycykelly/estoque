@@ -13,7 +13,7 @@ export class InformacoesNutricionaisRepository extends Repository<InformacoesNut
   async createInformacoesNutricionais(
     createInformacaoNutricional: CreateInformacaoNutricionalDto,
   ): Promise<InformacoesNutricionais> {
-    const informacaoNutricional = this.create({
+    const informacaoNutricional = await this.create({
       ...createInformacaoNutricional,
     });
 

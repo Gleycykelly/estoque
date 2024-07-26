@@ -120,6 +120,6 @@ export class LancamentosProdutosService {
       const entidadeBD = await service.findOne(entidade.id);
       return await service.update(entidadeBD.id, entidade);
     }
-    return service.create({ ...entidade });
+    return await service.create({ ...entidade });
   }
 }
