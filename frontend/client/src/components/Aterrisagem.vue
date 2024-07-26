@@ -259,7 +259,7 @@
                 item-title="razaoSocial"
                 item-value="id"
                 :items="fornecedores"
-                label="Forncedores"
+                label="Fornecedores"
                 multiple
                 color="var(--primary-color)"
                 variant="outlined"
