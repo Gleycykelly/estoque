@@ -589,6 +589,7 @@ export default {
     display: block;
   }
 }
+
 .campos-endereco {
   @media (min-width: 850px) {
     margin-left: 15px;

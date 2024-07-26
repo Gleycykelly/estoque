@@ -386,13 +386,6 @@ export default {
     };
   },
   methods: {
-    calculateTableHeight() {
-      const cardHeight = document.querySelector('.fill-height').clientHeight;
-      return cardHeight;
-    },
-
-    async obterdadosParaFiltrar() {},
-
     async obterParcial() {
       if (this.modalAberto) {
         this.modalAberto = false;

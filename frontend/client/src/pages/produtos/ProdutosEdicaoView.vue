@@ -554,7 +554,6 @@ export default {
   data() {
     return {
       dialog: false,
-      retornarParaTelaMovimentacao: false,
       modelo: {
         porcoes: [],
       },

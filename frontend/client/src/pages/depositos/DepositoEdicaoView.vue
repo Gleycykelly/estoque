@@ -137,8 +137,6 @@ export default {
           municipio: null,
         },
       },
-      exibeAlerta: false,
-      loading: false,
       estados: [],
       cidades: [],
     };
@@ -320,15 +318,6 @@ export default {
 </script>
 
 <style scoped>
-.container-endereco {
-  border-radius: 15px;
-  border-style: solid;
-  border-width: 2px;
-  border-color: var(--primary-color);
-  max-height: 450px;
-  overflow: auto;
-}
-
 .endereco-campos {
   @media (min-width: 850px) {
     display: flex;

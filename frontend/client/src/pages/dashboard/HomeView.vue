@@ -161,6 +161,7 @@ export default {
         this.nomeUsuarioLogado = response.data.nome;
       });
     },
+
     async obterValoresTotais() {
       await comunicacaoMovimentacoes
         .valorTotalEntradasESaidas()
@@ -215,17 +216,6 @@ export default {
         .then((response) => {
           this.produtosVencimento = response.data;
         });
-    },
-    async obterUltimasMovimentacoes() {
-      await comunicacaoMovimentacoes.ultimasMovimentacoes().then((response) => {
-        this.modelo.movimentacoes = [];
-
-        const dados = response.data;
-
-        for (const dado of dados) {
-          this.modelo.movimentacoes.push(dado);
-        }
-      });
     },
 
     gerarCores() {

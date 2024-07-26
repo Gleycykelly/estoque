@@ -127,10 +127,6 @@ export default {
   text-decoration: none;
 }
 
-.row-login {
-  margin-left: 0;
-}
-
 .left-login {
   background-color: #f2f2f2;
 }
@@ -191,18 +187,6 @@ export default {
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-}
-
-.novo-cadastro {
-  margin-top: 40px;
-}
-
-.texto-novo-cadastro {
-  color: #a09f9f;
-}
-
-.link-cadastro {
-  margin-left: 5px;
 }
 
 .container-imagem-login {
