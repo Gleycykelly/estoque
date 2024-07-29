@@ -164,6 +164,7 @@
           <v-card-text>
             <div>
               <v-select
+                style="width: 450px"
                 v-if="telaParaFiltrar == 'produtos'"
                 v-model="filtros.categorias"
                 item-title="descricao"
@@ -219,6 +220,7 @@
                 variant="outlined"
                 persistent-hint
                 clearable
+                :menu-props="{ maxWidth: 200 }"
               ></v-select>
 
               <v-select
@@ -572,5 +574,20 @@ tr {
 
 .cor-icones {
   color: white;
+}
+
+.vs__selected-options {
+  flex-wrap: nowrap;
+  max-width: calc(
+    100% - 25px
+  ); /* change this to `- 40px` if you're supporting a `clearable` field; I was not */
+}
+
+.v-field .v-field--appended {
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  overflow: hidden;
 }
 </style>

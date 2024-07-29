@@ -23,7 +23,12 @@
           v-model="modelo.descricao"
           maxlength="100"
           variant="outlined"
-        ></v-text-field>
+        >
+          <template #label>
+            <span><strong>*</strong></span>
+            Descrição
+          </template>
+        </v-text-field>
       </v-card-text>
     </v-card>
   </v-main>

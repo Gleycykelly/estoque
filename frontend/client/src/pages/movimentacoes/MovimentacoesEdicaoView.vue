@@ -39,7 +39,12 @@
               v-model="modelo.tipoMovimentacao"
               variant="outlined"
               @update:model-value="limparDados(modelo.tipoMovimentacao)"
-            ></v-combobox>
+            >
+              <template #label>
+                Tipo de movimentação
+                <span><strong>*</strong></span>
+              </template>
+            </v-combobox>
             <v-text-field
               v-if="
                 modelo.tipoMovimentacao && modelo.tipoMovimentacao === 'Saída'
@@ -58,6 +63,10 @@
                 obterDadosPorLote(modelo.lancamentoProduto.lote)
               "
             >
+              <template #label>
+                Lote
+                <span><strong>*</strong></span>
+              </template>
               <v-tooltip activator="parent" location="top">
                 Buscar por lote
               </v-tooltip>
@@ -121,7 +130,12 @@
               label="Lote"
               v-model="modelo.lancamentoProduto.lote"
               variant="outlined"
-            ></v-text-field>
+            >
+              <template #label>
+                Lote
+                <span><strong>*</strong></span>
+              </template>
+            </v-text-field>
 
             <div class="movimentacao-campos">
               <v-text-field
@@ -135,7 +149,12 @@
                 v-model="modelo.lancamentoProduto.dataValidade"
                 label="Data de validade"
                 clearable
-              ></v-text-field>
+              >
+                <template #label>
+                  Data de validade
+                  <span><strong>*</strong></span>
+                </template>
+              </v-text-field>
               <v-text-field
                 v-if="modelo.dataMovimentacao"
                 disabled
@@ -156,7 +175,12 @@
               v-model="modelo.quantidade"
               type="number"
               variant="outlined"
-            ></v-text-field>
+            >
+              <template #label>
+                Quantidade
+                <span><strong>*</strong></span>
+              </template>
+            </v-text-field>
 
             <div class="movimentacao-campos">
               <v-text-field
@@ -169,7 +193,12 @@
                 v-model="modelo.lancamentoProduto.precoCusto"
                 type="number"
                 variant="outlined"
-              ></v-text-field>
+              >
+                <template #label>
+                  Preço de custo
+                  <span><strong>*</strong></span>
+                </template>
+              </v-text-field>
               <v-text-field
                 :disabled="
                   modelo.tipoMovimentacao === null ||
@@ -181,7 +210,12 @@
                 v-model="modelo.lancamentoProduto.precoVenda"
                 type="number"
                 variant="outlined"
-              ></v-text-field>
+              >
+                <template #label>
+                  Preço de venda
+                  <span><strong>*</strong></span>
+                </template>
+              </v-text-field>
             </div>
 
             <v-combobox
@@ -197,7 +231,12 @@
               variant="outlined"
               append-icon="mdi-plus-circle-outline"
               @click:append="adicionarProduto"
-            ></v-combobox>
+            >
+              <template #label>
+                Produto
+                <span><strong>*</strong></span>
+              </template>
+            </v-combobox>
 
             <v-combobox
               :disabled="
@@ -212,7 +251,12 @@
               variant="outlined"
               append-icon="mdi-plus-circle-outline"
               @click:append="adicionarFornecedor"
-            ></v-combobox>
+            >
+              <template #label>
+                Fornecedor
+                <span><strong>*</strong></span>
+              </template>
+            </v-combobox>
           </v-tabs-window-item>
 
           <v-tabs-window-item :key="2" :value="2" style="padding: 5px">
@@ -221,7 +265,7 @@
                 modelo.tipoMovimentacao === null ||
                 modelo.tipoMovimentacao === 'Saída'
               "
-              label="Depósto"
+              label="Depósito"
               :items="depositos"
               item-title="descricao"
               item-value="id"
@@ -229,7 +273,12 @@
               variant="outlined"
               append-icon="mdi-plus-circle-outline"
               @click:append="adicionarDeposito"
-            ></v-combobox>
+            >
+              <template #label>
+                Depósito
+                <span><strong>*</strong></span>
+              </template>
+            </v-combobox>
 
             <div class="movimentacao-campos">
               <v-text-field
@@ -240,7 +289,12 @@
                 label="Corredor"
                 v-model="modelo.lancamentoProduto.localizacaoDeposito.corredor"
                 variant="outlined"
-              ></v-text-field>
+              >
+                <template #label>
+                  Corredor
+                  <span><strong>*</strong></span>
+                </template>
+              </v-text-field>
 
               <v-text-field
                 :disabled="
@@ -253,7 +307,12 @@
                   modelo.lancamentoProduto.localizacaoDeposito.prateleira
                 "
                 variant="outlined"
-              ></v-text-field>
+              >
+                <template #label>
+                  Prateleira
+                  <span><strong>*</strong></span>
+                </template>
+              </v-text-field>
             </div>
 
             <v-text-field

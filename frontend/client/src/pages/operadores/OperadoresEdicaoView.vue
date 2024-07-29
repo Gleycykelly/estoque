@@ -50,14 +50,24 @@
                 v-model="modelo.nome"
                 maxlength="150"
                 variant="outlined"
-              ></v-text-field>
+              >
+                <template #label>
+                  Nome
+                  <span><strong>*</strong></span>
+                </template>
+              </v-text-field>
 
               <v-text-field
                 label="E-mail"
                 v-model="modelo.email"
                 maxlength="100"
                 variant="outlined"
-              ></v-text-field>
+              >
+                <template #label>
+                  E-mail
+                  <span><strong>*</strong></span>
+                </template>
+              </v-text-field>
 
               <div class="dados-gerais-campos">
                 <v-text-field
@@ -65,7 +75,12 @@
                   v-mask="'###.###.###-##'"
                   v-model="modelo.cpf"
                   variant="outlined"
-                ></v-text-field>
+                >
+                  <template #label>
+                    CPF
+                    <span><strong>*</strong></span>
+                  </template>
+                </v-text-field>
 
                 <v-text-field
                   class="dados-gerais-margin"
@@ -73,7 +88,12 @@
                   v-mask="'##.###.###-#'"
                   v-model="modelo.rg"
                   variant="outlined"
-                ></v-text-field>
+                >
+                  <template #label>
+                    RG
+                    <span><strong>*</strong></span>
+                  </template>
+                </v-text-field>
               </div>
               <div class="dados-gerais-campos">
                 <v-text-field
@@ -82,7 +102,12 @@
                   type="date"
                   v-model="modelo.dataNascimento"
                   clearable
-                ></v-text-field>
+                >
+                  <template #label>
+                    Data de nascimento
+                    <span><strong>*</strong></span>
+                  </template>
+                </v-text-field>
 
                 <v-combobox
                   class="dados-gerais-margin"
@@ -92,18 +117,28 @@
                   item-value="id"
                   v-model="modelo.generoUsuario"
                   variant="outlined"
-                ></v-combobox>
+                >
+                  <template #label>
+                    Genêros
+                    <span><strong>*</strong></span>
+                  </template>
+                </v-combobox>
 
                 <v-combobox
                   class="dados-gerais-margin"
-                  label="Permissões"
+                  label="Permissão"
                   :items="['Administrador', 'Usuario']"
                   item-title="descricao"
                   item-value="id"
                   v-model="modelo.permissaoUsuario"
                   variant="outlined"
                   @update:model-value="modelo.depositos = []"
-                ></v-combobox>
+                >
+                  <template #label>
+                    Permissão
+                    <span><strong>*</strong></span>
+                  </template>
+                </v-combobox>
               </div>
               <v-select
                 :disabled="
@@ -120,14 +155,31 @@
                 color="var(--primary-color)"
                 variant="outlined"
                 persistent-hint
-              ></v-select>
+              >
+                <template #label>
+                  Depósitos visiveís
+                  <span
+                    v-if="
+                      !modelo.permissaoUsuario ||
+                      modelo.permissaoUsuario !== 'Administrador'
+                    "
+                  >
+                    <strong>*</strong>
+                  </span>
+                </template>
+              </v-select>
               <div class="dados-gerais-campos">
                 <v-text-field
                   label="Telefone principal"
                   v-mask="'(##) #####-####'"
                   v-model="modelo.usuariosTelefones.telefonePrincipal"
                   variant="outlined"
-                ></v-text-field>
+                >
+                  <template #label>
+                    Telefone principal
+                    <span><strong>*</strong></span>
+                  </template>
+                </v-text-field>
 
                 <v-text-field
                   class="dados-gerais-margin"
@@ -162,13 +214,23 @@
                           v-model="novoEndereco.logradouro"
                           maxlength="100"
                           variant="outlined"
-                        ></v-text-field>
+                        >
+                          <template #label>
+                            Logradouro
+                            <span><strong>*</strong></span>
+                          </template>
+                        </v-text-field>
                         <v-text-field
                           label="Bairro"
                           v-model="novoEndereco.bairro"
                           maxlength="100"
                           variant="outlined"
-                        ></v-text-field>
+                        >
+                          <template #label>
+                            Bairro
+                            <span><strong>*</strong></span>
+                          </template>
+                        </v-text-field>
                       </div>
 
                       <div>
@@ -184,12 +246,18 @@
                           v-model="novoEndereco.lote"
                           variant="outlined"
                         ></v-text-field>
+
                         <v-text-field
                           v-mask="'#####-###'"
                           label="CEP"
                           v-model="novoEndereco.cep"
                           variant="outlined"
-                        ></v-text-field>
+                        >
+                          <template #label>
+                            CEP
+                            <span><strong>*</strong></span>
+                          </template>
+                        </v-text-field>
                       </div>
 
                       <div>
@@ -204,7 +272,12 @@
                             obterCidades($event);
                             novoEndereco.municipio = null;
                           "
-                        ></v-combobox>
+                        >
+                          <template #label>
+                            Estado
+                            <span><strong>*</strong></span>
+                          </template>
+                        </v-combobox>
 
                         <v-combobox
                           v-if="carregouCidades"
@@ -214,7 +287,12 @@
                           item-value="id"
                           v-model="novoEndereco.municipio"
                           variant="outlined"
-                        ></v-combobox>
+                        >
+                          <template #label>
+                            Cidade
+                            <span><strong>*</strong></span>
+                          </template>
+                        </v-combobox>
                       </div>
                     </v-card-text>
 
@@ -245,13 +323,23 @@
                     label="Logradouro"
                     v-model="endereco.logradouro"
                     variant="outlined"
-                  ></v-text-field>
+                  >
+                    <template #label>
+                      Logradouro
+                      <span><strong>*</strong></span>
+                    </template>
+                  </v-text-field>
                   <v-text-field
                     class="campos-endereco"
                     label="Bairro"
                     v-model="endereco.bairro"
                     variant="outlined"
-                  ></v-text-field>
+                  >
+                    <template #label>
+                      Bairro
+                      <span><strong>*</strong></span>
+                    </template>
+                  </v-text-field>
                 </div>
 
                 <div class="container-dados-endereco">
@@ -268,13 +356,19 @@
                     v-model="endereco.lote"
                     variant="outlined"
                   ></v-text-field>
+
                   <v-text-field
                     class="campos-endereco"
                     v-mask="'#####-###'"
                     label="CEP"
                     v-model="endereco.cep"
                     variant="outlined"
-                  ></v-text-field>
+                  >
+                    <template #label>
+                      CEP
+                      <span><strong>*</strong></span>
+                    </template>
+                  </v-text-field>
                 </div>
 
                 <div class="container-dados-endereco">
@@ -289,7 +383,12 @@
                       obterCidades($event);
                       endereco.municipio = null;
                     "
-                  ></v-combobox>
+                  >
+                    <template #label>
+                      Estado
+                      <span><strong>*</strong></span>
+                    </template>
+                  </v-combobox>
 
                   <v-combobox
                     v-if="carregouCidades"
@@ -300,7 +399,12 @@
                     item-value="id"
                     v-model="endereco.municipio"
                     variant="outlined"
-                  ></v-combobox>
+                  >
+                    <template #label>
+                      Cidade
+                      <span><strong>*</strong></span>
+                    </template>
+                  </v-combobox>
                 </div>
                 <v-divider
                   style="

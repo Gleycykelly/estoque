@@ -23,21 +23,36 @@
           v-mask="'##.###.###/####-##'"
           v-model="modelo.cnpj"
           variant="outlined"
-        ></v-text-field>
+        >
+          <template #label>
+            CNPJ
+            <span><strong>*</strong></span>
+          </template>
+        </v-text-field>
 
         <v-text-field
           label="Razão social"
           v-model="modelo.razaoSocial"
           maxlength="150"
           variant="outlined"
-        ></v-text-field>
+        >
+          <template #label>
+            Razão social
+            <span><strong>*</strong></span>
+          </template>
+        </v-text-field>
 
         <v-text-field
           label="Telefone"
           v-mask="'(##) #####-####'"
           v-model="modelo.telefone"
           variant="outlined"
-        ></v-text-field>
+        >
+          <template #label>
+            Telefone
+            <span><strong>*</strong></span>
+          </template>
+        </v-text-field>
 
         <div>
           <div style="padding: 15px">
@@ -51,7 +66,12 @@
                   v-model="modelo.endereco.logradouro"
                   maxlength="100"
                   variant="outlined"
-                ></v-text-field>
+                >
+                  <template #label>
+                    Logradouro
+                    <span><strong>*</strong></span>
+                  </template>
+                </v-text-field>
 
                 <v-text-field
                   class="campos-endereco-margin"
@@ -59,7 +79,12 @@
                   v-model="modelo.endereco.bairro"
                   maxlength="100"
                   variant="outlined"
-                ></v-text-field>
+                >
+                  <template #label>
+                    Bairro
+                    <span><strong>*</strong></span>
+                  </template>
+                </v-text-field>
               </div>
 
               <div class="campos-endereco">
@@ -84,7 +109,12 @@
                   label="CEP"
                   v-model="modelo.endereco.cep"
                   variant="outlined"
-                ></v-text-field>
+                >
+                  <template #label>
+                    CEP
+                    <span><strong>*</strong></span>
+                  </template>
+                </v-text-field>
               </div>
 
               <div class="campos-endereco">
@@ -99,7 +129,12 @@
                     obterCidades($event);
                     modelo.endereco.municipio = null;
                   "
-                ></v-combobox>
+                >
+                  <template #label>
+                    Estado
+                    <span><strong>*</strong></span>
+                  </template>
+                </v-combobox>
 
                 <v-combobox
                   v-if="carregouCidades"
@@ -110,7 +145,12 @@
                   item-value="id"
                   v-model="modelo.endereco.municipio"
                   variant="outlined"
-                ></v-combobox>
+                >
+                  <template #label>
+                    Cidade
+                    <span><strong>*</strong></span>
+                  </template>
+                </v-combobox>
               </div>
 
               <v-text-field

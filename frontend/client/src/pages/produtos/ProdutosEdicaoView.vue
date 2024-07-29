@@ -35,14 +35,24 @@
               maxlength="60"
               v-model="modelo.codigoProduto"
               variant="outlined"
-            ></v-text-field>
+            >
+              <template #label>
+                Código do produto
+                <span><strong>*</strong></span>
+              </template>
+            </v-text-field>
 
             <v-text-field
               label="Nome"
               maxlength="100"
               v-model="modelo.nome"
               variant="outlined"
-            ></v-text-field>
+            >
+              <template #label>
+                Nome
+                <span><strong>*</strong></span>
+              </template>
+            </v-text-field>
 
             <v-text-field
               label="Descrição"
@@ -60,10 +70,15 @@
               variant="outlined"
               append-icon="mdi-plus-circle-outline"
               @click:append="adicionarCategoria"
-            ></v-combobox>
+            >
+              <template #label>
+                Categorias
+                <span><strong>*</strong></span>
+              </template>
+            </v-combobox>
 
             <v-combobox
-              label="Unidades de medida"
+              label="Unidade de medida"
               :items="unidadesDeMedida"
               item-title="descricao"
               item-value="id"
@@ -71,7 +86,12 @@
               variant="outlined"
               append-icon="mdi-plus-circle-outline"
               @click:append="adicionarUnidadeMedida"
-            ></v-combobox>
+            >
+              <template #label>
+                Unidade de medida
+                <span><strong>*</strong></span>
+              </template>
+            </v-combobox>
 
             <v-combobox
               label="Marcas"
@@ -82,7 +102,12 @@
               variant="outlined"
               append-icon="mdi-plus-circle-outline"
               @click:append="adicionarMarca"
-            ></v-combobox>
+            >
+              <template #label>
+                Marca
+                <span><strong>*</strong></span>
+              </template>
+            </v-combobox>
           </v-tabs-window-item>
 
           <v-tabs-window-item :key="2" :value="2" style="padding: 5px">
@@ -110,7 +135,12 @@
                           v-model="novaPorcao.porcao"
                           variant="outlined"
                           type="number"
-                        ></v-text-field>
+                        >
+                          <template #label>
+                            Porção
+                            <span><strong>*</strong></span>
+                          </template>
+                        </v-text-field>
 
                         <v-text-field
                           label="Alergênicos"
@@ -129,13 +159,18 @@
                         ></v-text-field>
 
                         <v-combobox
-                          label="Unidades de medida"
+                          label="Unidade de medida"
                           :items="unidadesDeMedida"
                           item-title="descricao"
                           item-value="id"
                           v-model="novaPorcao.unidadeMedida"
                           variant="outlined"
-                        ></v-combobox>
+                        >
+                          <template #label>
+                            Unidade de medida
+                            <span><strong>*</strong></span>
+                          </template>
+                        </v-combobox>
 
                         <div class="valores-nutricionais">
                           <div>
@@ -364,7 +399,12 @@
                   v-model="porcao.porcao"
                   variant="outlined"
                   type="number"
-                ></v-text-field>
+                >
+                  <template #label>
+                    Porção
+                    <span><strong>*</strong></span>
+                  </template>
+                </v-text-field>
 
                 <v-text-field
                   label="Alergênicos"
@@ -381,13 +421,18 @@
                 ></v-text-field>
 
                 <v-combobox
-                  label="Unidades de medida"
+                  label="Unidade de medida"
                   :items="unidadesDeMedida"
                   item-title="descricao"
                   item-value="id"
                   v-model="porcao.unidadeMedida"
                   variant="outlined"
-                ></v-combobox>
+                >
+                  <template #label>
+                    Unidade de medida
+                    <span><strong>*</strong></span>
+                  </template>
+                </v-combobox>
 
                 <div class="valores-nutricionais">
                   <div style="padding: 15px">

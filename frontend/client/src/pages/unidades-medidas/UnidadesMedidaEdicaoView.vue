@@ -23,12 +23,22 @@
           v-model="modelo.sigla"
           maxlength="4"
           variant="outlined"
-        ></v-text-field>
+        >
+          <template #label>
+            Sigla
+            <span><strong>*</strong></span>
+          </template>
+        </v-text-field>
         <v-text-field
           label="Descrição"
           v-model="modelo.descricao"
           variant="outlined"
-        ></v-text-field>
+        >
+          <template #label>
+            Descrição
+            <span><strong>*</strong></span>
+          </template>
+        </v-text-field>
       </v-card-text>
     </v-card>
   </v-main>
