@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { dataSource } from './database/orm-cli-config';
 
@@ -11,6 +11,23 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
+      validationError: { target: false },
+      exceptionFactory: (validationErrors = []) => {
+        const errors = validationErrors.map((error) => ({
+          field: error.property,
+          constraints: error.constraints,
+        }));
+
+        const firstError =
+          errors.length > 0
+            ? Object.values(errors[0].constraints)[0]
+            : 'Validation failed';
+
+        return new BadRequestException({
+          message: firstError,
+          errors: errors,
+        });
+      },
     }),
   );
 

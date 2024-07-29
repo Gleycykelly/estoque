@@ -12,7 +12,12 @@ export class CreateMovimentacoeDto {
   @IsOptional()
   dataMovimentacao: Date;
 
-  @IsNumber()
+  @IsNumber(
+    {},
+    {
+      message: 'Preencha o campo de quantidade apenas com valores númericos',
+    },
+  )
   quantidade: number;
 
   @IsEnum(TipoMovimentacao)

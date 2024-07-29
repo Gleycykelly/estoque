@@ -12,10 +12,14 @@ export class CreateEnderecoDto {
   @MaxLength(100)
   logradouro: string;
 
-  @IsNumber()
+  @IsNumber(null, {
+    message: 'Preencha o campo de número apenas com valores númericos',
+  })
   numero: number;
 
-  @IsNumber()
+  @IsNumber(null, {
+    message: 'Preencha o campo de lote apenas com valores númericos',
+  })
   lote: number;
 
   @IsString()
