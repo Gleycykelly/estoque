@@ -573,6 +573,7 @@ export default {
     },
 
     async obterDadosPorLote(lote) {
+      this.limparDados(this.modelo.tipoMovimentacao);
       if (!lote) {
         useAlerta().exibirSnackbar(
           'Insira o lote do produto para realizar a saída!',
@@ -584,7 +585,6 @@ export default {
       await comunicacaoMovimentacoes
         .obterMovimentacoesPorLote(lote)
         .then((response) => {
-          this.modelo = null;
           this.obteveDadosDoLote = true;
 
           this.totalEntrada = response.data.totalEntrada;
@@ -614,6 +614,7 @@ export default {
       if (movimentacaoAtual) {
         this.totalEntrada = null;
         this.totalSaida = null;
+        this.obteveDadosDoLote = false;
         (this.modelo = {
           lancamentoProduto: {
             localizacaoDeposito: {},
