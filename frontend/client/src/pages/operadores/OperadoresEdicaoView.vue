@@ -150,24 +150,12 @@
                 item-title="descricao"
                 item-value="id"
                 :items="depositos"
-                label="Depósitos visivéis"
+                label="Depósitos visiveis"
                 multiple
                 color="var(--primary-color)"
                 variant="outlined"
                 persistent-hint
-              >
-                <template #label>
-                  Depósitos visiveís
-                  <span
-                    v-if="
-                      !modelo.permissaoUsuario ||
-                      modelo.permissaoUsuario !== 'Administrador'
-                    "
-                  >
-                    <strong>*</strong>
-                  </span>
-                </template>
-              </v-select>
+              ></v-select>
               <div class="dados-gerais-campos">
                 <v-text-field
                   label="Telefone principal"
