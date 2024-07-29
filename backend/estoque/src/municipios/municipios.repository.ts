@@ -31,13 +31,15 @@ export class MunicipiosRepository extends Repository<Municipios> {
     let query = await this.createQueryBuilder('municipio');
 
     if (obterParcialMunicipiosDto.termoDePesquisa) {
-      query = query
-        .where('LOWER(municipio.uf) LIKE LOWER(:termo)', {
-          termo: `%${obterParcialMunicipiosDto.termoDePesquisa}%`,
-        })
-        .orWhere('LOWER(municipio.uf) LIKE LOWER(:uf)', {
-          uf: `%${obterParcialMunicipiosDto.uf}%`,
-        });
+      query = query.where('LOWER(municipio.nome) LIKE LOWER(:termo)', {
+        termo: `%${obterParcialMunicipiosDto.termoDePesquisa}%`,
+      });
+    }
+
+    if (obterParcialMunicipiosDto.uf) {
+      query = query.where('LOWER(municipio.uf) LIKE LOWER(:uf)', {
+        uf: `%${obterParcialMunicipiosDto.uf}%`,
+      });
     }
 
     query.orderBy('municipio.id', 'ASC');
