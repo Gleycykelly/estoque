@@ -419,7 +419,7 @@ export class MovimentacoesService {
     }
 
     let dados = await this.repositorio.produtosProximosDoVencimento(depositos);
-    console.log(dados);
+
     if (dados && dados.length > 0) {
       dados = dados.filter((m) => m.total_produtos > 0);
     }
