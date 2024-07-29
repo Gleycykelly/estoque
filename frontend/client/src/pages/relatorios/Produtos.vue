@@ -95,7 +95,7 @@ export default {
     return {
       modelo: {},
       depositos: [],
-      fornecedor: [],
+      fornecedores: [],
     };
   },
   methods: {
