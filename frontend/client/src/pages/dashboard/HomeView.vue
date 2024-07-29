@@ -73,7 +73,7 @@
             <v-card class="produtos-proximo-vencimento">
               <v-card-text>
                 <h2 style="color: #bdbdbd; font-size: 18px">
-                  Produtos próximo do vencimento
+                  Produtos com vencimento próximo
                 </h2>
 
                 <v-data-table-virtual
