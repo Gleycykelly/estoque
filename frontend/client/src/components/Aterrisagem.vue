@@ -226,6 +226,7 @@
                   telaParaFiltrar == 'produtos' ||
                   telaParaFiltrar == 'movimentacoes'
                 "
+                :disabled="!operadores || operadores.length <= 0"
                 v-model="filtros.operadores"
                 item-title="nome"
                 item-value="id"
