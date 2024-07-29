@@ -319,7 +319,7 @@ export default {
   color: var(--primary-color);
   font-weight: 900 !important;
   font-family: 'Roboto', sans-serif;
-  font-size: 35px;
+  font-size: 30px;
 }
 
 .gradient-background {
