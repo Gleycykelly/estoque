@@ -813,6 +813,13 @@ export default {
     },
 
     adicionarCategoria() {
+      if (this.dados && this.dados.ehTelaAtualizacao) {
+        useAlerta().exibirSnackbar(
+          'No momento esta funcionalidade só está funcionando ao criar um novo elemento, novas atualizações serão implementadas. Aguarde!',
+          'orange',
+        );
+        return;
+      }
       const dadosOutraTela = {
         dadosOriginais: this.modelo,
         rotaOriginal: 'produtos-edicao',
@@ -824,6 +831,13 @@ export default {
     },
 
     adicionarUnidadeMedida() {
+      if (this.dados && this.dados.ehTelaAtualizacao) {
+        useAlerta().exibirSnackbar(
+          'No momento esta funcionalidade só está funcionando ao criar um novo elemento, novas atualizações serão implementadas. Aguarde!',
+          'orange',
+        );
+        return;
+      }
       const dadosOutraTela = {
         dadosOriginais: this.modelo,
         rotaOriginal: 'produtos-edicao',
@@ -835,6 +849,13 @@ export default {
     },
 
     adicionarMarca() {
+      if (this.dados && this.dados.ehTelaAtualizacao) {
+        useAlerta().exibirSnackbar(
+          'No momento esta funcionalidade só está funcionando ao criar um novo elemento, novas atualizações serão implementadas. Aguarde!',
+          'orange',
+        );
+        return;
+      }
       const dadosOutraTela = {
         dadosOriginais: this.modelo,
         rotaOriginal: 'produtos-edicao',

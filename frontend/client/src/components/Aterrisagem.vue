@@ -23,7 +23,7 @@
             style="color: var(--primary-color)"
             @click="modalConfirmarExclusao = true"
             icon
-            v-if="mostrarBotaoEdicao"
+            v-if="mostrarBotaoEdicao && telaParaFiltrar != 'movimentacoes'"
           >
             <v-icon>mdi-delete-outline</v-icon>
             <v-tooltip activator="parent" location="top">
@@ -574,13 +574,6 @@ tr {
 
 .cor-icones {
   color: white;
-}
-
-.vs__selected-options {
-  flex-wrap: nowrap;
-  max-width: calc(
-    100% - 25px
-  ); /* change this to `- 40px` if you're supporting a `clearable` field; I was not */
 }
 
 .v-field .v-field--appended {

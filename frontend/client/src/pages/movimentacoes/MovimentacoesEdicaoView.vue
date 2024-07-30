@@ -598,6 +598,13 @@ export default {
     },
 
     adicionarProduto() {
+      if (this.dados && this.dados.ehTelaAtualizacao) {
+        useAlerta().exibirSnackbar(
+          'No momento esta funcionalidade só está funcionando ao criar um novo elemento, novas atualizações serão implementadas. Aguarde!',
+          'orange',
+        );
+        return;
+      }
       const dadosOutraTela = {
         dadosOriginais: this.modelo,
         rotaOriginal: 'movimentacoes-edicao',
@@ -610,6 +617,13 @@ export default {
     },
 
     adicionarDeposito() {
+      if (this.dados && this.dados.ehTelaAtualizacao) {
+        useAlerta().exibirSnackbar(
+          'No momento esta funcionalidade só está funcionando ao criar um novo elemento, novas atualizações serão implementadas. Aguarde!',
+          'orange',
+        );
+        return;
+      }
       const dadosOutraTela = {
         dadosOriginais: this.modelo,
         rotaOriginal: 'movimentacoes-edicao',
@@ -621,6 +635,13 @@ export default {
     },
 
     adicionarFornecedor() {
+      if (this.dados && this.dados.ehTelaAtualizacao) {
+        useAlerta().exibirSnackbar(
+          'No momento esta funcionalidade só está funcionando ao criar um novo elemento, novas atualizações serão implementadas. Aguarde!',
+          'orange',
+        );
+        return;
+      }
       const dadosOutraTela = {
         dadosOriginais: this.modelo,
         rotaOriginal: 'movimentacoes-edicao',
